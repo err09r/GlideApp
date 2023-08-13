@@ -1,0 +1,41 @@
+package com.apsl.glideapp.core.data.repositories
+
+import com.apsl.glideapp.common.dto.LoginRequest
+import com.apsl.glideapp.common.dto.RegisterRequest
+import com.apsl.glideapp.core.datastore.AppDataStore
+import com.apsl.glideapp.core.domain.auth.AuthRepository
+import com.apsl.glideapp.core.network.GlideApi
+import javax.inject.Inject
+import kotlinx.coroutines.flow.firstOrNull
+
+class AuthRepositoryImpl @Inject constructor(
+    private val api: GlideApi,
+    private val appDataStore: AppDataStore
+) : AuthRepository {
+
+    override suspend fun login(username: String, password: String): String {
+        val authResponse = api.login(
+            body = LoginRequest(username = username, password = password)
+        )
+        return authResponse.token
+    }
+
+    override suspend fun register(username: String, password: String): String {
+        val authResponse = api.register(
+            body = RegisterRequest(username = username, password = password)
+        )
+        return authResponse.token
+    }
+
+    override suspend fun saveAuthToken(token: String) {
+        appDataStore.saveAuthToken(token)
+    }
+
+    override suspend fun deleteAuthToken() {
+        appDataStore.deleteAuthToken()
+    }
+
+    override suspend fun getIsUserAuthenticated(): Boolean {
+        return appDataStore.getAuthToken().firstOrNull() != null
+    }
+}
