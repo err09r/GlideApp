@@ -37,9 +37,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.feature.home.R
 import com.apsl.glideapp.feature.home.viewmodels.RideState
-import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 
 @Composable
 fun SheetContent(
@@ -51,8 +51,8 @@ fun SheetContent(
     onStartRideClick: () -> Unit,
     onFinishRideClick: () -> Unit
 ) {
-    AnimatedContent(targetState = rideState) {
-        when (rideState) {
+    AnimatedContent(targetState = rideState, label = "") {
+        when (it) {
             RideState.Started -> {
                 Row(
                     modifier = modifier

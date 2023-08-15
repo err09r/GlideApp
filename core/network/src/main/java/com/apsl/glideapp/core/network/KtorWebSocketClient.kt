@@ -1,3 +1,5 @@
+@file:Suppress("UselessCallOnCollection")
+
 package com.apsl.glideapp.core.network
 
 import com.apsl.glideapp.common.dto.MapStateDto

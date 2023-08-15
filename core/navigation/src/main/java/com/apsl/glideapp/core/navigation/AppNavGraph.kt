@@ -4,9 +4,9 @@ import androidx.compose.runtime.Immutable
 
 @Immutable
 sealed class AppNavGraph(val route: String) {
-    object Auth : AppNavGraph("authGraph")
-    object Home : AppNavGraph("homeGraph")
-    object Rides : AppNavGraph("ridesGraph")
-    object Wallet : AppNavGraph("walletGraph")
-    object Settings : AppNavGraph("settingsGraph")
+    data object Auth : AppNavGraph("authGraph")
+    data object Home : AppNavGraph("homeGraph")
+    data object Rides : AppNavGraph("ridesGraph")
+    data object Wallet : AppNavGraph("walletGraph")
+    data object Settings : AppNavGraph("settingsGraph")
 }
