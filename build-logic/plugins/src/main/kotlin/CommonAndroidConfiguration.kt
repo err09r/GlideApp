@@ -74,19 +74,19 @@ private fun Project.configureKotlinCompileOptions() {
         kotlinOptions {
             jvmTarget = Config.jvmTarget
             freeCompilerArgs += listOf(
-                "-Xopt-in=kotlin.RequiresOptIn",
-                "-Xopt-in=kotlin.time.ExperimentalTime",
-                "-Xopt-in=kotlinx.coroutines.FlowPreview",
-                "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-                "-Xopt-in=kotlinx.serialization.ExperimentalSerializationApi",
-                "-Xopt-in=androidx.compose.ui.ExperimentalComposeUiApi",
-                "-Xopt-in=androidx.compose.foundation.ExperimentalFoundationApi",
-                "-Xopt-in=androidx.compose.animation.ExperimentalAnimationApi",
-                "-Xopt-in=androidx.compose.material.ExperimentalMaterialApi",
-                "-Xopt-in=androidx.paging.ExperimentalPagingApi",
-                "-Xopt-in=com.google.maps.android.compose.MapsComposeExperimentalApi",
-                "-Xopt-in=com.google.accompanist.pager.ExperimentalPagerApi",
-                "-Xopt-in=com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi"
+                "-opt-in=kotlin.RequiresOptIn",
+                "-opt-in=kotlin.time.ExperimentalTime",
+                "-opt-in=kotlinx.coroutines.FlowPreview",
+                "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+                "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
+                "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi",
+                "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
+                "-opt-in=androidx.compose.animation.ExperimentalAnimationApi",
+                "-opt-in=androidx.compose.material.ExperimentalMaterialApi",
+                "-opt-in=androidx.paging.ExperimentalPagingApi",
+                "-opt-in=com.google.maps.android.compose.MapsComposeExperimentalApi",
+                "-opt-in=com.google.accompanist.pager.ExperimentalPagerApi",
+                "-opt-in=com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi"
             )
         }
     }

@@ -1,5 +1,5 @@
 [versions]
-android-gradlePlugin = "7.4.2"
+android-gradlePlugin = "8.1.0"
 google-gms-googleServices = "4.3.15"
 gradleVersions = "0.47.0"
 kotlin = "1.9.0"
@@ -23,13 +23,13 @@ androidx-startup-runtime = "1.1.1"
 androidx-workmanager = "2.8.1"
 
 kotlinx-collectionsImmutable = "0.3.5"
-kotlinx-coroutines-core = "1.7.2"
+kotlinx-coroutines-core = "1.7.3"
 kotlinx-datetime = "0.4.0"
-kotlinx-serialization-json = "1.5.0"
+kotlinx-serialization-json = "1.5.1"
 
 google-gms-playServices-location = "21.0.1"
 google-gms-playServices-maps = "18.1.0"
-google-ksp = "1.9.0-1.0.12"
+google-ksp = "1.9.0-1.0.13"
 google-maps = "3.4.0"
 google-maps-compose = "2.11.3"
 
@@ -115,9 +115,14 @@ retrofit2-kotlinxSerializationConverter = { module = "com.jakewharton.retrofit:r
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 [plugins]
+android-application = { id = "com.android.application", version.ref = "android-gradlePlugin" }
+android-library = { id = "com.android.library", version.ref = "android-gradlePlugin" }
+dagger-hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "dagger-hilt-android" }
 google-gradleSecrets = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "secretsGradle" }
 google-ksp = { id = "com.google.devtools.ksp", version.ref = "google-ksp" }
 gradleVersions = { id = "com.github.ben-manes.versions", version.ref = "gradleVersions" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 
 [bundles]

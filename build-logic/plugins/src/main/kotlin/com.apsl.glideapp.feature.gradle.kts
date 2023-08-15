@@ -1,5 +1,3 @@
-@file:Suppress("UnstableApiUsage")
-
 plugins {
     id("com.apsl.glideapp.android-library")
     id("dagger.hilt.android.plugin")

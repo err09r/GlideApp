@@ -1,9 +1,7 @@
-@file:Suppress("UnstableApiUsage")
-
 plugins {
     id("com.apsl.glideapp.core")
     alias(libs.plugins.google.ksp)
-    kotlin("kapt")
+    alias(libs.plugins.kotlin.kapt)
 }
 
 android {
