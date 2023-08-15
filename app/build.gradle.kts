@@ -1,13 +1,11 @@
-@file:Suppress("UnstableApiUsage")
-
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 plugins {
     id("com.apsl.glideapp.android-app")
-    id("dagger.hilt.android.plugin")
+    alias(libs.plugins.dagger.hilt.android)
     alias(libs.plugins.google.gradleSecrets)
     alias(libs.plugins.gradleVersions)
-    kotlin("kapt")
+    alias(libs.plugins.kotlin.kapt)
 }
 
 android {
