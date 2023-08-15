@@ -3,6 +3,8 @@ import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 plugins {
     id("com.apsl.glideapp.android-app")
     alias(libs.plugins.dagger.hilt.android)
+    alias(libs.plugins.firebase.crashlytics)
+    alias(libs.plugins.google.gms.googleServices)
     alias(libs.plugins.google.gradleSecrets)
     alias(libs.plugins.gradleVersions)
     alias(libs.plugins.kotlin.kapt)
