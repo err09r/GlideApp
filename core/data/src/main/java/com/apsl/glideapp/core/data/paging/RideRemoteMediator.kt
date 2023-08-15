@@ -1,3 +1,5 @@
+@file:Suppress("FoldInitializerAndIfToElvis")
+
 package com.apsl.glideapp.core.data.paging
 
 import androidx.paging.LoadType

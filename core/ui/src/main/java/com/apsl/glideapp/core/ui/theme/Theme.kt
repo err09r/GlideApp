@@ -2,7 +2,7 @@ package com.apsl.glideapp.core.ui.theme
 
 import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.LocalMinimumTouchTargetEnforcement
+import androidx.compose.material.LocalMinimumInteractiveComponentEnforcement
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
@@ -53,7 +53,7 @@ fun GlideAppTheme(
     }
 
     CompositionLocalProvider(
-        LocalMinimumTouchTargetEnforcement provides false,
+        LocalMinimumInteractiveComponentEnforcement provides false,
         LocalOverscrollConfiguration provides null
     ) {
         MaterialTheme(
