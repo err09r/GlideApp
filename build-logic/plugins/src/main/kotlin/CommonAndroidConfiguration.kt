@@ -87,7 +87,19 @@ private fun Project.configureKotlinCompileOptions() {
                 "-opt-in=com.google.maps.android.compose.MapsComposeExperimentalApi",
                 "-opt-in=com.google.accompanist.pager.ExperimentalPagerApi",
                 "-opt-in=com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi"
-            )
+            ).run {
+                when {
+                    // Use `-Pcom.apsl.glideapp.enableComposeCompilerReports=true` to enable
+                    findProperty("${Config.namespace}.enableComposeCompilerReports") == "true" -> {
+                        this + listOf(
+                            "-P=plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=$buildDir/composeMetrics",
+                            "-P=plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=$buildDir/composeMetrics"
+                        )
+                    }
+
+                    else -> this
+                }
+            }
         }
     }
 }
