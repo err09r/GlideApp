@@ -26,6 +26,7 @@ dependencies {
     implementation(project(":core:di"))
     implementation(project(":core:navigation"))
     implementation(project(":core:ui"))
+    implementation(project(":core:util"))
 
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.appcompat)
@@ -40,6 +41,7 @@ dependencies {
     implementation(libs.dagger.hilt.android)
     kapt(libs.dagger.hilt.android.compiler)
 
+    implementation(libs.firebase.analytics.ktx)
     implementation(libs.timber)
 
     debugImplementation(libs.androidx.compose.ui.tooling)

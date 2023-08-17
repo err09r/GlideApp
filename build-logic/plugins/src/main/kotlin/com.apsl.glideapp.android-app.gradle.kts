@@ -35,10 +35,10 @@ configure<BaseExtension> {
 
     buildTypes {
         debug {
-//            applicationIdSuffix = ".debug"
+            applicationIdSuffix = ".debug"
         }
         staging {
-//            applicationIdSuffix = ".staging"
+            applicationIdSuffix = ".staging"
             isShrinkResources = true
             signingConfig = signingConfigs.getByName("staging")
         }
