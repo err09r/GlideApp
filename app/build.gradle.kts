@@ -3,6 +3,8 @@ import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 plugins {
     id("com.apsl.glideapp.android-app")
     alias(libs.plugins.dagger.hilt.android)
+    alias(libs.plugins.firebase.crashlytics)
+    alias(libs.plugins.google.gms.googleServices)
     alias(libs.plugins.google.gradleSecrets)
     alias(libs.plugins.gradleVersions)
     alias(libs.plugins.kotlin.kapt)
@@ -24,6 +26,7 @@ dependencies {
     implementation(project(":core:di"))
     implementation(project(":core:navigation"))
     implementation(project(":core:ui"))
+    implementation(project(":core:util"))
 
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.appcompat)
@@ -38,6 +41,7 @@ dependencies {
     implementation(libs.dagger.hilt.android)
     kapt(libs.dagger.hilt.android.compiler)
 
+    implementation(libs.firebase.analytics.ktx)
     implementation(libs.timber)
 
     debugImplementation(libs.androidx.compose.ui.tooling)
