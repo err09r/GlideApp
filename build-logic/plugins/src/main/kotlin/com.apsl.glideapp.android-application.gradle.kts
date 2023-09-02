@@ -18,14 +18,15 @@ configure<BaseExtension> {
         applicationId = Config.applicationId
     }
 
-    signingConfigs {
-        create("staging") {
-            storeFile = file(keystoreProperties.getProperty("KEY_STORE_PATH"))
-            storePassword = keystoreProperties.getProperty("KEY_STORE_PASSWORD")
-            keyAlias = keystoreProperties.getProperty("KEY_ALIAS")
-            keyPassword = keystoreProperties.getProperty("KEY_PASSWORD")
+    android {
+        buildFeatures {
+            buildConfig = true
+            compose = true
         }
-        create("release") {
+    }
+
+    signingConfigs {
+        maybeCreate("release").run {
             storeFile = file(keystoreProperties.getProperty("KEY_STORE_PATH"))
             storePassword = keystoreProperties.getProperty("KEY_STORE_PASSWORD")
             keyAlias = keystoreProperties.getProperty("KEY_ALIAS")
@@ -40,7 +41,6 @@ configure<BaseExtension> {
         staging {
             applicationIdSuffix = ".staging"
             isShrinkResources = true
-            signingConfig = signingConfigs.getByName("staging")
         }
         release {
             isShrinkResources = true

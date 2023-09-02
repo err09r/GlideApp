@@ -1,20 +1,10 @@
-import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
-
 plugins {
-    id("com.apsl.glideapp.android-app")
+    id("com.apsl.glideapp.android-application")
     alias(libs.plugins.dagger.hilt.android)
     alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.google.gms.googleServices)
     alias(libs.plugins.google.gradleSecrets)
-    alias(libs.plugins.gradleVersions)
     alias(libs.plugins.kotlin.kapt)
-}
-
-android {
-    buildFeatures {
-        buildConfig = true
-        compose = true
-    }
 }
 
 dependencies {
@@ -23,8 +13,10 @@ dependencies {
     implementation(project(":feature:rides"))
     implementation(project(":feature:wallet"))
 
+    implementation(project(":core:datastore"))
     implementation(project(":core:di"))
     implementation(project(":core:navigation"))
+    implementation(project(":core:network"))
     implementation(project(":core:ui"))
     implementation(project(":core:util"))
 
@@ -42,19 +34,8 @@ dependencies {
     kapt(libs.dagger.hilt.android.compiler)
 
     implementation(libs.firebase.analytics.ktx)
+    implementation(libs.glideapp.common.dto)
     implementation(libs.timber)
 
     debugImplementation(libs.androidx.compose.ui.tooling)
-}
-
-tasks.named<DependencyUpdatesTask>("dependencyUpdates").configure {
-    rejectVersionIf {
-        arrayOf("alpha", "beta", "rc", "dev").any {
-            candidate.version.contains(it, ignoreCase = true)
-        }
-    }
-    checkForGradleUpdate = true
-    outputDir = "${rootProject.buildDir}/dependencyUpdates"
-    outputFormatter = Config.DependencyUpdates.outputFormatter
-    reportfileName = Config.DependencyUpdates.reportfileName
 }
