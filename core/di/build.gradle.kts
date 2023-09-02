@@ -7,12 +7,9 @@ plugins {
 android {
     buildTypes {
         configureEach {
-            buildConfigField(
-                "String",
-                "GLIDE_API_BASE_URL_HTTP",
-                "\"http://api-glide.herokuapp.com/\""
-            )
-            buildConfigField("String", "GLIDE_API_BASE_URL_WS", "\"ws://api-glide.herokuapp.com/\"")
+//            "\"http://api-glide.herokuapp.com/\""
+            buildConfigField("String", "GLIDE_API_BASE_URL_HTTP", "\"http://192.168.1.120\"")
+            buildConfigField("String", "GLIDE_API_BASE_URL_WS", "\"ws://192.168.1.120\"")
         }
     }
 

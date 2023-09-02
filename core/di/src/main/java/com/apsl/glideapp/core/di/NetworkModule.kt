@@ -41,7 +41,7 @@ object NetworkModule {
     @Provides
     fun provideMapWebSocketSession(httpClient: HttpClient): WebSocketSession {
         return WebSocketSession(httpClient = httpClient) {
-            url("ws://192.168.1.120/api/map")
+            url("${BuildConfig.GLIDE_API_BASE_URL_WS}/api/map")
         }
     }
 
@@ -50,7 +50,7 @@ object NetworkModule {
     @Provides
     fun provideRideWebSocketSession(httpClient: HttpClient): WebSocketSession {
         return WebSocketSession(httpClient = httpClient) {
-            url("ws://192.168.1.120/api/ride")
+            url("${BuildConfig.GLIDE_API_BASE_URL_WS}/api/ride")
         }
     }
 
@@ -110,7 +110,7 @@ object NetworkModule {
         return Retrofit.Builder()
 //            .baseUrl(BuildConfig.GLIDE_API_BASE_URL_HTTP)
 //            .baseUrl("http://10.0.2.2")
-            .baseUrl("http://192.168.1.120/")
+            .baseUrl(BuildConfig.GLIDE_API_BASE_URL_HTTP)
             .addConverterFactory(jsonConverterFactory)
             .client(okHttpClient)
             .build()
