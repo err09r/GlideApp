@@ -3,7 +3,7 @@
 # proguardFiles setting in build.gradle.kts.
 #
 # For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+#   https://developer.android.com/build/shrink-code
 
 # If your project uses WebView with JS, uncomment the following
 # and specify the fully qualified class name to the JavaScript interface
@@ -19,3 +19,6 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Workaround for https://youtrack.jetbrains.com/issue/KTOR-5528
+-dontwarn org.slf4j.impl.StaticLoggerBinder
