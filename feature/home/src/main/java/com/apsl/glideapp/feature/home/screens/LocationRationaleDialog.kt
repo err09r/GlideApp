@@ -18,7 +18,7 @@ import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.core.util.navigateToAppSettings
 
 @Composable
-fun LocationPermissionDialog(modifier: Modifier = Modifier) {
+fun LocationRationaleDialog(modifier: Modifier = Modifier) {
     val context = LocalContext.current
 
     Surface(modifier = modifier) {
@@ -28,7 +28,7 @@ fun LocationPermissionDialog(modifier: Modifier = Modifier) {
         ) {
             Text(
                 modifier = Modifier.padding(horizontal = 50.dp, vertical = 200.dp),
-                text = "Location Permission Dialog"
+                text = "Location permission has to be granted to be able to use ride functionality"
             )
             Button(onClick = context::navigateToAppSettings) {
                 Text("Go to app settings")
@@ -40,8 +40,8 @@ fun LocationPermissionDialog(modifier: Modifier = Modifier) {
 
 @Preview(showBackground = true)
 @Composable
-fun LocationPermissionDialogPreview() {
+fun LocationRationaleDialogPreview() {
     GlideAppTheme {
-        LocationPermissionDialog()
+        LocationRationaleDialog()
     }
 }

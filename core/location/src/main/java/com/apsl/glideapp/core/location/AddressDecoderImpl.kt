@@ -12,7 +12,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import timber.log.Timber
 
-class GlideAddressDecoder @Inject constructor(
+class AddressDecoderImpl @Inject constructor(
     @ApplicationContext context: Context
 ) : AddressDecoder {
 
@@ -37,18 +37,24 @@ class GlideAddressDecoder @Inject constructor(
                     }
                 }
 
-                geocoder.getFromLocation(
-                    coordinates.latitude,
-                    coordinates.longitude,
-                    GEOCODER_MAX_RESULTS,
-                    callback
-                )
+                try {
+                    geocoder.getFromLocation(
+                        coordinates.latitude,
+                        coordinates.longitude,
+                        GEOCODER_MAX_RESULTS,
+                        callback
+                    )
+                } catch (e: Exception) {
+                    Timber.d(e)
+                }
             } else {
-                val results = geocoder.getFromLocation(
-                    coordinates.latitude,
-                    coordinates.longitude,
-                    GEOCODER_MAX_RESULTS
-                )
+                val results = runCatching {
+                    geocoder.getFromLocation(
+                        coordinates.latitude,
+                        coordinates.longitude,
+                        GEOCODER_MAX_RESULTS
+                    )
+                }.getOrNull()
                 val address = results?.firstOrNull()
                 continuation.resume(address?.toAddressString())
             }

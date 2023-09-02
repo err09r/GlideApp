@@ -6,6 +6,7 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
+import com.apsl.glideapp.common.models.RideStatus
 import com.apsl.glideapp.common.util.now
 import com.apsl.glideapp.core.database.AppDatabase
 import com.apsl.glideapp.core.database.entities.RideEntity
@@ -52,7 +53,11 @@ class RideRemoteMediator @Inject constructor(
 
             Timber.d("Loadkey: $loadKey")
 
-            val rideDtos = api.getUserRides(page = loadKey, limit = state.config.pageSize)
+            val rideDtos = api.getUserRidesByStatus(
+                status = RideStatus.Finished.name,
+                page = loadKey,
+                limit = state.config.pageSize
+            )
 
             appDatabase.withTransaction {
                 if (loadType == LoadType.REFRESH) {

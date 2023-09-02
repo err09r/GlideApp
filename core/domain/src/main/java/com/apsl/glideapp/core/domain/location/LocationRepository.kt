@@ -5,8 +5,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface LocationRepository {
     val userLocation: Flow<UserLocation>
-    val wasLocationRequestRationaleShown: Flow<Boolean>
+    suspend fun startReceivingLocationUpdates()
+    suspend fun stopReceivingLocationUpdates()
     suspend fun saveLastUserLocation(location: Coordinates)
     suspend fun getLastSavedUserLocation(): Coordinates?
-    suspend fun saveLocationRequestRationaleWasShown()
 }

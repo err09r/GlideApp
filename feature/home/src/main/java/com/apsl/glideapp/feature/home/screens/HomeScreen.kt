@@ -1,10 +1,9 @@
 package com.apsl.glideapp.feature.home.screens
 
+import android.Manifest
 import android.content.Intent
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,6 +23,7 @@ import androidx.compose.material.icons.rounded.NearMe
 import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material.rememberBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -37,25 +37,24 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.apsl.glideapp.core.ui.collectWithLifecycle
+import com.apsl.glideapp.core.ui.ComposableLifecycle
+import com.apsl.glideapp.core.ui.RequestPermission
 import com.apsl.glideapp.core.ui.getOffset
+import com.apsl.glideapp.core.ui.rememberRequestPermissionState
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
-import com.apsl.glideapp.core.util.launchForLocationPermissions
-import com.apsl.glideapp.core.util.locationPermissionsGranted
-import com.apsl.glideapp.core.util.showLocationRequestPermissionRationale
-import com.apsl.glideapp.feature.home.RideService
 import com.apsl.glideapp.feature.home.components.DrawerContent
 import com.apsl.glideapp.feature.home.components.SheetContent
 import com.apsl.glideapp.feature.home.maps.VehicleClusterItem
 import com.apsl.glideapp.feature.home.maps.toLatLng
+import com.apsl.glideapp.feature.home.rideservice.RideService
 import com.apsl.glideapp.feature.home.viewmodels.HomeAction
 import com.apsl.glideapp.feature.home.viewmodels.HomeUiState
 import com.apsl.glideapp.feature.home.viewmodels.HomeViewModel
 import com.apsl.glideapp.feature.home.viewmodels.UserAuthState
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.maps.android.compose.CameraPositionState
 import kotlinx.coroutines.launch
@@ -67,20 +66,10 @@ fun HomeScreen(
     onNavigateToLogin: () -> Unit,
     onNavigateToAllRides: () -> Unit,
     onNavigateToWallet: () -> Unit,
-    onNavigateToLocationPermission: () -> Unit
+    onNavigateToLocationPermission: () -> Unit,
+    onNavigateToLocationRationale: () -> Unit
 ) {
-    viewModel.run {
-        mapState.collectWithLifecycle()
-        userLocation.collectWithLifecycle()
-    }
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
-
-    LaunchedEffect(uiState.userAuthState) {
-        if (uiState.userAuthState == UserAuthState.NotAuthenticated) {
-            onNavigateToLogin()
-        }
-    }
 
     LaunchedEffect(Unit) {
         viewModel.actions.collect { action ->
@@ -108,13 +97,54 @@ fun HomeScreen(
         }
     }
 
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(uiState.userAuthState) {
+        when (uiState.userAuthState) {
+            UserAuthState.NotAuthenticated -> onNavigateToLogin()
+            else -> Unit
+        }
+    }
+
     if (uiState.userAuthState == UserAuthState.Authenticated) {
+        ComposableLifecycle { event ->
+            with(viewModel) {
+                when (event) {
+                    Lifecycle.Event.ON_START -> {
+                        startReceivingRideEvents()
+                        startReceivingLocationUpdates()
+                        startObservingMapState()
+                        startObservingUserLocation()
+                    }
+
+                    Lifecycle.Event.ON_RESUME -> {
+
+                    }
+
+                    Lifecycle.Event.ON_STOP -> {
+                        stopObservingMapState()
+                        stopObservingUserLocation()
+                        stopReceivingLocationUpdates()
+                    }
+
+                    else -> Unit
+                }
+            }
+        }
+
+        DisposableEffect(Unit) {
+            onDispose {
+                viewModel.stopReceivingLocationUpdates()
+            }
+        }
+
         HomeScreenContent(
             uiState = uiState,
-            onFirstTimeLocationPermissionRequested = viewModel::saveLocationRequestRationaleWasShown,
+            onLocationButtonClick = {},
             onOpenLocationPermissionDialog = onNavigateToLocationPermission,
+            onOpenLocationRationaleDialog = onNavigateToLocationRationale,
             onVehicleSelect = viewModel::updateSelectedVehicle,
-            onLoadContentWithinBounds = viewModel::loadContentWithinBounds,
+            onLoadMapDataWithinBounds = viewModel::loadMapDataWithinBounds,
             onStartRideClick = viewModel::startRide,
             onFinishRideClick = viewModel::finishRide,
             onMyRidesClick = onNavigateToAllRides,
@@ -126,10 +156,11 @@ fun HomeScreen(
 @Composable
 fun HomeScreenContent(
     uiState: HomeUiState,
-    onFirstTimeLocationPermissionRequested: () -> Unit,
+    onLocationButtonClick: () -> Unit,
     onOpenLocationPermissionDialog: () -> Unit,
+    onOpenLocationRationaleDialog: () -> Unit,
     onVehicleSelect: (VehicleClusterItem?) -> Unit,
-    onLoadContentWithinBounds: (LatLngBounds) -> Unit,
+    onLoadMapDataWithinBounds: (LatLngBounds) -> Unit,
     onStartRideClick: () -> Unit,
     onFinishRideClick: () -> Unit,
     onMyRidesClick: () -> Unit,
@@ -162,11 +193,6 @@ fun HomeScreenContent(
         }
     }
 
-    val locationPermissionResultLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestMultiplePermissions(),
-        onResult = { onFirstTimeLocationPermissionRequested() }
-    )
-
     BackHandler(enabled = uiState.selectedVehicle != null) {
         onVehicleSelect(null)
     }
@@ -182,23 +208,59 @@ fun HomeScreenContent(
     val cameraPositionState = remember(uiState.initialCameraPosition) {
         CameraPositionState().apply {
             if (uiState.initialCameraPosition != null) {
-                position = CameraPosition.fromLatLngZoom(
-//                            LatLng(
-//                                uiState.initialCameraPosition.latitude,
-//                                uiState.initialCameraPosition.longitude
-//                            ), 13f
-                    LatLng(54.4, 17.1),
-                    13f
-                )
+                position = CameraPosition.fromLatLngZoom(uiState.initialCameraPosition, 13f)
+//                    LatLng(54.4, 17.1),
+//                    13f
             }
         }
     }
 
+    val permissionRequestState = rememberRequestPermissionState(
+        initRequest = false,
+        permission = Manifest.permission.ACCESS_FINE_LOCATION
+    )
+    RequestPermission(
+        context = context,
+        requestState = permissionRequestState,
+        onGranted = {
+            Timber.d("granted")
+            uiState.userLocation?.let {
+                scope.launch {
+                    cameraPositionState.animate(
+                        CameraUpdateFactory.newCameraPosition(
+                            CameraPosition(
+                                it.toLatLng(),
+                                cameraPositionState.position.zoom,
+                                cameraPositionState.position.tilt,
+                                cameraPositionState.position.bearing
+                            )
+                        ), 2000
+                    )
+                }
+            }
+        },
+        onShowRationale = {
+            Timber.d("show rationale")
+            onOpenLocationRationaleDialog()
+        },
+        onPermanentlyDenied = {
+            Timber.d("denied")
+            onOpenLocationPermissionDialog()
+        }
+    )
+
     LaunchedEffect(cameraPositionState.isMoving) {
         if (!cameraPositionState.isMoving) {
             cameraPositionState.projection?.visibleRegion?.latLngBounds?.let { bounds ->
-                onLoadContentWithinBounds(bounds)
+                onLoadMapDataWithinBounds(bounds)
             }
+        }
+    }
+
+    val visibleBounds = cameraPositionState.projection?.visibleRegion?.latLngBounds
+    LaunchedEffect(visibleBounds != null) {
+        if (visibleBounds != null) {
+            onLoadMapDataWithinBounds(visibleBounds)
         }
     }
 
@@ -279,36 +341,8 @@ fun HomeScreenContent(
                         modifier = Modifier.align(Alignment.BottomEnd),
                         backgroundColor = Color.White,
                         onClick = {
-                            if (context.showLocationRequestPermissionRationale) {
-                                locationPermissionResultLauncher.launchForLocationPermissions()
-                                Timber.d("1")
-                            } else {
-                                if (context.locationPermissionsGranted) {
-                                    Timber.d("2")
-                                    uiState.userLocation?.let {
-                                        scope.launch {
-                                            cameraPositionState.animate(
-                                                CameraUpdateFactory.newCameraPosition(
-                                                    CameraPosition(
-                                                        it.toLatLng(),
-                                                        cameraPositionState.position.zoom,
-                                                        cameraPositionState.position.tilt,
-                                                        cameraPositionState.position.bearing
-                                                    )
-                                                ), 2000
-                                            )
-                                        }
-                                    }
-                                } else {
-                                    if (uiState.wasLocationRequestRationaleShown) {
-                                        Timber.d("3")
-                                        onOpenLocationPermissionDialog()
-                                    } else {
-                                        Timber.d("4")
-                                        locationPermissionResultLauncher.launchForLocationPermissions()
-                                    }
-                                }
-                            }
+                            onLocationButtonClick()
+                            permissionRequestState.requestPermission = true
                         }
                     ) {
                         Icon(
@@ -328,10 +362,11 @@ fun HomeScreenPreview() {
     GlideAppTheme {
         HomeScreenContent(
             uiState = HomeUiState(),
-            onFirstTimeLocationPermissionRequested = {},
+            onLocationButtonClick = {},
             onOpenLocationPermissionDialog = {},
+            onOpenLocationRationaleDialog = {},
             onVehicleSelect = {},
-            onLoadContentWithinBounds = {},
+            onLoadMapDataWithinBounds = {},
             onStartRideClick = {},
             onFinishRideClick = {},
             onMyRidesClick = {},

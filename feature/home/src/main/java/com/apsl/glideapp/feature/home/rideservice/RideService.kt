@@ -1,15 +1,18 @@
-package com.apsl.glideapp.feature.home
+package com.apsl.glideapp.feature.home.rideservice
 
 import android.annotation.SuppressLint
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.apsl.glideapp.common.models.RideAction
+import com.apsl.glideapp.core.datastore.AppDataStore
 import com.apsl.glideapp.core.domain.location.AddressDecoder
-import com.apsl.glideapp.core.domain.location.LocationClient
+import com.apsl.glideapp.core.domain.location.LocationRepository
 import com.apsl.glideapp.core.network.WebSocketClient
+import com.apsl.glideapp.feature.home.R
 import com.apsl.glideapp.feature.home.maps.toCoordinates
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -25,7 +28,7 @@ import timber.log.Timber
 class RideService : Service() {
 
     @Inject
-    lateinit var locationClient: LocationClient
+    lateinit var locationRepository: LocationRepository
 
     @Inject
     lateinit var webSocketClient: WebSocketClient
@@ -33,9 +36,28 @@ class RideService : Service() {
     @Inject
     lateinit var addressDecoder: AddressDecoder
 
+    @Inject
+    lateinit var appDataStore: AppDataStore
+
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     private val notificationManager get() = NotificationManagerCompat.from(this)
+
+    private val pendingContentIntent by lazy {
+        val contentIntent = Intent(
+            this,
+            Class.forName("com.apsl.glideapp.MainActivity")
+        ).apply {
+            flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+        }
+
+        PendingIntent.getActivity(
+            this,
+            0,
+            contentIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+    }
 
     private val notificationBuilder by lazy {
         NotificationCompat.Builder(this, "location")
@@ -45,7 +67,7 @@ class RideService : Service() {
             .setOngoing(true)
             .setAutoCancel(false)
             .setOnlyAlertOnce(true)
-            .setUsesChronometer(true)
+            .setContentIntent(pendingContentIntent)
             .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
     }
 
@@ -59,7 +81,8 @@ class RideService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
             ACTION_START -> {
-                intent.extras?.getString(RIDE_ID)?.let { rideId ->
+                val rideId = intent.extras?.getString(RIDE_ID)
+                if (rideId != null) {
                     start(rideId)
                 }
             }
@@ -71,25 +94,32 @@ class RideService : Service() {
 
     private fun start(rideId: String) {
         startForeground(NOTIFICATION_ID, notificationBuilder.build())
+        startReceivingLocationUpdates()
         observeUserLocation(rideId = rideId)
+    }
+
+    private fun startReceivingLocationUpdates() {
+        scope.launch {
+            appDataStore.saveLocationUpdateInterval(LOCATION_REQUEST_INTERVAL_MS)
+            locationRepository.startReceivingLocationUpdates()
+        }
     }
 
     private fun observeUserLocation(rideId: String) {
         scope.launch {
-            locationClient.run {
-                setLocationUpdateInterval(LOCATION_REQUEST_INTERVAL_MS)
+            locationRepository.userLocation.collectLatest { userLocation ->
+                val coordinates = userLocation.toCoordinates()
 
-                userLocation.collectLatest { userLocation ->
-                    val coordinates = userLocation.toCoordinates()
-
-                    webSocketClient.sendRideAction(
-                        action = RideAction.UpdateRoute(rideId = rideId, coordinates = coordinates)
+                webSocketClient.sendRideAction(
+                    RideAction.UpdateRoute(
+                        rideId = rideId,
+                        coordinates = coordinates
                     )
+                )
 
-                    val address = addressDecoder.decodeFromCoordinates(coordinates)
-                    if (address != null) {
-                        updateNotification(address)
-                    }
+                val address = addressDecoder.decodeFromCoordinates(coordinates)
+                if (address != null) {
+                    updateNotification(address)
                 }
             }
         }
@@ -109,8 +139,15 @@ class RideService : Service() {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
+        stopReceivingLocationUpdates()
         scope.cancel()
+        super.onDestroy()
+    }
+
+    private fun stopReceivingLocationUpdates() {
+        scope.launch {
+            locationRepository.stopReceivingLocationUpdates()
+        }
     }
 
     companion object {

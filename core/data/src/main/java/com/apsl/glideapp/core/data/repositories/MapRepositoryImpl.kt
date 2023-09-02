@@ -9,19 +9,15 @@ import com.apsl.glideapp.core.domain.map.MapState
 import com.apsl.glideapp.core.network.WebSocketClient
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.runBlocking
 
 class MapRepositoryImpl @Inject constructor(
     private val webSocketClient: WebSocketClient,
     private val appDataStore: AppDataStore
 ) : MapRepository {
 
-    override fun getMapStateUpdates(): Flow<MapState> {
-        return webSocketClient.getMapStateUpdates(
-            authToken = runBlocking { appDataStore.getAuthToken().firstOrNull() }
-        ).map { mapStateDto ->
+    override val mapStateUpdates: Flow<MapState> =
+        webSocketClient.mapStateUpdates.map { mapStateDto ->
             MapState(
                 availableVehicles = mapStateDto.availableVehicles.map { vehicleDto ->
                     Vehicle(
@@ -50,9 +46,8 @@ class MapRepositoryImpl @Inject constructor(
                 }
             )
         }
-    }
 
-    override suspend fun loadMapContentWithinBounds(bounds: CoordinatesBounds) {
+    override suspend fun loadMapDataWithinBounds(bounds: CoordinatesBounds) {
         webSocketClient.sendMapData(data = bounds)
     }
 }

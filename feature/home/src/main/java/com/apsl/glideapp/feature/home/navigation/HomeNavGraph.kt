@@ -9,6 +9,7 @@ import com.apsl.glideapp.core.navigation.AppNavGraph
 import com.apsl.glideapp.core.navigation.Screen
 import com.apsl.glideapp.feature.home.screens.HomeScreen
 import com.apsl.glideapp.feature.home.screens.LocationPermissionDialog
+import com.apsl.glideapp.feature.home.screens.LocationRationaleDialog
 
 fun NavGraphBuilder.homeGraph(navController: NavController) {
     navigation(startDestination = Screen.Home.Root.route, route = AppNavGraph.Home.route) {
@@ -28,12 +29,19 @@ fun NavGraphBuilder.homeGraph(navController: NavController) {
                 },
                 onNavigateToLocationPermission = {
                     navController.navigate(Screen.Home.LocationPermission.route)
+                },
+                onNavigateToLocationRationale = {
+                    navController.navigate(Screen.Home.LocationRationale.route)
                 }
             )
         }
 
         dialog(route = Screen.Home.LocationPermission.route) {
             LocationPermissionDialog()
+        }
+
+        dialog(route = Screen.Home.LocationRationale.route) {
+            LocationRationaleDialog()
         }
     }
 }

@@ -14,9 +14,8 @@ import com.apsl.glideapp.core.network.GlideApi
 import com.apsl.glideapp.core.network.WebSocketClient
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.flow.mapNotNull
 
 class RideRepositoryImpl @Inject constructor(
     private val webSocketClient: WebSocketClient,
@@ -25,21 +24,21 @@ class RideRepositoryImpl @Inject constructor(
     private val appDataStore: AppDataStore
 ) : RideRepository {
 
-    override fun receiveRideStateUpdates(): Flow<RideEvent> {
-        val token = runBlocking { appDataStore.getAuthToken().firstOrNull() }
-        return webSocketClient.getRideStateUpdates(authToken = token).map {
-            when (it) {
-                is RideEventDto.Started -> RideEvent.Started(it.rideId, it.dateTime)
-                is RideEventDto.RouteUpdated -> RideEvent.RouteUpdated(it.currentRoute)
-                is RideEventDto.Finished -> RideEvent.Finished
-                is RideEventDto.Error -> {
-                    when (it) {
-                        is RideEventDto.Error.UserInsideNoParkingZone -> {
-                            RideEvent.Error.UserInsideNoParkingZone(it.message)
-                        }
+    override val rideEvents: Flow<RideEvent> = webSocketClient.rideEvents.mapNotNull {
+        when (it) {
+            is RideEventDto.Started -> RideEvent.Started(it.rideId, it.dateTime)
+            is RideEventDto.Restored -> RideEvent.Started(it.rideId, it.dateTime)
+            is RideEventDto.RouteUpdated -> RideEvent.RouteUpdated(it.currentRoute)
+            is RideEventDto.Finished -> RideEvent.Finished
+            is RideEventDto.Error -> {
+                when (it) {
+                    is RideEventDto.Error.UserInsideNoParkingZone -> {
+                        RideEvent.Error.UserInsideNoParkingZone(it.message)
                     }
                 }
             }
+
+            else -> null
         }
     }
 

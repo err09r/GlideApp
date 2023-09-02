@@ -20,7 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.GlideApp"
         android:usesCleartextTraffic="true"
-        tools:targetApi="33">
+        tools:targetApi="34">
 
         <activity
             android:name=".MainActivity"
@@ -36,7 +36,7 @@
         </activity>
 
         <service
-            android:name=".feature.home.RideService"
+            android:name=".feature.home.rideservice.RideService"
             android:foregroundServiceType="location" />
 
         <provider

@@ -8,6 +8,6 @@ interface AppDataStore {
     suspend fun deleteAuthToken()
     suspend fun saveLastUserLocation(location: String)
     fun getLastSavedUserLocation(): Flow<String?>
-    suspend fun saveLocationRequestRationaleWasShown()
-    val wasLocationRequestRationaleShown: Flow<Boolean?>
+    suspend fun saveLocationUpdateInterval(intervalMs: Long)
+    fun getLocationUpdateInterval(): Flow<Long?>
 }

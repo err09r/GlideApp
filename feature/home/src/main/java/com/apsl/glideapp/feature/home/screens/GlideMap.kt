@@ -17,8 +17,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.core.content.ContextCompat
 import com.apsl.glideapp.core.domain.location.UserLocation
 import com.apsl.glideapp.feature.home.R
-import com.apsl.glideapp.feature.home.maps.GlideClusterRenderer
-import com.apsl.glideapp.feature.home.maps.GlideLocationSource
+import com.apsl.glideapp.feature.home.maps.ClusterRendererImpl
+import com.apsl.glideapp.feature.home.maps.LocationSourceImpl
 import com.apsl.glideapp.feature.home.maps.NoParkingZone
 import com.apsl.glideapp.feature.home.maps.VehicleClusterItem
 import com.apsl.glideapp.feature.home.maps.toLocation
@@ -27,7 +27,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.JointType
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
-import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.RoundCap
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.compose.CameraPositionState
@@ -40,7 +39,6 @@ import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.Polygon
 import com.google.maps.android.compose.Polyline
 import timber.log.Timber
-import com.apsl.glideapp.core.ui.R as CoreR
 
 
 @Composable
@@ -63,7 +61,7 @@ fun GlideMap(
 
     LaunchedEffect(userLocation) {
         userLocation?.let { location ->
-            GlideLocationSource.onLocationChanged(location.toLocation())
+            LocationSourceImpl.onLocationChanged(location.toLocation())
         }
     }
 
@@ -73,11 +71,11 @@ fun GlideMap(
         properties = MapProperties(
             isMyLocationEnabled = true,
             latLngBoundsForCameraTarget = LatLngBounds(LatLng(48.45, 13.9), LatLng(55.75, 23.15)),
-            mapStyleOptions = MapStyleOptions.loadRawResourceStyle(context, CoreR.raw.map_style),
+//            mapStyleOptions = MapStyleOptions.loadRawResourceStyle(context, CoreR.raw.map_style),
             maxZoomPreference = 20f,
             minZoomPreference = 9f//11f
         ),
-        locationSource = GlideLocationSource,
+        locationSource = LocationSourceImpl,
         uiSettings = MapUiSettings(
             compassEnabled = false,
             indoorLevelPickerEnabled = false,
@@ -92,7 +90,7 @@ fun GlideMap(
 
             if (clusterManager == null) {
                 clusterManager = ClusterManager<VehicleClusterItem>(context, map).apply {
-                    renderer = GlideClusterRenderer(context, map, this)
+                    renderer = ClusterRendererImpl(context, map, this)
 
                     setOnClusterItemClickListener {
                         onVehicleSelect(it)
@@ -151,7 +149,7 @@ fun GlideMap(
             Polyline(
                 points = rideRoute,
                 jointType = JointType.ROUND,
-                startCap = RoundCap()//CustomCap(a)
+                startCap = RoundCap() //CustomCap(a)
             )
         }
     }

@@ -20,5 +20,6 @@ class GlideApplication : Application() {
         val locationChannel =
             NotificationChannel("location", "Location", NotificationManager.IMPORTANCE_HIGH)
         notificationManager.createNotificationChannel(locationChannel)
+        //TODO: request notification permission
     }
 }

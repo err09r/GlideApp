@@ -1,15 +1,13 @@
 package com.apsl.glideapp.feature.home.maps
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.graphics.Color
-import android.view.View
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
-import androidx.core.view.drawToBitmap
 import androidx.core.view.setPadding
 import com.apsl.glideapp.core.ui.asDp
+import com.apsl.glideapp.core.util.toBitmap
 import com.apsl.glideapp.feature.home.R
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptor
@@ -20,7 +18,7 @@ import com.google.maps.android.clustering.Cluster
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.clustering.view.DefaultClusterRenderer
 
-class GlideClusterRenderer(
+class ClusterRendererImpl(
     context: Context,
     map: GoogleMap,
     clusterManager: ClusterManager<VehicleClusterItem>
@@ -92,13 +90,4 @@ class GlideClusterRenderer(
     // Use that to customize the cluster appearance.
     private val clusterIcon: BitmapDescriptor =
         BitmapDescriptorFactory.fromBitmap(clusterView.toBitmap(36.asDp, 36.asDp))
-}
-
-fun View.toBitmap(width: Int, height: Int): Bitmap {
-    measure(
-        View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
-        View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY)
-    )
-    layout(0, 0, width, height)
-    return drawToBitmap()
 }

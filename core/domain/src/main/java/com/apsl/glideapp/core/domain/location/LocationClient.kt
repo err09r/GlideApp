@@ -4,5 +4,10 @@ import kotlinx.coroutines.flow.Flow
 
 interface LocationClient {
     val userLocation: Flow<UserLocation>
-    fun setLocationUpdateInterval(intervalMillis: Long)
+    suspend fun startReceivingLocationUpdates(locationUpdateIntervalMs: Long)
+    suspend fun stopReceivingLocationUpdates()
+
+    companion object {
+        const val DEFAULT_LOCATION_REQUEST_INTERVAL_MS = 5000L
+    }
 }
