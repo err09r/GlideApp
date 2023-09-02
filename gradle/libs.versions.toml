@@ -1,14 +1,14 @@
 [versions]
-android-gradlePlugin = "8.1.0"
+android-gradlePlugin = "8.1.1"
 google-gms-googleServices = "4.3.15"
 gradleVersions = "0.47.0"
-kotlin = "1.9.0"
+kotlin = "1.9.10"
 secretsGradle = "2.0.1"
 
 androidx-activity-compose = "1.7.2"
 androidx-appcompat = "1.6.1"
 androidx-compose = "1.5.0"
-androidx-compose-compiler = "1.5.1"
+androidx-compose-compiler = "1.5.3"
 androidx-core-ktx = "1.10.1"
 androidx-core-splashscreen = "1.0.1"
 androidx-datastore = "1.0.0"
@@ -16,7 +16,7 @@ androidx-hilt-compiler = "1.0.0"
 androidx-hilt-navigationCompose = "1.0.0"
 androidx-hilt-work = "1.0.0"
 androidx-lifecycle = "2.6.1"
-androidx-navigation = "2.7.0"
+androidx-navigation = "2.7.1"
 androidx-paging = "3.2.0"
 androidx-room = "2.5.2"
 androidx-startup-runtime = "1.1.1"
@@ -24,27 +24,28 @@ androidx-workmanager = "2.8.1"
 
 kotlinx-collectionsImmutable = "0.3.5"
 kotlinx-coroutines-core = "1.7.3"
-kotlinx-datetime = "0.4.0"
-kotlinx-serialization-json = "1.5.1"
+kotlinx-datetime = "0.4.1"
+kotlinx-serialization-json = "1.6.0"
 
 google-gms-playServices-location = "21.0.1"
 google-gms-playServices-maps = "18.1.0"
-google-ksp = "1.9.0-1.0.13"
-google-maps = "3.4.0"
-google-maps-compose = "2.11.3"
+google-ksp = "1.9.10-1.0.13"
+google-maps-compose = "2.14.0"
+google-maps-utils = "3.5.3"
+google-maps-utils-ktx = "3.4.0"
 
 accompanist = "0.30.1"
-dagger-hilt-android = "2.47"
+dagger-hilt-android = "2.48"
 firebase-analytics = "21.3.0"
-firebase-crashlytics = "18.4.0"
-firebase-crashlytics-plugin = "2.9.8"
-glideapp-common = "0.0.37"
+firebase-crashlytics = "18.4.1"
+firebase-crashlytics-plugin = "2.9.9"
+glideapp-common = "0.0.41"
 javax-inject = "1"
-ktor = "2.2.4"
+ktor = "2.3.4"
 lottie = "6.1.0"
 okhttp3-loggingInterceptor = "4.11.0"
 retrofit2 = "2.9.0"
-retrofit2-kotlinxSerializationConverter = "0.8.0"
+retrofit2-kotlinxSerializationConverter = "1.0.0"
 timber = "5.0.1"
 
 [libraries]
@@ -78,8 +79,8 @@ google-gms-playServices-maps = { module = "com.google.android.gms:play-services-
 google-maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "google-maps-compose" }
 google-maps-compose-utils = { module = "com.google.maps.android:maps-compose-utils", version.ref = "google-maps-compose" }
 google-maps-compose-widgets = { module = "com.google.maps.android:maps-compose-widgets", version.ref = "google-maps-compose" }
-google-maps-utils = { module = "com.google.maps.android:android-maps-utils", version.ref = "google-maps" }
-google-maps-utils-ktx = { module = "com.google.maps.android:maps-utils-ktx", version.ref = "google-maps" }
+google-maps-utils = { module = "com.google.maps.android:android-maps-utils", version.ref = "google-maps-utils" }
+google-maps-utils-ktx = { module = "com.google.maps.android:maps-utils-ktx", version.ref = "google-maps-utils-ktx" }
 
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "androidx-room" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "androidx-room" }
@@ -108,6 +109,7 @@ ktor-client-websockets = { module = "io.ktor:ktor-client-websockets", version.re
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 
 accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanist" }
+accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
 accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
 
 firebase-analytics-ktx = { module = "com.google.firebase:firebase-analytics-ktx", version.ref = "firebase-analytics" }
