@@ -37,11 +37,11 @@ fun NavGraphBuilder.homeGraph(navController: NavController) {
         }
 
         dialog(route = Screen.Home.LocationPermission.route) {
-            LocationPermissionDialog()
+            LocationPermissionDialog(onNavigateBack = { navController.popBackStack() })
         }
 
         dialog(route = Screen.Home.LocationRationale.route) {
-            LocationRationaleDialog()
+            LocationRationaleDialog(onNavigateBack = { navController.popBackStack() })
         }
     }
 }

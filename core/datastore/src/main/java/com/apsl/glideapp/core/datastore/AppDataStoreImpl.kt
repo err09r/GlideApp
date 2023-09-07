@@ -2,8 +2,8 @@ package com.apsl.glideapp.core.datastore
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.map
 
 internal val USER_AUTH_TOKEN = stringPreferencesKey("user_auth_token")
 internal val LAST_USER_LOCATION = stringPreferencesKey("last_user_location")
-internal val LOCATION_UPDATE_INTERVAL_MS = longPreferencesKey("location_update_interval_ms")
+internal val RIDE_MODE_ACTIVE = booleanPreferencesKey("ride_mode_active")
 
 class AppDataStoreImpl @Inject constructor(
     private val dataStore: DataStore<Preferences>
@@ -37,11 +37,11 @@ class AppDataStoreImpl @Inject constructor(
         return dataStore.data.map { it[LAST_USER_LOCATION] }
     }
 
-    override suspend fun saveLocationUpdateInterval(intervalMs: Long) {
-        dataStore.edit { it[LOCATION_UPDATE_INTERVAL_MS] = intervalMs }
+    override suspend fun saveRideModeActive(value: Boolean) {
+        dataStore.edit { it[RIDE_MODE_ACTIVE] = value }
     }
 
-    override fun getLocationUpdateInterval(): Flow<Long?> {
-        return dataStore.data.map { it[LOCATION_UPDATE_INTERVAL_MS] }
+    override fun getRideModeActive(): Flow<Boolean?> {
+        return dataStore.data.map { it[RIDE_MODE_ACTIVE] }
     }
 }

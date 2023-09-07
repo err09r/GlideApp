@@ -18,7 +18,7 @@ import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.core.util.navigateToAppSettings
 
 @Composable
-fun LocationPermissionDialog(modifier: Modifier = Modifier) {
+fun LocationPermissionDialog(modifier: Modifier = Modifier, onNavigateBack: () -> Unit) {
     val context = LocalContext.current
 
     Surface(modifier = modifier) {
@@ -30,7 +30,12 @@ fun LocationPermissionDialog(modifier: Modifier = Modifier) {
                 modifier = Modifier.padding(horizontal = 50.dp, vertical = 200.dp),
                 text = "Location Permission Dialog"
             )
-            Button(onClick = context::navigateToAppSettings) {
+            Button(
+                onClick = {
+                    context.navigateToAppSettings()
+                    onNavigateBack()
+                }
+            ) {
                 Text("Go to app settings")
             }
             Spacer(modifier = Modifier.height(64.dp))
@@ -42,6 +47,6 @@ fun LocationPermissionDialog(modifier: Modifier = Modifier) {
 @Composable
 fun LocationPermissionDialogPreview() {
     GlideAppTheme {
-        LocationPermissionDialog()
+        LocationPermissionDialog(onNavigateBack = {})
     }
 }

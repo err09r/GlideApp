@@ -21,8 +21,11 @@ class RideRepositoryImpl @Inject constructor(
     private val webSocketClient: WebSocketClient,
     private val api: GlideApi,
     private val ridePager: Pager<Int, RideEntity>,
-    private val appDataStore: AppDataStore
+    appDataStore: AppDataStore
 ) : RideRepository {
+
+    override val isRideModeActive: Flow<Boolean> =
+        appDataStore.getRideModeActive().map { it ?: false }
 
     override val rideEvents: Flow<RideEvent> = webSocketClient.rideEvents.mapNotNull {
         when (it) {
@@ -38,7 +41,10 @@ class RideRepositoryImpl @Inject constructor(
                 }
             }
 
-            else -> null
+            is RideEventDto.SessionCancelled -> {
+                appDataStore.saveRideModeActive(value = false)
+                null
+            }
         }
     }
 

@@ -3,115 +3,152 @@ package com.apsl.glideapp.core.location
 import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
+import android.location.LocationListener
 import android.location.LocationManager
-import android.os.Looper
-import com.apsl.glideapp.core.domain.LocationException
+import android.location.LocationRequest
+import android.os.Build
+import androidx.core.content.ContextCompat
+import com.apsl.glideapp.common.util.asResult
+import com.apsl.glideapp.core.datastore.AppDataStore
+import com.apsl.glideapp.core.domain.location.GpsDisabledException
 import com.apsl.glideapp.core.domain.location.LocationClient
+import com.apsl.glideapp.core.domain.location.MissingLocationPermissionsException
 import com.apsl.glideapp.core.domain.location.UserLocation
 import com.apsl.glideapp.core.util.locationPermissionsGranted
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.Priority
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 @SuppressLint("MissingPermission")
 class LocationClientImpl @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    private val appDataStore: AppDataStore
 ) : LocationClient {
 
-    private val scope = CoroutineScope(SupervisorJob())
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
-    private val fusedLocationProviderClient =
-        LocationServices.getFusedLocationProviderClient(context)
+    private val locationManager =
+        context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
-    private val _userLocation = MutableSharedFlow<UserLocation>()
-    override val userLocation = _userLocation.asSharedFlow()
-
-    private var locationUpdatesJob: Job? = null
-
-    private var locationCallback: LocationCallback? = null
-    private var locationRequest: LocationRequest? = null
-
-    override suspend fun startReceivingLocationUpdates(locationUpdateIntervalMs: Long) {
-        Timber.d("startReceivingLocationUpdates, job: ${locationUpdatesJob.toString()}")
-        locationUpdatesJob?.cancel()
-        locationUpdatesJob = callbackFlow<Unit> {
-            ensureLocationPermissionsGranted()
-            ensureProvidersEnabled()
-
-            locationRequest = LocationRequest
-                .Builder(USER_LOCATION_PRIORITY, locationUpdateIntervalMs)
-                .build()
-
-            locationCallback = object : LocationCallback() {
-                override fun onLocationResult(result: LocationResult) {
-                    result.lastLocation?.let { location ->
-                        scope.launch {
-                            Timber.d("lat: ${location.latitude}/long: ${location.longitude}")
-                            _userLocation.emit(location.toUserLocation())
-                        }
-                    }
-                }
-            }
-
-            fusedLocationProviderClient.requestLocationUpdates(
-                checkNotNull(locationRequest),
-                checkNotNull(locationCallback),
-                Looper.getMainLooper()
-            )
-
-            awaitClose {
-                val callback = locationCallback
-                if (callback != null) {
-                    fusedLocationProviderClient.removeLocationUpdates(callback)
-                    locationCallback = null
-                }
-                locationRequest = null
-            }
+    private val _userLocation = MutableSharedFlow<Flow<Result<UserLocation>>>()
+    override val userLocation = _userLocation
+        .onStart {
+            Timber.d("User Location flow started")
+            val isRideModeActive = appDataStore.getRideModeActive().firstOrNull() ?: false
+            val interval = getLocationUpdateInterval(isRideModeActive = isRideModeActive)
+            emit(buildUserLocationFlow(locationUpdateIntervalMs = interval))
         }
-            .catch { Timber.d(it) }
-            .launchIn(scope)
+        .onCompletion { Timber.d("User Location flow completed") }
+        .flatMapLatest { it }
+        .shareIn(scope = scope, started = SharingStarted.WhileSubscribed())
+
+    init {
+        observeLocationUpdateInterval()
     }
 
-    override suspend fun stopReceivingLocationUpdates() {
-        if (locationRequest?.intervalMillis == LocationClient.DEFAULT_LOCATION_REQUEST_INTERVAL_MS) {
-            locationUpdatesJob?.cancelAndJoin()
+    private fun observeLocationUpdateInterval() {
+        scope.launch {
+            appDataStore.getRideModeActive()
+                .map { it ?: false }
+                .distinctUntilChanged()
+                .collectLatest { isRideModeActive ->
+                    val interval = getLocationUpdateInterval(isRideModeActive = isRideModeActive)
+                    Timber.d("isRideModeActive: $isRideModeActive, interval: $interval")
+                    _userLocation.emit(
+                        buildUserLocationFlow(locationUpdateIntervalMs = interval)
+                    )
+                }
         }
     }
+
+    private fun getLocationUpdateInterval(isRideModeActive: Boolean): Long {
+        return if (isRideModeActive) {
+            LocationClient.RIDE_MODE_LOCATION_REQUEST_INTERVAL_MS
+        } else {
+            LocationClient.DEFAULT_LOCATION_REQUEST_INTERVAL_MS
+        }
+    }
+
+    private fun buildUserLocationFlow(locationUpdateIntervalMs: Long) = callbackFlow {
+        ensureLocationPermissionsGranted()
+        ensureProvidersEnabled()
+
+        val locationListener = LocationListener { location ->
+            val userLocation = location.toUserLocation()
+            scope.launch {
+                Timber.d("Latitude: ${userLocation.latitudeDegrees}, Longitude: ${userLocation.longitudeDegrees}")
+                send(userLocation)
+            }
+        }
+
+        withContext(Dispatchers.Main.immediate) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                val locationRequest = LocationRequest.Builder(locationUpdateIntervalMs)
+                    .setMinUpdateIntervalMillis(locationUpdateIntervalMs)
+                    .setQuality(LocationRequest.QUALITY_HIGH_ACCURACY)
+                    .setMinUpdateDistanceMeters(LOCATION_UPDATE_MIN_DISTANCE)
+                    .build()
+
+                locationManager.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER,
+                    locationRequest,
+                    ContextCompat.getMainExecutor(context),
+                    locationListener
+                )
+            } else {
+                locationManager.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER,
+                    locationUpdateIntervalMs,
+                    LOCATION_UPDATE_MIN_DISTANCE,
+                    locationListener
+                )
+            }
+        }
+
+        awaitClose {
+            Timber.d("Location subflow has been either cancelled or closed")
+            locationManager.removeUpdates(locationListener)
+        }
+    }.asResult()
 
     private fun ensureLocationPermissionsGranted() {
         if (!context.locationPermissionsGranted) {
-            //TODO HANDLE PROPERLY
-            throw LocationException("Missing location permission")
+            throw MissingLocationPermissionsException()
         }
     }
 
     private fun ensureProvidersEnabled() {
-        val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         val isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-        val isNetworkEnabled =
-            locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
-
-        if (!isGpsEnabled && !isNetworkEnabled) {
-            //TODO HANDLE PROPERLY
-            throw LocationException("GPS is disabled")
+        if (!isGpsEnabled) {
+            throw GpsDisabledException()
         }
     }
+
+    override val isGpsEnabled: Boolean
+        get() = try {
+            ensureProvidersEnabled()
+            true
+        } catch (e: Exception) {
+            false
+        }
 
     private fun Location.toUserLocation(): UserLocation {
         return UserLocation(
@@ -131,6 +168,6 @@ class LocationClientImpl @Inject constructor(
     }
 
     private companion object {
-        private const val USER_LOCATION_PRIORITY = Priority.PRIORITY_HIGH_ACCURACY
+        private const val LOCATION_UPDATE_MIN_DISTANCE = 0.8f
     }
 }

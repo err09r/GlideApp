@@ -6,7 +6,6 @@ import com.apsl.glideapp.common.dto.MapStateDto
 import com.apsl.glideapp.common.dto.RideEventDto
 import com.apsl.glideapp.common.models.CoordinatesBounds
 import com.apsl.glideapp.common.models.RideAction
-import com.apsl.glideapp.core.util.DispatcherProvider
 import io.ktor.client.plugins.websocket.DefaultClientWebSocketSession
 import io.ktor.client.plugins.websocket.receiveDeserialized
 import io.ktor.client.plugins.websocket.sendSerialized
@@ -16,17 +15,21 @@ import io.ktor.websocket.readText
 import java.util.concurrent.ConcurrentLinkedQueue
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
@@ -34,17 +37,16 @@ import timber.log.Timber
 
 class KtorWebSocketClient @Inject constructor(
     private val mapWebSocketSession: WebSocketSession,
-    private val rideWebSocketSession: WebSocketSession,
-    private val dispatchers: DispatcherProvider
+    private val rideWebSocketSession: WebSocketSession
 ) : WebSocketClient {
 
-    private val scope = CoroutineScope(SupervisorJob() + dispatchers.io)
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     private var mapSession: DefaultClientWebSocketSession? = null
     private var rideSession: DefaultClientWebSocketSession? = null
 
-    private val mapDataQueue = ConcurrentLinkedQueue<CoordinatesBounds>()
-    private val rideActionsQueue = ConcurrentLinkedQueue<RideAction>()
+    private val mapDataToSend = MutableStateFlow<CoordinatesBounds?>(null)
+    private val rideActionsToSend = ConcurrentLinkedQueue<RideAction>()
 
     private val _mapStateUpdates = MutableSharedFlow<Flow<MapStateDto>>()
     override val mapStateUpdates = _mapStateUpdates
@@ -76,7 +78,7 @@ class KtorWebSocketClient @Inject constructor(
                 }
             }
         }
-        .flowOn(dispatchers.io)
+        .flowOn(Dispatchers.IO)
         .catch {
             Timber.d("Exception in map session: $it")
             closeMapSession()
@@ -87,18 +89,15 @@ class KtorWebSocketClient @Inject constructor(
         }
 
     private suspend fun DefaultClientWebSocketSession.onMapSessionInitialized() {
-        if (mapDataQueue.isNotEmpty()) {
-            withContext(dispatchers.io) {
-                mapDataQueue
-                    .filterNotNull()
-                    .forEach { sendSerialized(it) }
-                mapDataQueue.clear()
-            }
+        withContext(Dispatchers.IO) {
+            mapDataToSend
+                .getAndUpdate { null }
+                ?.let { sendSerialized(it) }
         }
     }
 
     private suspend fun closeMapSession() {
-        mapDataQueue.clear()
+        mapDataToSend.update { null }
         mapSession?.close()
         mapSession = null
     }
@@ -106,7 +105,7 @@ class KtorWebSocketClient @Inject constructor(
     override suspend fun sendMapData(data: CoordinatesBounds) {
 //        Timber.d(data.toString())
         mapSession?.sendSerialized(data) ?: run {
-            mapDataQueue.add(data)
+            mapDataToSend.update { data }
             _mapStateUpdates.emit(mapFlow)
         }
     }
@@ -120,7 +119,7 @@ class KtorWebSocketClient @Inject constructor(
     override suspend fun sendRideAction(action: RideAction) {
 //        Timber.d("action: $action, rideSession: $rideSession")
         rideSession?.sendSerialized(action) ?: run {
-            rideActionsQueue.add(action)
+            rideActionsToSend.add(action)
             _rideEvents.emit(rideFlow)
         }
     }
@@ -160,19 +159,19 @@ class KtorWebSocketClient @Inject constructor(
         .rideFlowOperators()
 
     private suspend fun DefaultClientWebSocketSession.onRideSessionInitialized() {
-        if (rideActionsQueue.isNotEmpty()) {
-            withContext(dispatchers.io) {
-                rideActionsQueue
+        if (rideActionsToSend.isNotEmpty()) {
+            withContext(Dispatchers.IO) {
+                rideActionsToSend
                     .filterNotNull()
                     .forEach { sendSerialized<RideAction>(it) }
-                rideActionsQueue.clear()
+                rideActionsToSend.clear()
             }
         }
     }
 
     private fun Flow<RideEventDto>.rideFlowOperators(): Flow<RideEventDto> {
         return this
-            .flowOn(dispatchers.io)
+            .flowOn(Dispatchers.IO)
             .catch {
                 Timber.d("Exception in ride session: $it")
                 closeRideSession()
@@ -184,7 +183,7 @@ class KtorWebSocketClient @Inject constructor(
     }
 
     private suspend fun closeRideSession() {
-        rideActionsQueue.clear()
+        rideActionsToSend.clear()
         rideSession?.close()
         rideSession = null
     }

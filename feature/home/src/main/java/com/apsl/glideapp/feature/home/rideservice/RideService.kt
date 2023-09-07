@@ -4,53 +4,39 @@ import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
+import android.os.Binder
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import com.apsl.glideapp.common.models.RideAction
-import com.apsl.glideapp.core.datastore.AppDataStore
-import com.apsl.glideapp.core.domain.location.AddressDecoder
-import com.apsl.glideapp.core.domain.location.LocationRepository
-import com.apsl.glideapp.core.network.WebSocketClient
 import com.apsl.glideapp.feature.home.R
-import com.apsl.glideapp.feature.home.maps.toCoordinates
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import timber.log.Timber
 
 @AndroidEntryPoint
 class RideService : Service() {
 
-    @Inject
-    lateinit var locationRepository: LocationRepository
-
-    @Inject
-    lateinit var webSocketClient: WebSocketClient
-
-    @Inject
-    lateinit var addressDecoder: AddressDecoder
-
-    @Inject
-    lateinit var appDataStore: AppDataStore
-
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
+    private val binder = RideBinder()
+
+    @Inject
+    lateinit var controllerFactory: RideServiceControllerFactory
+    private var controller: RideServiceController? = null
 
     private val notificationManager get() = NotificationManagerCompat.from(this)
 
     private val pendingContentIntent by lazy {
-        val contentIntent = Intent(
-            this,
-            Class.forName("com.apsl.glideapp.MainActivity")
-        ).apply {
+        val contentIntent = Intent(this, Class.forName(MAIN_ACTIVITY_CLASSNAME)).apply {
             flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
         }
-
         PendingIntent.getActivity(
             this,
             0,
@@ -71,57 +57,17 @@ class RideService : Service() {
             .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
     }
 
-    override fun onBind(intent: Intent?): IBinder? = null
+    override fun onBind(intent: Intent?): IBinder = binder
 
     override fun onCreate() {
         super.onCreate()
-        Timber.d("Service created")
-    }
-
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        when (intent?.action) {
-            ACTION_START -> {
-                val rideId = intent.extras?.getString(RIDE_ID)
-                if (rideId != null) {
-                    start(rideId)
-                }
-            }
-
-            ACTION_STOP -> stop()
-        }
-        return super.onStartCommand(intent, flags, startId)
-    }
-
-    private fun start(rideId: String) {
-        startForeground(NOTIFICATION_ID, notificationBuilder.build())
-        startReceivingLocationUpdates()
-        observeUserLocation(rideId = rideId)
-    }
-
-    private fun startReceivingLocationUpdates() {
-        scope.launch {
-            appDataStore.saveLocationUpdateInterval(LOCATION_REQUEST_INTERVAL_MS)
-            locationRepository.startReceivingLocationUpdates()
-        }
-    }
-
-    private fun observeUserLocation(rideId: String) {
-        scope.launch {
-            locationRepository.userLocation.collectLatest { userLocation ->
-                val coordinates = userLocation.toCoordinates()
-
-                webSocketClient.sendRideAction(
-                    RideAction.UpdateRoute(
-                        rideId = rideId,
-                        coordinates = coordinates
-                    )
-                )
-
-                val address = addressDecoder.decodeFromCoordinates(coordinates)
-                if (address != null) {
-                    updateNotification(address)
-                }
-            }
+        Timber.d("onCreate")
+        controller = controllerFactory.create(scope = scope)
+        controller?.run {
+            currentAddress
+                .filterNotNull()
+                .onEach { updateNotification(address = it) }
+                .launchIn(scope)
         }
     }
 
@@ -133,21 +79,41 @@ class RideService : Service() {
         )
     }
 
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        when (intent?.action) {
+            ACTION_START -> {
+                val rideId = checkNotNull(intent.extras?.getString(RIDE_ID))
+                start(rideId)
+            }
+
+            ACTION_STOP -> stop()
+        }
+        return super.onStartCommand(intent, flags, startId)
+    }
+
+    private fun start(rideId: String) {
+        startForeground(NOTIFICATION_ID, notificationBuilder.build())
+        controller?.onServiceStart(rideId = rideId)
+    }
+
     private fun stop() {
+        controller?.onServiceStop()
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
     }
 
-    override fun onDestroy() {
-        stopReceivingLocationUpdates()
-        scope.cancel()
-        super.onDestroy()
+    fun restartUserLocationFlow(rideId: String) {
+        controller?.startObservingUserLocation(rideId)
     }
 
-    private fun stopReceivingLocationUpdates() {
-        scope.launch {
-            locationRepository.stopReceivingLocationUpdates()
-        }
+    override fun onDestroy() {
+        scope.cancel()
+        super.onDestroy()
+        Timber.d("onDestroy")
+    }
+
+    inner class RideBinder : Binder() {
+        val service get() = this@RideService
     }
 
     companion object {
@@ -155,6 +121,6 @@ class RideService : Service() {
         const val ACTION_STOP = "ACTION_STOP"
         const val RIDE_ID = "RIDE_ID"
         private const val NOTIFICATION_ID = 1
-        private const val LOCATION_REQUEST_INTERVAL_MS = 1000L
+        private const val MAIN_ACTIVITY_CLASSNAME = "com.apsl.glideapp.app.MainActivity"
     }
 }

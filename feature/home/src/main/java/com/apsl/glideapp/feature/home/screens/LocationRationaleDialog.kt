@@ -18,7 +18,7 @@ import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.core.util.navigateToAppSettings
 
 @Composable
-fun LocationRationaleDialog(modifier: Modifier = Modifier) {
+fun LocationRationaleDialog(modifier: Modifier = Modifier, onNavigateBack: () -> Unit) {
     val context = LocalContext.current
 
     Surface(modifier = modifier) {
@@ -30,7 +30,12 @@ fun LocationRationaleDialog(modifier: Modifier = Modifier) {
                 modifier = Modifier.padding(horizontal = 50.dp, vertical = 200.dp),
                 text = "Location permission has to be granted to be able to use ride functionality"
             )
-            Button(onClick = context::navigateToAppSettings) {
+            Button(
+                onClick = {
+                    context.navigateToAppSettings()
+                    onNavigateBack()
+                }
+            ) {
                 Text("Go to app settings")
             }
             Spacer(modifier = Modifier.height(64.dp))
@@ -42,6 +47,6 @@ fun LocationRationaleDialog(modifier: Modifier = Modifier) {
 @Composable
 fun LocationRationaleDialogPreview() {
     GlideAppTheme {
-        LocationRationaleDialog()
+        LocationRationaleDialog(onNavigateBack = {})
     }
 }

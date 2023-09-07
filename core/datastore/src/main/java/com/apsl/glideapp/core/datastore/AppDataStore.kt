@@ -8,6 +8,6 @@ interface AppDataStore {
     suspend fun deleteAuthToken()
     suspend fun saveLastUserLocation(location: String)
     fun getLastSavedUserLocation(): Flow<String?>
-    suspend fun saveLocationUpdateInterval(intervalMs: Long)
-    fun getLocationUpdateInterval(): Flow<Long?>
+    suspend fun saveRideModeActive(value: Boolean)
+    fun getRideModeActive(): Flow<Boolean?>
 }

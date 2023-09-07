@@ -7,7 +7,7 @@ secretsGradle = "2.0.1"
 
 androidx-activity-compose = "1.7.2"
 androidx-appcompat = "1.6.1"
-androidx-compose = "1.5.0"
+androidx-compose = "1.5.1"
 androidx-compose-compiler = "1.5.3"
 androidx-core-ktx = "1.10.1"
 androidx-core-splashscreen = "1.0.1"
@@ -15,15 +15,15 @@ androidx-datastore = "1.0.0"
 androidx-hilt-compiler = "1.0.0"
 androidx-hilt-navigationCompose = "1.0.0"
 androidx-hilt-work = "1.0.0"
-androidx-lifecycle = "2.6.1"
-androidx-navigation = "2.7.1"
+androidx-lifecycle = "2.6.2"
+androidx-navigation = "2.7.2"
 androidx-paging = "3.2.0"
 androidx-room = "2.5.2"
 androidx-startup-runtime = "1.1.1"
 androidx-workmanager = "2.8.1"
 
 kotlinx-collectionsImmutable = "0.3.5"
-kotlinx-coroutines-core = "1.7.3"
+kotlinx-coroutines = "1.7.3"
 kotlinx-datetime = "0.4.1"
 kotlinx-serialization-json = "1.6.0"
 
@@ -34,7 +34,7 @@ google-maps-compose = "2.14.0"
 google-maps-utils = "3.5.3"
 google-maps-utils-ktx = "3.4.0"
 
-accompanist = "0.30.1"
+accompanist = "0.32.0"
 dagger-hilt-android = "2.48"
 firebase-analytics = "21.3.0"
 firebase-crashlytics = "18.4.1"
@@ -96,7 +96,8 @@ dagger-hilt-android-compiler = { module = "com.google.dagger:hilt-android-compil
 dagger-hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "dagger-hilt-android" }
 
 kotlinx-collectionsImmutable-core = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinx-collectionsImmutable" }
-kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines-core" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-playServices = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "kotlinx-coroutines" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization-json" }
 

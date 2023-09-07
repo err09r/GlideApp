@@ -4,7 +4,6 @@ import com.apsl.glideapp.core.network.GlideApi
 import com.apsl.glideapp.core.network.KtorWebSocketClient
 import com.apsl.glideapp.core.network.WebSocketClient
 import com.apsl.glideapp.core.network.WebSocketSession
-import com.apsl.glideapp.core.util.DispatcherProvider
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
@@ -58,13 +57,11 @@ object NetworkModule {
     @Provides
     fun provideWebSocketClient(
         @MapWebSocket mapWebSocketSession: WebSocketSession,
-        @RideWebSocket rideWebSocketSession: WebSocketSession,
-        dispatcherProvider: DispatcherProvider
+        @RideWebSocket rideWebSocketSession: WebSocketSession
     ): WebSocketClient {
         return KtorWebSocketClient(
             mapWebSocketSession = mapWebSocketSession,
-            rideWebSocketSession = rideWebSocketSession,
-            dispatchers = dispatcherProvider
+            rideWebSocketSession = rideWebSocketSession
         )
     }
 
@@ -108,8 +105,6 @@ object NetworkModule {
         okHttpClient: OkHttpClient
     ): Retrofit {
         return Retrofit.Builder()
-//            .baseUrl(BuildConfig.GLIDE_API_BASE_URL_HTTP)
-//            .baseUrl("http://10.0.2.2")
             .baseUrl(BuildConfig.GLIDE_API_BASE_URL_HTTP)
             .addConverterFactory(jsonConverterFactory)
             .client(okHttpClient)

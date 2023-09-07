@@ -4,9 +4,7 @@ import com.apsl.glideapp.common.models.Coordinates
 import kotlinx.coroutines.flow.Flow
 
 interface LocationRepository {
-    val userLocation: Flow<UserLocation>
-    suspend fun startReceivingLocationUpdates()
-    suspend fun stopReceivingLocationUpdates()
+    val userLocation: Flow<Result<UserLocation>>
     suspend fun saveLastUserLocation(location: Coordinates)
     suspend fun getLastSavedUserLocation(): Coordinates?
 }

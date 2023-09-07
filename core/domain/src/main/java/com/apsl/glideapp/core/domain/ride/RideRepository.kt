@@ -5,6 +5,7 @@ import com.apsl.glideapp.common.models.RideAction
 import kotlinx.coroutines.flow.Flow
 
 interface RideRepository {
+    val isRideModeActive: Flow<Boolean>
     val rideEvents: Flow<RideEvent>
     suspend fun updateRideState(action: RideAction)
     fun getUserRidesPaginated(): Flow<PagingData<Ride>>

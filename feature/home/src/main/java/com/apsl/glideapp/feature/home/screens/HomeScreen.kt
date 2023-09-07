@@ -1,8 +1,6 @@
 package com.apsl.glideapp.feature.home.screens
 
 import android.Manifest
-import android.content.Intent
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
@@ -23,7 +21,6 @@ import androidx.compose.material.icons.rounded.NearMe
 import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material.rememberBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -39,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.apsl.glideapp.core.domain.auth.UserAuthState
 import com.apsl.glideapp.core.ui.ComposableLifecycle
 import com.apsl.glideapp.core.ui.RequestPermission
 import com.apsl.glideapp.core.ui.getOffset
@@ -48,11 +46,8 @@ import com.apsl.glideapp.feature.home.components.DrawerContent
 import com.apsl.glideapp.feature.home.components.SheetContent
 import com.apsl.glideapp.feature.home.maps.VehicleClusterItem
 import com.apsl.glideapp.feature.home.maps.toLatLng
-import com.apsl.glideapp.feature.home.rideservice.RideService
-import com.apsl.glideapp.feature.home.viewmodels.HomeAction
 import com.apsl.glideapp.feature.home.viewmodels.HomeUiState
 import com.apsl.glideapp.feature.home.viewmodels.HomeViewModel
-import com.apsl.glideapp.feature.home.viewmodels.UserAuthState
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLngBounds
@@ -69,87 +64,49 @@ fun HomeScreen(
     onNavigateToLocationPermission: () -> Unit,
     onNavigateToLocationRationale: () -> Unit
 ) {
-    val context = LocalContext.current
-
-    LaunchedEffect(Unit) {
-        viewModel.actions.collect { action ->
-            when (action) {
-
-                is HomeAction.RideStarted -> {
-                    val intent = Intent(context, RideService::class.java).apply {
-                        this.action = RideService.ACTION_START
-                        putExtra(RideService.RIDE_ID, action.rideId)
-                    }
-                    context.startForegroundService(intent)
-                }
-
-                is HomeAction.RideFinished -> {
-                    val intent = Intent(context, RideService::class.java).apply {
-                        this.action = RideService.ACTION_STOP
-                    }
-                    context.startForegroundService(intent)
-                }
-
-                is HomeAction.Toast -> {
-                    Toast.makeText(context, action.message, Toast.LENGTH_LONG).show()
-                }
-            }
-        }
-    }
-
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(uiState.userAuthState) {
-        when (uiState.userAuthState) {
-            UserAuthState.NotAuthenticated -> onNavigateToLogin()
-            else -> Unit
-        }
-    }
+    when (uiState.userAuthState) {
+        UserAuthState.NotAuthenticated -> onNavigateToLogin()
+        UserAuthState.Authenticated -> {
+            HomeActionsHandler(
+                actions = viewModel.actions,
+                onStartObservingUserLocation = viewModel::startObservingUserLocation
+            )
+            ComposableLifecycle { event ->
+                with(viewModel) {
+                    when (event) {
+                        Lifecycle.Event.ON_START -> {
+                            getUser()
+                            startReceivingRideEvents()
+                            startObservingMapState()
+                            startObservingUserLocation()
+                        }
 
-    if (uiState.userAuthState == UserAuthState.Authenticated) {
-        ComposableLifecycle { event ->
-            with(viewModel) {
-                when (event) {
-                    Lifecycle.Event.ON_START -> {
-                        startReceivingRideEvents()
-                        startReceivingLocationUpdates()
-                        startObservingMapState()
-                        startObservingUserLocation()
+                        Lifecycle.Event.ON_STOP -> {
+                            stopObservingMapState()
+                            stopObservingUserLocation()
+                        }
+
+                        else -> Unit
                     }
-
-                    Lifecycle.Event.ON_RESUME -> {
-
-                    }
-
-                    Lifecycle.Event.ON_STOP -> {
-                        stopObservingMapState()
-                        stopObservingUserLocation()
-                        stopReceivingLocationUpdates()
-                    }
-
-                    else -> Unit
                 }
             }
+            HomeScreenContent(
+                uiState = uiState,
+                onLocationButtonClick = viewModel::startObservingUserLocation,
+                onOpenLocationPermissionDialog = onNavigateToLocationPermission,
+                onOpenLocationRationaleDialog = onNavigateToLocationRationale,
+                onVehicleSelect = viewModel::updateSelectedVehicle,
+                onLoadMapDataWithinBounds = viewModel::loadMapDataWithinBounds,
+                onStartRideClick = viewModel::startRide,
+                onFinishRideClick = viewModel::finishRide,
+                onMyRidesClick = onNavigateToAllRides,
+                onWalletClick = onNavigateToWallet
+            )
         }
 
-        DisposableEffect(Unit) {
-            onDispose {
-                viewModel.stopReceivingLocationUpdates()
-            }
-        }
-
-        HomeScreenContent(
-            uiState = uiState,
-            onLocationButtonClick = {},
-            onOpenLocationPermissionDialog = onNavigateToLocationPermission,
-            onOpenLocationRationaleDialog = onNavigateToLocationRationale,
-            onVehicleSelect = viewModel::updateSelectedVehicle,
-            onLoadMapDataWithinBounds = viewModel::loadMapDataWithinBounds,
-            onStartRideClick = viewModel::startRide,
-            onFinishRideClick = viewModel::finishRide,
-            onMyRidesClick = onNavigateToAllRides,
-            onWalletClick = onNavigateToWallet
-        )
+        else -> Unit
     }
 }
 
