@@ -15,6 +15,7 @@ dependencies {
 
     implementation(project(":core:datastore"))
     implementation(project(":core:di"))
+    implementation(project(":core:domain"))
     implementation(project(":core:navigation"))
     implementation(project(":core:network"))
     implementation(project(":core:ui"))
@@ -23,6 +24,7 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.compose)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.startup.runtime)
 

@@ -8,6 +8,7 @@ dependencies {
 
     implementation(libs.accompanist.permissions)
     implementation(libs.glideapp.common.util)
+    implementation(libs.google.gms.playServices.location)
     implementation(libs.google.gms.playServices.maps)
     implementation(libs.google.maps.compose)
     implementation(libs.google.maps.compose.utils)
