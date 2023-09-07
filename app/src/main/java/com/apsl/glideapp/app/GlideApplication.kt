@@ -1,4 +1,4 @@
-package com.apsl.glideapp
+package com.apsl.glideapp.app
 
 import android.app.Application
 import android.app.NotificationChannel

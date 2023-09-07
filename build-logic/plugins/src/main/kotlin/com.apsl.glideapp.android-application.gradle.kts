@@ -14,6 +14,8 @@ keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 configure<BaseExtension> {
     commonAndroidConfiguration(project)
 
+    namespace = "${Config.namespace}.app"
+
     defaultConfig {
         applicationId = Config.applicationId
     }
@@ -43,8 +45,8 @@ configure<BaseExtension> {
             isShrinkResources = true
         }
         release {
-            isShrinkResources = true
             signingConfig = signingConfigs.getByName("release")
+            isShrinkResources = true
         }
     }
 }

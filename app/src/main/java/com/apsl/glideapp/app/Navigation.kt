@@ -1,4 +1,4 @@
-package com.apsl.glideapp
+package com.apsl.glideapp.app
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController

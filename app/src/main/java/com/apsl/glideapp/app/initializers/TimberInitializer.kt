@@ -1,8 +1,8 @@
-package com.apsl.glideapp.initializers
+package com.apsl.glideapp.app.initializers
 
 import android.content.Context
 import androidx.startup.Initializer
-import com.apsl.glideapp.BuildConfig
+import com.apsl.glideapp.app.BuildConfig
 import com.apsl.glideapp.core.util.CrashReportingTree
 import timber.log.Timber
 
