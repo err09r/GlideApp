@@ -25,11 +25,11 @@ import retrofit2.Retrofit
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
-annotation class MapWebSocket
+private annotation class MapWebSocket
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
-annotation class RideWebSocket
+private annotation class RideWebSocket
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -57,11 +57,13 @@ object NetworkModule {
     @Provides
     fun provideWebSocketClient(
         @MapWebSocket mapWebSocketSession: WebSocketSession,
-        @RideWebSocket rideWebSocketSession: WebSocketSession
+        @RideWebSocket rideWebSocketSession: WebSocketSession,
+        json: Json
     ): WebSocketClient {
         return KtorWebSocketClient(
             mapWebSocketSession = mapWebSocketSession,
-            rideWebSocketSession = rideWebSocketSession
+            rideWebSocketSession = rideWebSocketSession,
+            json = json
         )
     }
 
@@ -69,7 +71,8 @@ object NetworkModule {
     @Provides
     fun provideHttpClient(
         loggingInterceptor: HttpLoggingInterceptor,
-        authInterceptor: AuthInterceptor
+        authInterceptor: AuthInterceptor,
+        json: Json
     ): HttpClient {
         return HttpClient(OkHttp) {
             engine {
@@ -79,7 +82,7 @@ object NetworkModule {
                 }
             }
             install(WebSockets) {
-                contentConverter = KotlinxWebsocketSerializationConverter(Json)
+                contentConverter = KotlinxWebsocketSerializationConverter(json)
             }
         }
     }
@@ -92,9 +95,8 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideJsonConverterFactory(): Converter.Factory {
+    fun provideJsonConverterFactory(json: Json): Converter.Factory {
         val contentType = "application/json".toMediaType()
-        val json = Json { ignoreUnknownKeys = true }
         return json.asConverterFactory(contentType)
     }
 
