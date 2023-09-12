@@ -31,6 +31,7 @@ class MainActivity : ComponentActivity() {
     private fun init() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         registerLifecycleObservers()
+        viewModel.updateAppConfiguration()
     }
 
     private fun registerLifecycleObservers() {
