@@ -1,6 +1,5 @@
 package com.apsl.glideapp.feature.home.rideservice
 
-import com.apsl.glideapp.core.datastore.AppDataStore
 import com.apsl.glideapp.core.domain.location.DecodeAddressUseCase
 import com.apsl.glideapp.core.domain.location.ObserveUserLocationUseCase
 import com.apsl.glideapp.core.domain.ride.UpdateRideRouteUseCase
@@ -10,13 +9,11 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 @AssistedFactory
@@ -26,7 +23,6 @@ interface RideServiceControllerFactory {
 
 class RideServiceController @AssistedInject constructor(
     @Assisted private val scope: CoroutineScope,
-    private val appDataStore: AppDataStore,
     private val observeUserLocationUseCase: ObserveUserLocationUseCase,
     private val decodeAddressUseCase: DecodeAddressUseCase,
     private val updateRideRouteUseCase: UpdateRideRouteUseCase
@@ -39,7 +35,6 @@ class RideServiceController @AssistedInject constructor(
 
     fun onServiceStart(rideId: String) {
         scope.launch {
-            appDataStore.saveRideModeActive(value = true)
             startObservingUserLocation(rideId)
         }
     }
@@ -65,13 +60,5 @@ class RideServiceController @AssistedInject constructor(
                     }
             }
             .launchIn(scope)
-    }
-
-    fun onServiceStop() {
-        scope.launch {
-            withContext(NonCancellable) {
-                appDataStore.saveRideModeActive(value = false)
-            }
-        }
     }
 }

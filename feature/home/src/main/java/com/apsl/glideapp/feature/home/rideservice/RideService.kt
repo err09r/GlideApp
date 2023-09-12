@@ -97,7 +97,6 @@ class RideService : Service() {
     }
 
     private fun stop() {
-        controller?.onServiceStop()
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
     }
