@@ -5,9 +5,11 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import io.ktor.serialization.kotlinx.json.DefaultJson
 import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.serialization.json.Json
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -20,5 +22,14 @@ object AppModule {
         override val io: CoroutineDispatcher = Dispatchers.IO
         override val default: CoroutineDispatcher = Dispatchers.Default
         override val unconfined: CoroutineDispatcher = Dispatchers.Unconfined
+    }
+
+    @Singleton
+    @Provides
+    fun provideBaseJson(): Json {
+        return Json(DefaultJson) {
+            decodeEnumsCaseInsensitive = true
+            ignoreUnknownKeys = true
+        }
     }
 }
