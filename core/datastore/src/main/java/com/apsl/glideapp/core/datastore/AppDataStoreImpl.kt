@@ -1,47 +1,44 @@
 package com.apsl.glideapp.core.datastore
 
 import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
+import com.apsl.glideapp.common.models.Coordinates
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-internal val USER_AUTH_TOKEN = stringPreferencesKey("user_auth_token")
-internal val LAST_USER_LOCATION = stringPreferencesKey("last_user_location")
-internal val RIDE_MODE_ACTIVE = booleanPreferencesKey("ride_mode_active")
-
 class AppDataStoreImpl @Inject constructor(
-    private val dataStore: DataStore<Preferences>
+    private val dataStore: DataStore<AppPreferences>,
+    private val encryptedDataStore: DataStore<EncryptedAppPreferences>
 ) : AppDataStore {
 
-    override suspend fun saveAuthToken(token: String) {
-        dataStore.edit { it[USER_AUTH_TOKEN] = token }
-    }
+    override val authToken: Flow<String?> = encryptedDataStore.data.map { it.authToken }
 
-    override fun getAuthToken(): Flow<String?> {
-        return dataStore.data.map { it[USER_AUTH_TOKEN] }
+    override suspend fun saveAuthToken(token: String) {
+        encryptedDataStore.updateData { it.copy(authToken = token) }
     }
 
     override suspend fun deleteAuthToken() {
-        dataStore.edit { it.remove(USER_AUTH_TOKEN) }
+        encryptedDataStore.updateData { it.copy(authToken = null) }
     }
 
-    override suspend fun saveLastUserLocation(location: String) {
-        dataStore.edit { it[LAST_USER_LOCATION] = location }
+    override val lastUserLocation: Flow<Coordinates?> = dataStore.data.map { it.lastUserLocation }
+
+    override suspend fun saveLastUserLocation(location: Coordinates): Coordinates? {
+        val updated = dataStore.updateData { it.copy(lastUserLocation = location) }
+        return updated.lastUserLocation
     }
 
-    override fun getLastSavedUserLocation(): Flow<String?> {
-        return dataStore.data.map { it[LAST_USER_LOCATION] }
+    override val isRideModeActive: Flow<Boolean?> = dataStore.data.map { it.isRideModeActive }
+
+    override suspend fun saveRideModeActive(value: Boolean): Boolean? {
+        val updated = dataStore.updateData { it.copy(isRideModeActive = value) }
+        return updated.isRideModeActive
     }
 
-    override suspend fun saveRideModeActive(value: Boolean) {
-        dataStore.edit { it[RIDE_MODE_ACTIVE] = value }
-    }
+    override val unlockDistance: Flow<Double?> = dataStore.data.map { it.unlockDistance }
 
-    override fun getRideModeActive(): Flow<Boolean?> {
-        return dataStore.data.map { it[RIDE_MODE_ACTIVE] }
+    override suspend fun saveUnlockDistance(distance: Double): Double? {
+        val updated = dataStore.updateData { it.copy(unlockDistance = distance) }
+        return updated.unlockDistance
     }
 }
