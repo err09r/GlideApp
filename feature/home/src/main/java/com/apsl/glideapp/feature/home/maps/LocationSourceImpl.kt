@@ -8,7 +8,7 @@ object LocationSourceImpl : LocationSource {
     private var listener: LocationSource.OnLocationChangedListener? = null
 
     override fun activate(listener: LocationSource.OnLocationChangedListener) {
-        LocationSourceImpl.listener = listener
+        this.listener = listener
     }
 
     override fun deactivate() {
