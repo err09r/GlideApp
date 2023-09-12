@@ -7,10 +7,11 @@ import com.apsl.glideapp.core.domain.auth.ObserveUserAuthenticationStateUseCase
 import com.apsl.glideapp.core.domain.location.GetLastSavedUserLocationUseCase
 import com.apsl.glideapp.core.domain.location.GpsDisabledException
 import com.apsl.glideapp.core.domain.location.IsGpsEnabledUseCase
+import com.apsl.glideapp.core.domain.location.MissingLocationPermissionsException
 import com.apsl.glideapp.core.domain.location.ObserveUserLocationUseCase
 import com.apsl.glideapp.core.domain.location.SaveLastUserLocationUseCase
-import com.apsl.glideapp.core.domain.map.LoadMapDataWithinBoundsUseCase
-import com.apsl.glideapp.core.domain.map.ObserveMapStateUseCase
+import com.apsl.glideapp.core.domain.map.GetMapContentWithinBoundsUseCase
+import com.apsl.glideapp.core.domain.map.ObserveMapContentUseCase
 import com.apsl.glideapp.core.domain.ride.FinishRideUseCase
 import com.apsl.glideapp.core.domain.ride.IsRideModeActiveUseCase
 import com.apsl.glideapp.core.domain.ride.ObserveRideEventsUseCase
@@ -18,17 +19,19 @@ import com.apsl.glideapp.core.domain.ride.RideEvent
 import com.apsl.glideapp.core.domain.ride.StartRideUseCase
 import com.apsl.glideapp.core.domain.user.GetUserUseCase
 import com.apsl.glideapp.core.ui.BaseViewModel
+import com.apsl.glideapp.feature.home.maps.NoParkingZone
 import com.apsl.glideapp.feature.home.maps.VehicleClusterItem
 import com.apsl.glideapp.feature.home.maps.toCoordinates
 import com.apsl.glideapp.feature.home.maps.toCoordinatesBounds
 import com.apsl.glideapp.feature.home.maps.toLatLng
-import com.apsl.glideapp.feature.home.maps.toNoParkingZone
 import com.google.android.gms.maps.model.LatLngBounds
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlin.math.roundToInt
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -46,12 +49,12 @@ class HomeViewModel @Inject constructor(
     private val getUserUseCase: GetUserUseCase,
     private val getLastSavedUserLocationUseCase: GetLastSavedUserLocationUseCase,
     private val saveLastUserLocationUseCase: SaveLastUserLocationUseCase,
-    private val loadMapDataWithinBoundsUseCase: LoadMapDataWithinBoundsUseCase,
+    private val getMapContentWithinBoundsUseCase: GetMapContentWithinBoundsUseCase,
     private val startRideUseCase: StartRideUseCase,
     private val finishRideUseCase: FinishRideUseCase,
     private val observeRideEventsUseCase: ObserveRideEventsUseCase,
     private val observeUserLocationUseCase: ObserveUserLocationUseCase,
-    private val observeMapStateUseCase: ObserveMapStateUseCase,
+    private val observeMapContentUseCase: ObserveMapContentUseCase,
     private val isRideModeActiveUseCase: IsRideModeActiveUseCase,
     private val isGpsEnabledUseCase: IsGpsEnabledUseCase
 ) : BaseViewModel() {
@@ -63,7 +66,7 @@ class HomeViewModel @Inject constructor(
     val actions = _actions.receiveAsFlow()
 
     private var rideEventsJob: Job? = null
-    private var mapStateJob: Job? = null
+    private var mapContentJob: Job? = null
     private var userLocationJob: Job? = null
 
     private var currentRideId: String? = null
@@ -143,9 +146,14 @@ class HomeViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
-    fun loadMapDataWithinBounds(bounds: LatLngBounds) {
+    fun loadMapContentWithinBounds(bounds: LatLngBounds) {
+        Timber.d("loadMapContentWithinBounds: $bounds")
         viewModelScope.launch {
-            loadMapDataWithinBoundsUseCase(bounds.toCoordinatesBounds())
+            if (isRideModeActiveUseCase()) {
+                return@launch
+            }
+            _uiState.update { it.copy(isLoadingMapContent = true) }
+            getMapContentWithinBoundsUseCase(bounds.toCoordinatesBounds())
         }
     }
 
@@ -168,7 +176,7 @@ class HomeViewModel @Inject constructor(
 
                 Timber.d("Distance from vehicle: $distanceFromVehicle")
 
-                if (distanceFromVehicle <= 25.0) {
+                if (distanceFromVehicle <= 50.0) {
                     startRideUseCase(
                         vehicleId = selectedVehicle.id,
                         userCoordinates = currentUserLocation.toCoordinates()
@@ -188,13 +196,11 @@ class HomeViewModel @Inject constructor(
             }
 
             val currentUserLocation = uiState.value.userLocation
-            val selectedVehicleId = uiState.value.selectedVehicle?.id
             val currentRideId = currentRideId
 
-            if (currentUserLocation != null && selectedVehicleId != null && currentRideId != null) {
+            if (currentUserLocation != null && currentRideId != null) {
                 finishRideUseCase(
                     rideId = currentRideId,
-                    vehicleId = selectedVehicleId,
                     userCoordinates = currentUserLocation.toCoordinates()
                 )
             }
@@ -213,7 +219,9 @@ class HomeViewModel @Inject constructor(
         Timber.d("Ride started")
         currentRideId = rideId
 
-        _uiState.update { it.copy(rideState = RideState.Started) }
+//        stopObservingMapContent()
+
+        _uiState.update { it.copy(rideState = RideState.Active) }
 
         viewModelScope.launch {
             _actions.send(HomeAction.StartRide(rideId = rideId))
@@ -242,41 +250,64 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun startObservingMapState() {
-        if (mapStateJob != null) {
+    fun startObservingMapContent() {
+        if (mapContentJob != null) {
             return
         }
         viewModelScope.launch {
-            mapStateJob = observeMapStateUseCase()
-                .onEach { mapState ->
-                    _uiState.update { state ->
-                        state.copy(
-                            vehicleClusterItems = mapState.availableVehicles.map { vehicle ->
-                                VehicleClusterItem(
-                                    isSelected = state.selectedVehicle?.id == vehicle.id,
-                                    id = vehicle.id,
-                                    code = vehicle.code.toString().padStart(5, '0'),
-                                    charge = vehicle.batteryCharge,
-                                    range = (vehicle.batteryCharge * 0.4).roundToInt(),
-                                    itemPosition = vehicle.coordinates.toLatLng()
+//            if (isRideModeActiveUseCase()) {
+//                stopObservingMapContent()
+//                return@launch
+//            }
+
+            mapContentJob = observeMapContentUseCase()
+                .onEach { result ->
+                    result
+                        .onSuccess { mapContent ->
+                            _uiState.update { state ->
+                                hideMapLoading()
+                                state.copy(
+                                    vehicleClusterItems = mapContent.availableVehicles.map { vehicle ->
+                                        VehicleClusterItem(
+                                            isSelected = state.selectedVehicle?.id == vehicle.id,
+                                            id = vehicle.id,
+                                            code = vehicle.code.toString().padStart(5, '0'),
+                                            charge = vehicle.batteryCharge,
+                                            range = (vehicle.batteryCharge * 0.4).roundToInt(),
+                                            itemPosition = vehicle.coordinates.toLatLng()
+                                        )
+                                    },
+                                    ridingZones = mapContent.ridingZones.map { zone ->
+                                        zone.coordinates.map { it.toLatLng() }
+                                    },
+                                    noParkingZones = mapContent.noParkingZones.map { zone ->
+                                        NoParkingZone(zone.coordinates.map { it.toLatLng() })
+                                    }
                                 )
-                            },
-                            ridingZones = mapState.ridingZones.map { zone ->
-                                zone.coordinates.map(Coordinates::toLatLng)
-                            },
-                            noParkingZones = mapState.noParkingZones.map { zone ->
-                                zone.coordinates.toNoParkingZone()
                             }
-                        )
-                    }
+                        }
+                        .onFailure {
+                            hideMapLoading()
+                            _uiState.update { it.copy(vehicleClusterItems = emptyList()) }
+                        }
                 }
                 .launchIn(viewModelScope)
         }
     }
 
-    fun stopObservingMapState() {
-        mapStateJob?.cancel()
-        mapStateJob = null
+    private var mapLoadingJob: Job? = null
+
+    private suspend fun hideMapLoading() {
+        mapLoadingJob?.cancelAndJoin()
+        mapLoadingJob = viewModelScope.launch {
+            delay(1000)
+            _uiState.update { it.copy(isLoadingMapContent = false) }
+        }
+    }
+
+    fun stopObservingMapContent() {
+        mapContentJob?.cancel()
+        mapContentJob = null
     }
 
     fun startObservingUserLocation() {
@@ -306,6 +337,12 @@ class HomeViewModel @Inject constructor(
                             is GpsDisabledException -> {
                                 if (!isRideModeActiveUseCase()) {
                                     _actions.send(HomeAction.OpenLocationSettingsDialog)
+                                }
+                            }
+
+                            is MissingLocationPermissionsException -> {
+                                if (isRideModeActiveUseCase()) {
+                                    _actions.send(HomeAction.RequestLocationPermissions)
                                 }
                             }
                         }

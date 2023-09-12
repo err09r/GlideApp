@@ -7,22 +7,16 @@ import com.apsl.glideapp.core.domain.location.AddressDecoder
 import javax.inject.Inject
 import kotlinx.datetime.LocalDateTime
 
-class
-FinishRideUseCase @Inject constructor(
+class FinishRideUseCase @Inject constructor(
     private val rideRepository: RideRepository,
     private val addressDecoder: AddressDecoder
 ) {
 
-    suspend operator fun invoke(
-        rideId: String,
-        vehicleId: String,
-        userCoordinates: Coordinates
-    ) = runCatching {
+    suspend operator fun invoke(rideId: String, userCoordinates: Coordinates) = runCatching {
         val address = addressDecoder.decodeFromCoordinates(userCoordinates)
         rideRepository.updateRideState(
             RideAction.Finish(
                 rideId = rideId,
-                vehicleId = vehicleId,
                 coordinates = userCoordinates,
                 address = address,
                 dateTime = LocalDateTime.now()

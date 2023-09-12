@@ -52,7 +52,7 @@ class LocationClientImpl @Inject constructor(
     override val userLocation = _userLocation
         .onStart {
             Timber.d("User Location flow started")
-            val isRideModeActive = appDataStore.getRideModeActive().firstOrNull() ?: false
+            val isRideModeActive = appDataStore.isRideModeActive.firstOrNull() ?: false
             val interval = getLocationUpdateInterval(isRideModeActive = isRideModeActive)
             emit(buildUserLocationFlow(locationUpdateIntervalMs = interval))
         }
@@ -66,7 +66,7 @@ class LocationClientImpl @Inject constructor(
 
     private fun observeLocationUpdateInterval() {
         scope.launch {
-            appDataStore.getRideModeActive()
+            appDataStore.isRideModeActive
                 .map { it ?: false }
                 .distinctUntilChanged()
                 .collectLatest { isRideModeActive ->

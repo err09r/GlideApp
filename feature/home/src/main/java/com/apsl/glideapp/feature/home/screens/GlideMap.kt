@@ -27,6 +27,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.JointType
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.RoundCap
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.compose.CameraPositionState
@@ -39,7 +40,7 @@ import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.Polygon
 import com.google.maps.android.compose.Polyline
 import timber.log.Timber
-
+import com.apsl.glideapp.core.ui.R as CoreR
 
 @Composable
 fun GlideMap(
@@ -51,6 +52,7 @@ fun GlideMap(
     mapPaddingBottom: Dp,
     modifier: Modifier = Modifier,
     rideRoute: List<LatLng>? = null,
+    onLoadMapDataWithinBounds: (LatLngBounds) -> Unit,
     onVehicleSelect: (VehicleClusterItem?) -> Unit
 ) {
     val context = LocalContext.current
@@ -60,8 +62,8 @@ fun GlideMap(
     }
 
     LaunchedEffect(userLocation) {
-        userLocation?.let { location ->
-            LocationSourceImpl.onLocationChanged(location.toLocation())
+        userLocation?.let {
+            LocationSourceImpl.onLocationChanged(it.toLocation())
         }
     }
 
@@ -71,7 +73,7 @@ fun GlideMap(
         properties = MapProperties(
             isMyLocationEnabled = true,
             latLngBoundsForCameraTarget = LatLngBounds(LatLng(48.45, 13.9), LatLng(55.75, 23.15)),
-//            mapStyleOptions = MapStyleOptions.loadRawResourceStyle(context, CoreR.raw.map_style),
+            mapStyleOptions = MapStyleOptions.loadRawResourceStyle(context, CoreR.raw.map_style),
             maxZoomPreference = 20f,
             minZoomPreference = 9f//11f
         ),
@@ -87,6 +89,14 @@ fun GlideMap(
         contentPadding = PaddingValues(bottom = mapPaddingBottom)
     ) {
         MapEffect(vehicleClusterItems) { map ->
+
+            map.setOnCameraIdleListener {
+                val visibleBounds =
+                    cameraPositionState.projection?.visibleRegion?.latLngBounds
+                if (visibleBounds != null) {
+                    onLoadMapDataWithinBounds(visibleBounds)
+                }
+            }
 
             if (clusterManager == null) {
                 clusterManager = ClusterManager<VehicleClusterItem>(context, map).apply {

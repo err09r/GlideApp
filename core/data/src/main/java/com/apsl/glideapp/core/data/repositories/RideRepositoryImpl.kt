@@ -16,6 +16,8 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.onCompletion
+import timber.log.Timber
 
 class RideRepositoryImpl @Inject constructor(
     private val webSocketClient: WebSocketClient,
@@ -24,15 +26,26 @@ class RideRepositoryImpl @Inject constructor(
     appDataStore: AppDataStore
 ) : RideRepository {
 
-    override val isRideModeActive: Flow<Boolean> =
-        appDataStore.getRideModeActive().map { it ?: false }
+    override val isRideModeActive: Flow<Boolean> = appDataStore.isRideModeActive.map { it ?: false }
 
     override val rideEvents: Flow<RideEvent> = webSocketClient.rideEvents.mapNotNull {
         when (it) {
-            is RideEventDto.Started -> RideEvent.Started(it.rideId, it.dateTime)
-            is RideEventDto.Restored -> RideEvent.Started(it.rideId, it.dateTime)
+            is RideEventDto.Started -> {
+                appDataStore.saveRideModeActive(value = true)
+                RideEvent.Started(it.rideId, it.dateTime)
+            }
+
+            is RideEventDto.Restored -> {
+                appDataStore.saveRideModeActive(value = true)
+                RideEvent.Started(it.rideId, it.dateTime)
+            }
+
             is RideEventDto.RouteUpdated -> RideEvent.RouteUpdated(it.currentRoute)
-            is RideEventDto.Finished -> RideEvent.Finished
+            is RideEventDto.Finished -> {
+                appDataStore.saveRideModeActive(value = false)
+                RideEvent.Finished
+            }
+
             is RideEventDto.Error -> {
                 when (it) {
                     is RideEventDto.Error.UserInsideNoParkingZone -> {
@@ -46,7 +59,7 @@ class RideRepositoryImpl @Inject constructor(
                 null
             }
         }
-    }
+    }.onCompletion { Timber.d("ride rep compl") }
 
     override suspend fun updateRideState(action: RideAction) {
         webSocketClient.sendRideAction(action)
@@ -61,7 +74,7 @@ class RideRepositoryImpl @Inject constructor(
                     finishAddress = dto.finishAddress,
                     startDateTime = dto.startDateTime,
                     finishDateTime = dto.finishDateTime,
-                    route = dto.route,
+                    route = emptyList(),// dto.route,
                     distance = dto.distance,
                     averageSpeed = dto.averageSpeed
                 )

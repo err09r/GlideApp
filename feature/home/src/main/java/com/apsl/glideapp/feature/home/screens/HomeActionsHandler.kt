@@ -19,9 +19,12 @@ import com.apsl.glideapp.feature.home.rideservice.RideService
 import com.apsl.glideapp.feature.home.viewmodels.HomeAction
 import kotlinx.coroutines.flow.Flow
 
-
 @Composable
-fun HomeActionsHandler(actions: Flow<HomeAction>, onStartObservingUserLocation: () -> Unit) {
+fun HomeActionsHandler(
+    actions: Flow<HomeAction>,
+    onStartObservingUserLocation: () -> Unit,
+    onRequestLocationPermissions: () -> Unit
+) {
     val context = LocalContext.current
     val locationSettingsLauncher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.StartIntentSenderForResult()) { activityResult ->
@@ -98,6 +101,8 @@ fun HomeActionsHandler(actions: Flow<HomeAction>, onStartObservingUserLocation: 
                         rideService?.restartUserLocationFlow(action.rideId)
                     }
                 }
+
+                is HomeAction.RequestLocationPermissions -> onRequestLocationPermissions()
 
                 else -> Unit
             }

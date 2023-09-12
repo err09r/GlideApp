@@ -8,8 +8,6 @@ import com.apsl.glideapp.core.domain.location.UserLocation
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 
 class LocationRepositoryImpl @Inject constructor(
     private val appDataStore: AppDataStore,
@@ -19,12 +17,10 @@ class LocationRepositoryImpl @Inject constructor(
     override val userLocation: Flow<Result<UserLocation>> = locationClient.userLocation
 
     override suspend fun saveLastUserLocation(location: Coordinates) {
-        appDataStore.saveLastUserLocation(Json.encodeToString(location))
+        appDataStore.saveLastUserLocation(location)
     }
 
     override suspend fun getLastSavedUserLocation(): Coordinates? {
-        return appDataStore.getLastSavedUserLocation().firstOrNull()?.let {
-            Json.decodeFromString(it)
-        }
+        return appDataStore.lastUserLocation.firstOrNull()
     }
 }

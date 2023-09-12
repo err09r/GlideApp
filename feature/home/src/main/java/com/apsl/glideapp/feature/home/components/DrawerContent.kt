@@ -29,6 +29,7 @@ fun DrawerContent(
     username: String?,
     userTotalDistance: Int,
     userTotalRides: Int,
+    onRefreshData: () -> Unit,
     onMyRidesClick: () -> Unit,
     onWalletClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -92,6 +93,7 @@ fun DrawerContentPreview() {
             username = "err09r",
             userTotalDistance = 1405,
             userTotalRides = 23,
+            onRefreshData = {},
             onMyRidesClick = {},
             onWalletClick = {}
         )

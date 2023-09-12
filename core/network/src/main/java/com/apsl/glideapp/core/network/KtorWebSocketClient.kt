@@ -2,7 +2,7 @@
 
 package com.apsl.glideapp.core.network
 
-import com.apsl.glideapp.common.dto.MapStateDto
+import com.apsl.glideapp.common.dto.MapContentDto
 import com.apsl.glideapp.common.dto.RideEventDto
 import com.apsl.glideapp.common.models.CoordinatesBounds
 import com.apsl.glideapp.common.models.RideAction
@@ -37,7 +37,8 @@ import timber.log.Timber
 
 class KtorWebSocketClient @Inject constructor(
     private val mapWebSocketSession: WebSocketSession,
-    private val rideWebSocketSession: WebSocketSession
+    private val rideWebSocketSession: WebSocketSession,
+    private val json: Json
 ) : WebSocketClient {
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -48,13 +49,12 @@ class KtorWebSocketClient @Inject constructor(
     private val mapDataToSend = MutableStateFlow<CoordinatesBounds?>(null)
     private val rideActionsToSend = ConcurrentLinkedQueue<RideAction>()
 
-    private val _mapStateUpdates = MutableSharedFlow<Flow<MapStateDto>>()
-    override val mapStateUpdates = _mapStateUpdates
-        .onStart { emit(mapFlow) }
+    private val _mapContent = MutableSharedFlow<Flow<MapContentDto>>()
+    override val mapContent = _mapContent
         .flatMapLatest { it }
         .shareIn(scope = scope, started = SharingStarted.WhileSubscribed())
 
-    private val mapFlow = emptyFlow<MapStateDto>()
+    private val mapFlow = emptyFlow<MapContentDto>()
         .onStart {
             mapSession?.close()
             mapSession = mapWebSocketSession.open()
@@ -66,14 +66,14 @@ class KtorWebSocketClient @Inject constructor(
                 for (frame in this.incoming) {
                     frame as? Frame.Text ?: continue
 
-                    val mapStateDto = runCatching {
-                        Json.decodeFromString<MapStateDto>(frame.readText())
+                    val mapContentDto = runCatching {
+                        json.decodeFromString<MapContentDto>(frame.readText())
                     }.getOrNull()
 
-//                Timber.tag("mapStateDto").d(mapStateDto.toString())
+//                Timber.tag("mapContentDto").d(mapContentDto.toString())
 
-                    if (mapStateDto != null) {
-                        emit(mapStateDto)
+                    if (mapContentDto != null) {
+                        emit(mapContentDto)
                     }
                 }
             }
@@ -103,10 +103,10 @@ class KtorWebSocketClient @Inject constructor(
     }
 
     override suspend fun sendMapData(data: CoordinatesBounds) {
-//        Timber.d(data.toString())
+        Timber.d(data.toString())
         mapSession?.sendSerialized(data) ?: run {
             mapDataToSend.update { data }
-            _mapStateUpdates.emit(mapFlow)
+            _mapContent.emit(mapFlow)
         }
     }
 
