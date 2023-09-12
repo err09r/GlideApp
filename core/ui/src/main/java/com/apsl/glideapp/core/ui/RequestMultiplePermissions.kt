@@ -12,42 +12,47 @@ import androidx.core.app.ActivityCompat
 import com.apsl.glideapp.core.util.findActivity
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
-import com.google.accompanist.permissions.rememberPermissionState
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 
-class RequestPermissionState(initRequest: Boolean, val permission: String) {
-    var requestPermission by mutableStateOf(initRequest)
+class RequestMultiplePermissionsState(initRequest: Boolean, val permissions: List<String>) {
+    var requestPermissions by mutableStateOf(initRequest)
 }
 
 @Composable
-fun rememberRequestPermissionState(
+fun rememberRequestMultiplePermissionState(
     initRequest: Boolean = false,
-    permission: String
-): RequestPermissionState {
-    return remember { RequestPermissionState(initRequest, permission) }
+    permissions: List<String>
+): RequestMultiplePermissionsState {
+    return remember { RequestMultiplePermissionsState(initRequest, permissions) }
 }
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun RequestPermission(
+fun RequestMultiplePermissions(
     context: Context = LocalContext.current,
-    requestState: RequestPermissionState,
+    requestState: RequestMultiplePermissionsState,
     onGranted: () -> Unit,
     onShowRationale: () -> Unit,
     onPermanentlyDenied: () -> Unit
 ) {
     val permissionState =
-        rememberPermissionState(permission = requestState.permission) { isGranted ->
+        rememberMultiplePermissionsState(permissions = requestState.permissions) { permissionStatuses ->
             // This block will be triggered after the user chooses to grant or deny the permission
             // and we can tell if the user permanently declines or if we need to show rational
             val activity = checkNotNull(context.findActivity())
-            val permissionPermanentlyDenied = !ActivityCompat.shouldShowRequestPermissionRationale(
-                activity,
-                requestState.permission
-            ) && !isGranted
+            val areGranted = permissionStatuses.all { it.value }
+            val permissionsPermanentlyDenied = permissionStatuses
+                .map { (permission, isGranted) ->
+                    !ActivityCompat.shouldShowRequestPermissionRationale(
+                        activity,
+                        permission
+                    ) && !isGranted
+                }
+                .any { !it }
 
-            if (permissionPermanentlyDenied) {
+            if (permissionsPermanentlyDenied) {
                 onPermanentlyDenied()
-            } else if (!isGranted) {
+            } else if (!areGranted) {
                 onShowRationale()
             }
         }
@@ -57,13 +62,13 @@ fun RequestPermission(
     // After that, the RequestPermission will recompose and permissionState above will be triggered
     // and we can differentiate whether the permission is permanently declined or whether rational
     // should be shown
-    if (requestState.requestPermission) {
-        requestState.requestPermission = false
-        if (permissionState.status.isGranted) {
+    if (requestState.requestPermissions) {
+        requestState.requestPermissions = false
+        if (permissionState.permissions.all { it.status.isGranted }) {
             onGranted()
         } else {
             LaunchedEffect(Unit) {
-                permissionState.launchPermissionRequest()
+                permissionState.launchMultiplePermissionRequest()
             }
         }
     }
