@@ -9,7 +9,7 @@ import com.google.android.gms.maps.model.LatLng
 
 @Immutable
 data class HomeUiState(
-    val isLoading: Boolean = false,
+    val isLoadingMapContent: Boolean = false,
     val userAuthState: UserAuthState = UserAuthState.Undefined,
     val userTotalDistance: Int = 0,
     val userTotalRides: Int = 0,
@@ -26,9 +26,9 @@ data class HomeUiState(
     val rideRoute: List<LatLng>? = null,
     val error: HomeUiError? = null
 ) {
-    val isInRideMode: Boolean get() = rideState == RideState.Started
+    val isInRideMode: Boolean get() = rideState == RideState.Active
 }
 
 enum class RideState {
-    Started, Paused
+    Active, Paused
 }
