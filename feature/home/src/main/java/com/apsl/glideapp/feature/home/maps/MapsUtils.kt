@@ -30,7 +30,7 @@ fun UserLocation.toCoordinates() = Coordinates(this.latitudeDegrees, this.longit
 
 fun Coordinates.toLatLng() = LatLng(this.latitude, this.longitude)
 
-fun List<Coordinates>.toNoParkingZone() = NoParkingZone(this.map(Coordinates::toLatLng))
+fun List<Coordinates>.toNoParkingZones() = NoParkingZone(this.map(Coordinates::toLatLng))
 
 fun LatLng.toCoordinates() = Coordinates(this.latitude, this.longitude)
 

@@ -14,34 +14,52 @@ import com.apsl.glideapp.core.network.GlideApi
 import com.apsl.glideapp.core.network.WebSocketClient
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.onCompletion
+import timber.log.Timber
 
 class RideRepositoryImpl @Inject constructor(
     private val webSocketClient: WebSocketClient,
     private val api: GlideApi,
     private val ridePager: Pager<Int, RideEntity>,
-    private val appDataStore: AppDataStore
+    appDataStore: AppDataStore
 ) : RideRepository {
 
-    override fun receiveRideStateUpdates(): Flow<RideEvent> {
-        val token = runBlocking { appDataStore.getAuthToken().firstOrNull() }
-        return webSocketClient.getRideStateUpdates(authToken = token).map {
-            when (it) {
-                is RideEventDto.Started -> RideEvent.Started(it.rideId, it.dateTime)
-                is RideEventDto.RouteUpdated -> RideEvent.RouteUpdated(it.currentRoute)
-                is RideEventDto.Finished -> RideEvent.Finished
-                is RideEventDto.Error -> {
-                    when (it) {
-                        is RideEventDto.Error.UserInsideNoParkingZone -> {
-                            RideEvent.Error.UserInsideNoParkingZone(it.message)
-                        }
+    override val isRideModeActive: Flow<Boolean> = appDataStore.isRideModeActive.map { it ?: false }
+
+    override val rideEvents: Flow<RideEvent> = webSocketClient.rideEvents.mapNotNull {
+        when (it) {
+            is RideEventDto.Started -> {
+                appDataStore.saveRideModeActive(value = true)
+                RideEvent.Started(it.rideId, it.dateTime)
+            }
+
+            is RideEventDto.Restored -> {
+                appDataStore.saveRideModeActive(value = true)
+                RideEvent.Started(it.rideId, it.dateTime)
+            }
+
+            is RideEventDto.RouteUpdated -> RideEvent.RouteUpdated(it.currentRoute)
+            is RideEventDto.Finished -> {
+                appDataStore.saveRideModeActive(value = false)
+                RideEvent.Finished
+            }
+
+            is RideEventDto.Error -> {
+                when (it) {
+                    is RideEventDto.Error.UserInsideNoParkingZone -> {
+                        RideEvent.Error.UserInsideNoParkingZone(it.message)
                     }
                 }
             }
+
+            is RideEventDto.SessionCancelled -> {
+                appDataStore.saveRideModeActive(value = false)
+                null
+            }
         }
-    }
+    }.onCompletion { Timber.d("ride rep compl") }
 
     override suspend fun updateRideState(action: RideAction) {
         webSocketClient.sendRideAction(action)
@@ -56,7 +74,7 @@ class RideRepositoryImpl @Inject constructor(
                     finishAddress = dto.finishAddress,
                     startDateTime = dto.startDateTime,
                     finishDateTime = dto.finishDateTime,
-                    route = dto.route,
+                    route = emptyList(),// dto.route,
                     distance = dto.distance,
                     averageSpeed = dto.averageSpeed
                 )

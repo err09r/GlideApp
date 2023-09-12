@@ -17,9 +17,4 @@ object Config {
     const val testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
     val resourceConfigurations = arrayOf("en")
-
-    object DependencyUpdates {
-        const val outputFormatter = "html"
-        const val reportfileName = "report"
-    }
 }

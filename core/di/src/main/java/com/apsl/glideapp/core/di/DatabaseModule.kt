@@ -33,4 +33,12 @@ object DatabaseModule {
     @Singleton
     @Provides
     fun provideRideDao(database: AppDatabase) = database.rideDao()
+
+    @Singleton
+    @Provides
+    fun provideZoneDao(database: AppDatabase) = database.zoneDao()
+
+    @Singleton
+    @Provides
+    fun provideZoneCoordinatesDao(database: AppDatabase) = database.zoneCoordinatesDao()
 }

@@ -3,169 +3,80 @@ package com.apsl.glideapp.feature.home.viewmodels
 import androidx.lifecycle.viewModelScope
 import com.apsl.glideapp.common.models.Coordinates
 import com.apsl.glideapp.common.util.Geometry
-import com.apsl.glideapp.core.domain.auth.GetIsUserAuthenticatedUseCase
+import com.apsl.glideapp.core.domain.auth.ObserveUserAuthenticationStateUseCase
 import com.apsl.glideapp.core.domain.location.GetLastSavedUserLocationUseCase
-import com.apsl.glideapp.core.domain.location.ObserveLocationRequestRationaleWasShownUseCase
+import com.apsl.glideapp.core.domain.location.GpsDisabledException
+import com.apsl.glideapp.core.domain.location.IsGpsEnabledUseCase
+import com.apsl.glideapp.core.domain.location.MissingLocationPermissionsException
 import com.apsl.glideapp.core.domain.location.ObserveUserLocationUseCase
 import com.apsl.glideapp.core.domain.location.SaveLastUserLocationUseCase
-import com.apsl.glideapp.core.domain.location.SaveLocationRequestRationaleWasShownUseCase
-import com.apsl.glideapp.core.domain.map.LoadMapContentWithinBoundsUseCase
-import com.apsl.glideapp.core.domain.map.ObserveMapStateUseCase
+import com.apsl.glideapp.core.domain.map.GetMapContentWithinBoundsUseCase
+import com.apsl.glideapp.core.domain.map.ObserveMapContentUseCase
 import com.apsl.glideapp.core.domain.ride.FinishRideUseCase
-import com.apsl.glideapp.core.domain.ride.ObserveRideStateUseCase
+import com.apsl.glideapp.core.domain.ride.IsRideModeActiveUseCase
+import com.apsl.glideapp.core.domain.ride.ObserveRideEventsUseCase
 import com.apsl.glideapp.core.domain.ride.RideEvent
 import com.apsl.glideapp.core.domain.ride.StartRideUseCase
 import com.apsl.glideapp.core.domain.user.GetUserUseCase
 import com.apsl.glideapp.core.ui.BaseViewModel
+import com.apsl.glideapp.feature.home.maps.NoParkingZone
 import com.apsl.glideapp.feature.home.maps.VehicleClusterItem
 import com.apsl.glideapp.feature.home.maps.toCoordinates
 import com.apsl.glideapp.feature.home.maps.toCoordinatesBounds
 import com.apsl.glideapp.feature.home.maps.toLatLng
-import com.apsl.glideapp.feature.home.maps.toNoParkingZone
 import com.google.android.gms.maps.model.LatLngBounds
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlin.math.roundToInt
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val getIsUserAuthenticatedUseCase: GetIsUserAuthenticatedUseCase,
+    private val observeUserAuthenticationStateUseCase: ObserveUserAuthenticationStateUseCase,
     private val getUserUseCase: GetUserUseCase,
     private val getLastSavedUserLocationUseCase: GetLastSavedUserLocationUseCase,
     private val saveLastUserLocationUseCase: SaveLastUserLocationUseCase,
-    private val observeLocationRequestRationaleWasShownUseCase: ObserveLocationRequestRationaleWasShownUseCase,
-    private val saveLocationRequestRationaleWasShownUseCase: SaveLocationRequestRationaleWasShownUseCase,
-    private val loadMapContentWithinBoundsUseCase: LoadMapContentWithinBoundsUseCase,
+    private val getMapContentWithinBoundsUseCase: GetMapContentWithinBoundsUseCase,
     private val startRideUseCase: StartRideUseCase,
     private val finishRideUseCase: FinishRideUseCase,
-    observeUserLocationUseCase: ObserveUserLocationUseCase,
-    observeMapStateUseCase: ObserveMapStateUseCase,
-    observeRideStateUseCase: ObserveRideStateUseCase
+    private val observeRideEventsUseCase: ObserveRideEventsUseCase,
+    private val observeUserLocationUseCase: ObserveUserLocationUseCase,
+    private val observeMapContentUseCase: ObserveMapContentUseCase,
+    private val isRideModeActiveUseCase: IsRideModeActiveUseCase,
+    private val isGpsEnabledUseCase: IsGpsEnabledUseCase
 ) : BaseViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState = _uiState.asStateFlow()
 
-    private val _actions = MutableSharedFlow<HomeAction>(replay = 1)
-    val actions = _actions.asSharedFlow()
+    private val _actions = Channel<HomeAction>()
+    val actions = _actions.receiveAsFlow()
 
-    private var rideJob: Job? = null
+    private var rideEventsJob: Job? = null
+    private var mapContentJob: Job? = null
+    private var userLocationJob: Job? = null
+
     private var currentRideId: String? = null
 
-    val mapState = observeMapStateUseCase().onEach { result ->
-        result
-            .onSuccess { mapState ->
-                _uiState.update { state ->
-                    state.copy(
-                        vehicleClusterItems = mapState.availableVehicles.map { vehicle ->
-                            VehicleClusterItem(
-                                isSelected = state.selectedVehicle?.id == vehicle.id,
-                                id = vehicle.id,
-                                code = vehicle.code.toString().padStart(5, '0'),
-                                charge = vehicle.batteryCharge,
-                                range = (vehicle.batteryCharge * 0.4).roundToInt(),
-                                itemPosition = vehicle.coordinates.toLatLng()
-                            )
-                        },
-                        ridingZones = mapState.ridingZones.map { zone ->
-                            zone.coordinates.map(Coordinates::toLatLng)
-                        },
-                        noParkingZones = mapState.noParkingZones.map { zone ->
-                            zone.coordinates.toNoParkingZone()
-                        }
-                    )
-                }
-            }
-            .onFailure(Timber::d)
-    }
-
-    val userLocation = observeUserLocationUseCase().onEach { result ->
-        result
-            .onSuccess { userLocation ->
-                val coordinates = userLocation.toCoordinates()
-                saveLastUserLocationUseCase(coordinates)
-
-                _uiState.update { it.copy(userLocation = userLocation) }
-            }
-            .onFailure(Timber::d)
-    }
-
-    private val rideEvent = observeRideStateUseCase().onEach { result ->
-        result.onSuccess { rideEvent ->
-            when (rideEvent) {
-                is RideEvent.Started -> onRideStarted(rideEvent.rideId)
-                is RideEvent.RouteUpdated -> onRideRouteUpdated(rideEvent.currentRoute)
-                is RideEvent.Finished -> onRideFinished()
-                is RideEvent.Error.UserInsideNoParkingZone -> {
-                    _actions.emit(HomeAction.Toast(rideEvent.message.toString()))
-                }
-            }
-        }
-    }
-
-//    private var rideTimerJob: Job? = null
-
-//    private val rideTimerFlow = flow {
-//        val interval = 1.seconds
-//        val res =
-//            (uiState.value.rideState as? RideState.Started)?.dateTime?.toInstant(TimeZone.currentSystemDefault())
-//        val initialTimerValue = res?.minus(Clock.System.now()) ?: 0.seconds
-//        var timerValue = initialTimerValue
-//
-//        delay(interval)
-//        Timber.d("init timer value: $initialTimerValue")
-//        while (currentCoroutineContext().isActive && uiState.value.rideState is RideState.Started) {
-//            emit(timerValue)
-//            delay(interval)
-//            timerValue += interval
-//        }
-//    }
-//        .onEach {
-//            _uiState.update { state ->
-//                state.copy(
-//                    rideTimerValue = it.toIsoString()
-//                        .removePrefix("PT")
-//                        .replace("[HMS]".toRegex(), ":")
-//                        .removeSuffix(":")
-//                )
-//            }
-//        }
-
     init {
-        getIsUserAuthenticated()
-        getUser()
-        observeLocationRequestRationaleWasShown()
+        observeUserAuthenticationState()
+        getLastSavedUserLocation()
     }
 
-    private fun getIsUserAuthenticated() {
-        viewModelScope.launch {
-            getIsUserAuthenticatedUseCase()
-                .onSuccess { isAuthenticated ->
-                    _uiState.update { state ->
-                        state.copy(
-                            userAuthState = when {
-                                isAuthenticated -> UserAuthState.Authenticated
-                                else -> UserAuthState.NotAuthenticated
-                            }
-                        )
-                    }
-                }
-                .onFailure(Timber::d)
-        }
-    }
-
-    private fun getUser() {
+    fun getUser() {
         viewModelScope.launch {
             getUserUseCase()
                 .onSuccess { user ->
@@ -185,9 +96,20 @@ class HomeViewModel @Inject constructor(
     private fun getLastSavedUserLocation() {
         viewModelScope.launch {
             getLastSavedUserLocationUseCase().onSuccess { coordinates ->
-                _uiState.update { it.copy(initialCameraPosition = coordinates) }
+                val initialCameraPosition = coordinates?.toLatLng()
+                _uiState.update { it.copy(initialCameraPosition = initialCameraPosition) }
             }
         }
+    }
+
+    private fun observeUserAuthenticationState() {
+        observeUserAuthenticationStateUseCase()
+            .distinctUntilChanged()
+            .onEach { authState ->
+                Timber.d("User authentication state: $authState")
+                _uiState.update { it.copy(userAuthState = authState) }
+            }
+            .launchIn(viewModelScope)
     }
 
     fun updateSelectedVehicle(vehicle: VehicleClusterItem?) {
@@ -205,32 +127,44 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun observeLocationRequestRationaleWasShown() {
-        viewModelScope.launch {
-            observeLocationRequestRationaleWasShownUseCase().collectLatest { result ->
-                result
-                    .onSuccess { wasLocationRequestRationaleShown ->
-                        _uiState.update { it.copy(wasLocationRequestRationaleShown = wasLocationRequestRationaleShown) }
+    fun startReceivingRideEvents() {
+        if (rideEventsJob != null) {
+            return
+        }
+        rideEventsJob = observeRideEventsUseCase()
+            .mapNotNull { it.getOrNull() }
+            .onEach { rideEvent ->
+                when (rideEvent) {
+                    is RideEvent.Started -> onRideStarted(rideEvent.rideId)
+                    is RideEvent.RouteUpdated -> onRideRouteUpdated(rideEvent.currentRoute)
+                    is RideEvent.Finished -> onRideFinished()
+                    is RideEvent.Error.UserInsideNoParkingZone -> {
+                        _actions.send(HomeAction.Toast(rideEvent.message.toString()))
                     }
-                    .onFailure(Timber::d)
+                }
             }
-        }
+            .launchIn(viewModelScope)
     }
 
-    fun saveLocationRequestRationaleWasShown() {
+    fun loadMapContentWithinBounds(bounds: LatLngBounds) {
+        Timber.d("loadMapContentWithinBounds: $bounds")
         viewModelScope.launch {
-            saveLocationRequestRationaleWasShownUseCase().onFailure(Timber::d)
-        }
-    }
-
-    fun loadContentWithinBounds(bounds: LatLngBounds) {
-        viewModelScope.launch {
-            loadMapContentWithinBoundsUseCase(bounds.toCoordinatesBounds())
+            if (isRideModeActiveUseCase()) {
+                return@launch
+            }
+            _uiState.update { it.copy(isLoadingMapContent = true) }
+            getMapContentWithinBoundsUseCase(bounds.toCoordinatesBounds())
         }
     }
 
     fun startRide() {
         viewModelScope.launch {
+            ensureGpsEnabled().onFailure {
+                Timber.d(it)
+                _actions.send(HomeAction.OpenLocationSettingsDialog)
+                return@launch
+            }
+
             val currentUserLocation = uiState.value.userLocation
             val selectedVehicle = uiState.value.selectedVehicle
 
@@ -242,14 +176,13 @@ class HomeViewModel @Inject constructor(
 
                 Timber.d("Distance from vehicle: $distanceFromVehicle")
 
-                if (distanceFromVehicle <= 25.0) {
-                    rideJob = rideEvent.launchIn(this)
+                if (distanceFromVehicle <= 50.0) {
                     startRideUseCase(
                         vehicleId = selectedVehicle.id,
                         userCoordinates = currentUserLocation.toCoordinates()
                     )
                 } else {
-                    _actions.emit(HomeAction.Toast("You are too far from the vehicle"))
+                    _actions.send(HomeAction.Toast("You are too far from the vehicle"))
                 }
             }
         }
@@ -257,32 +190,46 @@ class HomeViewModel @Inject constructor(
 
     fun finishRide() {
         viewModelScope.launch {
+            ensureGpsEnabled().onFailure {
+                _actions.send(HomeAction.OpenLocationSettingsDialog)
+                return@launch
+            }
+
             val currentUserLocation = uiState.value.userLocation
-            val selectedVehicleId = uiState.value.selectedVehicle?.id
             val currentRideId = currentRideId
 
-            if (currentUserLocation != null && selectedVehicleId != null && currentRideId != null) {
+            if (currentUserLocation != null && currentRideId != null) {
                 finishRideUseCase(
                     rideId = currentRideId,
-                    vehicleId = selectedVehicleId,
                     userCoordinates = currentUserLocation.toCoordinates()
                 )
             }
         }
     }
 
+    private fun ensureGpsEnabled(): Result<Unit> {
+        return if (isGpsEnabledUseCase()) {
+            Result.success(Unit)
+        } else {
+            Result.failure(GpsDisabledException())
+        }
+    }
+
     private fun onRideStarted(rideId: String) {
-        Timber.d("started")
+        Timber.d("Ride started")
         currentRideId = rideId
 
-        _uiState.update { it.copy(rideState = RideState.Started) }
+//        stopObservingMapContent()
 
-        _actions.tryEmit(HomeAction.RideStarted(rideId = rideId))
-//        rideTimerJob = rideTimerFlow.launchIn(viewModelScope)
+        _uiState.update { it.copy(rideState = RideState.Active) }
+
+        viewModelScope.launch {
+            _actions.send(HomeAction.StartRide(rideId = rideId))
+        }
     }
 
     private fun onRideRouteUpdated(currentRoute: List<Coordinates>) {
-        Timber.d("updated")
+        Timber.d("Ride route updated")
 
         _uiState.update { state ->
             state.copy(rideRoute = currentRoute.map(Coordinates::toLatLng))
@@ -291,19 +238,122 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun onRideFinished() {
-        Timber.d("finished")
+        Timber.d("Ride finished")
 
         viewModelScope.launch {
-            rideJob?.cancel()
-            rideJob = null
-
             currentRideId = null
-//            rideTimerJob?.cancel()
-//            rideTimerJob = null
             updateSelectedVehicle(null)
 
             _uiState.update { it.copy(rideRoute = null, rideState = null) }
-            _actions.tryEmit(HomeAction.RideFinished)
+
+            _actions.send(HomeAction.FinishRide)
         }
+    }
+
+    fun startObservingMapContent() {
+        if (mapContentJob != null) {
+            return
+        }
+        viewModelScope.launch {
+//            if (isRideModeActiveUseCase()) {
+//                stopObservingMapContent()
+//                return@launch
+//            }
+
+            mapContentJob = observeMapContentUseCase()
+                .onEach { result ->
+                    result
+                        .onSuccess { mapContent ->
+                            _uiState.update { state ->
+                                hideMapLoading()
+                                state.copy(
+                                    vehicleClusterItems = mapContent.availableVehicles.map { vehicle ->
+                                        VehicleClusterItem(
+                                            isSelected = state.selectedVehicle?.id == vehicle.id,
+                                            id = vehicle.id,
+                                            code = vehicle.code.toString().padStart(5, '0'),
+                                            charge = vehicle.batteryCharge,
+                                            range = (vehicle.batteryCharge * 0.4).roundToInt(),
+                                            itemPosition = vehicle.coordinates.toLatLng()
+                                        )
+                                    },
+                                    ridingZones = mapContent.ridingZones.map { zone ->
+                                        zone.coordinates.map { it.toLatLng() }
+                                    },
+                                    noParkingZones = mapContent.noParkingZones.map { zone ->
+                                        NoParkingZone(zone.coordinates.map { it.toLatLng() })
+                                    }
+                                )
+                            }
+                        }
+                        .onFailure {
+                            hideMapLoading()
+                            _uiState.update { it.copy(vehicleClusterItems = emptyList()) }
+                        }
+                }
+                .launchIn(viewModelScope)
+        }
+    }
+
+    private var mapLoadingJob: Job? = null
+
+    private suspend fun hideMapLoading() {
+        mapLoadingJob?.cancelAndJoin()
+        mapLoadingJob = viewModelScope.launch {
+            delay(1000)
+            _uiState.update { it.copy(isLoadingMapContent = false) }
+        }
+    }
+
+    fun stopObservingMapContent() {
+        mapContentJob?.cancel()
+        mapContentJob = null
+    }
+
+    fun startObservingUserLocation() {
+        if (userLocationJob != null) {
+            viewModelScope.launch {
+                val isInRideMode = isRideModeActiveUseCase()
+                val userLocation = uiState.value.userLocation
+                val currentRideId = currentRideId
+                if (isInRideMode && userLocation == null && currentRideId != null) {
+                    _actions.send(HomeAction.RestartUserLocation(currentRideId))
+                }
+            }
+            return
+        }
+
+        userLocationJob = observeUserLocationUseCase()
+            .onEach { result ->
+                result
+                    .onSuccess { userLocation ->
+                        val coordinates = userLocation.toCoordinates()
+                        saveLastUserLocationUseCase(coordinates)
+                        _uiState.update { it.copy(userLocation = userLocation) }
+                    }
+                    .onFailure { throwable ->
+                        Timber.d(throwable.message)
+                        when (throwable) {
+                            is GpsDisabledException -> {
+                                if (!isRideModeActiveUseCase()) {
+                                    _actions.send(HomeAction.OpenLocationSettingsDialog)
+                                }
+                            }
+
+                            is MissingLocationPermissionsException -> {
+                                if (isRideModeActiveUseCase()) {
+                                    _actions.send(HomeAction.RequestLocationPermissions)
+                                }
+                            }
+                        }
+                        stopObservingUserLocation()
+                    }
+            }
+            .launchIn(viewModelScope)
+    }
+
+    fun stopObservingUserLocation() {
+        userLocationJob?.cancel()
+        userLocationJob = null
     }
 }

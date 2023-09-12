@@ -1,11 +1,10 @@
 package com.apsl.glideapp.feature.home.screens
 
-import android.content.Intent
-import android.widget.Toast
+import android.Manifest
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,6 +13,7 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.BottomSheetScaffold
 import androidx.compose.material.BottomSheetValue
 import androidx.compose.material.FloatingActionButton
@@ -37,25 +37,25 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.apsl.glideapp.core.ui.collectWithLifecycle
+import com.apsl.glideapp.core.domain.auth.UserAuthState
+import com.apsl.glideapp.core.ui.ComposableLifecycle
+import com.apsl.glideapp.core.ui.LoadingBar
+import com.apsl.glideapp.core.ui.RequestMultiplePermissions
+import com.apsl.glideapp.core.ui.RequestMultiplePermissionsState
 import com.apsl.glideapp.core.ui.getOffset
+import com.apsl.glideapp.core.ui.rememberRequestMultiplePermissionState
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
-import com.apsl.glideapp.core.util.launchForLocationPermissions
-import com.apsl.glideapp.core.util.locationPermissionsGranted
-import com.apsl.glideapp.core.util.showLocationRequestPermissionRationale
-import com.apsl.glideapp.feature.home.RideService
 import com.apsl.glideapp.feature.home.components.DrawerContent
 import com.apsl.glideapp.feature.home.components.SheetContent
 import com.apsl.glideapp.feature.home.maps.VehicleClusterItem
 import com.apsl.glideapp.feature.home.maps.toLatLng
-import com.apsl.glideapp.feature.home.viewmodels.HomeAction
 import com.apsl.glideapp.feature.home.viewmodels.HomeUiState
 import com.apsl.glideapp.feature.home.viewmodels.HomeViewModel
-import com.apsl.glideapp.feature.home.viewmodels.UserAuthState
+import com.apsl.glideapp.feature.home.viewmodels.RideState
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.maps.android.compose.CameraPositionState
 import kotlinx.coroutines.launch
@@ -67,69 +67,74 @@ fun HomeScreen(
     onNavigateToLogin: () -> Unit,
     onNavigateToAllRides: () -> Unit,
     onNavigateToWallet: () -> Unit,
-    onNavigateToLocationPermission: () -> Unit
+    onNavigateToLocationPermission: () -> Unit,
+    onNavigateToLocationRationale: () -> Unit
 ) {
-    viewModel.run {
-        mapState.collectWithLifecycle()
-        userLocation.collectWithLifecycle()
-    }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val context = LocalContext.current
 
-    LaunchedEffect(uiState.userAuthState) {
-        if (uiState.userAuthState == UserAuthState.NotAuthenticated) {
-            onNavigateToLogin()
-        }
-    }
+    when (uiState.userAuthState) {
+        UserAuthState.NotAuthenticated -> onNavigateToLogin()
+        UserAuthState.Authenticated -> {
+            val requestPermissionsState = rememberRequestMultiplePermissionState(
+                permissions = listOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+            HomeActionsHandler(
+                actions = viewModel.actions,
+                onStartObservingUserLocation = viewModel::startObservingUserLocation,
+                onRequestLocationPermissions = { requestPermissionsState.requestPermissions = true }
+            )
+            ComposableLifecycle { event ->
+                with(viewModel) {
+                    when (event) {
+                        Lifecycle.Event.ON_START -> {
+                            getUser()
+                            startReceivingRideEvents()
+                            startObservingMapContent()
+                            startObservingUserLocation()
+                        }
 
-    LaunchedEffect(Unit) {
-        viewModel.actions.collect { action ->
-            when (action) {
+                        Lifecycle.Event.ON_STOP -> {
+                            stopObservingMapContent()
+                            stopObservingUserLocation()
+                        }
 
-                is HomeAction.RideStarted -> {
-                    val intent = Intent(context, RideService::class.java).apply {
-                        this.action = RideService.ACTION_START
-                        putExtra(RideService.RIDE_ID, action.rideId)
+                        else -> Unit
                     }
-                    context.startForegroundService(intent)
-                }
-
-                is HomeAction.RideFinished -> {
-                    val intent = Intent(context, RideService::class.java).apply {
-                        this.action = RideService.ACTION_STOP
-                    }
-                    context.startForegroundService(intent)
-                }
-
-                is HomeAction.Toast -> {
-                    Toast.makeText(context, action.message, Toast.LENGTH_LONG).show()
                 }
             }
+            HomeScreenContent(
+                uiState = uiState,
+                requestPermissionsState = requestPermissionsState,
+                onRefreshUserData = viewModel::getUser,
+                onLocationButtonClick = viewModel::startObservingUserLocation,
+                onOpenLocationPermissionDialog = onNavigateToLocationPermission,
+                onOpenLocationRationaleDialog = onNavigateToLocationRationale,
+                onVehicleSelect = viewModel::updateSelectedVehicle,
+                onLoadMapDataWithinBounds = viewModel::loadMapContentWithinBounds,
+                onStartRideClick = viewModel::startRide,
+                onFinishRideClick = viewModel::finishRide,
+                onMyRidesClick = onNavigateToAllRides,
+                onWalletClick = onNavigateToWallet
+            )
         }
-    }
 
-    if (uiState.userAuthState == UserAuthState.Authenticated) {
-        HomeScreenContent(
-            uiState = uiState,
-            onFirstTimeLocationPermissionRequested = viewModel::saveLocationRequestRationaleWasShown,
-            onOpenLocationPermissionDialog = onNavigateToLocationPermission,
-            onVehicleSelect = viewModel::updateSelectedVehicle,
-            onLoadContentWithinBounds = viewModel::loadContentWithinBounds,
-            onStartRideClick = viewModel::startRide,
-            onFinishRideClick = viewModel::finishRide,
-            onMyRidesClick = onNavigateToAllRides,
-            onWalletClick = onNavigateToWallet
-        )
+        else -> Unit
     }
 }
 
 @Composable
 fun HomeScreenContent(
     uiState: HomeUiState,
-    onFirstTimeLocationPermissionRequested: () -> Unit,
+    requestPermissionsState: RequestMultiplePermissionsState,
+    onRefreshUserData: () -> Unit,
+    onLocationButtonClick: () -> Unit,
     onOpenLocationPermissionDialog: () -> Unit,
+    onOpenLocationRationaleDialog: () -> Unit,
     onVehicleSelect: (VehicleClusterItem?) -> Unit,
-    onLoadContentWithinBounds: (LatLngBounds) -> Unit,
+    onLoadMapDataWithinBounds: (LatLngBounds) -> Unit,
     onStartRideClick: () -> Unit,
     onFinishRideClick: () -> Unit,
     onMyRidesClick: () -> Unit,
@@ -140,7 +145,7 @@ fun HomeScreenContent(
     val scope = rememberCoroutineScope()
 
     val scaffoldState = rememberBottomSheetScaffoldState(
-        bottomSheetState = rememberBottomSheetState(initialValue = BottomSheetValue.Collapsed)
+        bottomSheetState = rememberBottomSheetState(initialValue = BottomSheetValue.Expanded)
     )
 
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
@@ -162,61 +167,105 @@ fun HomeScreenContent(
         }
     }
 
-    val locationPermissionResultLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestMultiplePermissions(),
-        onResult = { onFirstTimeLocationPermissionRequested() }
-    )
-
     BackHandler(enabled = uiState.selectedVehicle != null) {
         onVehicleSelect(null)
     }
 
-    LaunchedEffect(uiState.selectedVehicle) {
-        if (uiState.selectedVehicle == null) {
-            launch {
-                scaffoldState.bottomSheetState.collapse()
-            }
+//    LaunchedEffect(uiState.selectedVehicle) {
+//        if (uiState.selectedVehicle == null) {
+//            scaffoldState.bottomSheetState.collapse()
+//        }
+//    }
+
+    LaunchedEffect(uiState.rideState) {
+        if (uiState.rideState == RideState.Active) {
+            scaffoldState.bottomSheetState.expand()
         }
     }
 
     val cameraPositionState = remember(uiState.initialCameraPosition) {
         CameraPositionState().apply {
             if (uiState.initialCameraPosition != null) {
-                position = CameraPosition.fromLatLngZoom(
-//                            LatLng(
-//                                uiState.initialCameraPosition.latitude,
-//                                uiState.initialCameraPosition.longitude
-//                            ), 13f
-                    LatLng(54.4, 17.1),
-                    13f
+                position = CameraPosition.fromLatLngZoom(uiState.initialCameraPosition, 13f)
+//                    LatLng(54.4, 17.1),
+//                    13f
+            }
+        }
+    }
+
+    LaunchedEffect(uiState.userLocation) {
+        if (uiState.isInRideMode) {
+            uiState.userLocation?.let {
+                val cameraPosition = CameraPosition.builder()
+                    .zoom(17f)
+                    .target(it.toLatLng())
+                    .bearing(it.bearingDegrees)
+                    .tilt(30f)
+                    .build()
+                cameraPositionState.animate(
+                    CameraUpdateFactory.newCameraPosition(cameraPosition),
+                    500
                 )
             }
         }
     }
 
-    LaunchedEffect(cameraPositionState.isMoving) {
-        if (!cameraPositionState.isMoving) {
-            cameraPositionState.projection?.visibleRegion?.latLngBounds?.let { bounds ->
-                onLoadContentWithinBounds(bounds)
+    RequestMultiplePermissions(
+        context = context,
+        requestState = requestPermissionsState,
+        onGranted = {
+            Timber.d("granted")
+            uiState.userLocation?.let {
+                scope.launch {
+                    cameraPositionState.animate(
+                        CameraUpdateFactory.newCameraPosition(
+                            CameraPosition(
+                                it.toLatLng(),
+                                cameraPositionState.position.zoom,
+                                0f,
+                                0f
+                            )
+                        ), 1000
+                    )
+                }
             }
-        }
-    }
+        },
+        onShowRationale = onOpenLocationRationaleDialog,
+        onPermanentlyDenied = onOpenLocationPermissionDialog
+    )
+//
+//    val visibleBounds = cameraPositionState.projection?.visibleRegion?.latLngBounds
+//    LaunchedEffect(cameraPositionState.isMoving) {
+//        if (!cameraPositionState.isMoving) {
+//            visibleBounds?.let { onLoadMapDataWithinBounds(it) }
+//        }
+//    }
+
+//    val timesVisibleBoundsChanged = remember { mutableIntStateOf(0) }
+//    LaunchedEffect(cameraPositionState.projection) {
+//        Timber.d("load block")
+//        timesVisibleBoundsChanged.intValue++
+//        if (timesVisibleBoundsChanged.intValue == 2 && visibleBounds != null && uiState.vehicleClusterItems.isEmpty()) {
+//            Timber.d("onLoad: $visibleBounds")
+//            onLoadMapDataWithinBounds(visibleBounds)
+//        }
+//    }
 
     BottomSheetScaffold(
         scaffoldState = scaffoldState,
         sheetGesturesEnabled = !uiState.isInRideMode,
         sheetPeekHeight = 0.dp,
         sheetContent = {
-            if (uiState.selectedVehicle != null) {
-                SheetContent(
-                    vehicleCode = uiState.selectedVehicle.code,
-                    vehicleRange = uiState.selectedVehicle.range,
-                    vehicleCharge = uiState.selectedVehicle.charge,
-                    rideState = uiState.rideState,
-                    onStartRideClick = onStartRideClick,
-                    onFinishRideClick = onFinishRideClick
-                )
-            }
+//            if (uiState.selectedVehicle != null) {
+            SheetContent(
+                vehicleCode = uiState.selectedVehicle?.code ?: "",
+                vehicleRange = uiState.selectedVehicle?.range ?: 0,
+                vehicleCharge = uiState.selectedVehicle?.charge ?: 0,
+                rideState = uiState.rideState,
+                onStartRideClick = onStartRideClick,
+                onFinishRideClick = onFinishRideClick
+            )
+//            }
         },
         drawerGesturesEnabled = scaffoldState.drawerState.isOpen,
         drawerElevation = 8.dp,
@@ -225,6 +274,7 @@ fun HomeScreenContent(
                 username = uiState.username,
                 userTotalDistance = uiState.userTotalDistance,
                 userTotalRides = uiState.userTotalRides,
+                onRefreshData = onRefreshUserData,
                 onMyRidesClick = onMyRidesClick,
                 onWalletClick = onWalletClick
             )
@@ -243,6 +293,7 @@ fun HomeScreenContent(
                 userLocation = uiState.userLocation,
                 mapPaddingBottom = mapPaddingBottom,
                 rideRoute = uiState.rideRoute,
+                onLoadMapDataWithinBounds = onLoadMapDataWithinBounds,
                 onVehicleSelect = {
                     scope.launch {
                         scaffoldState.bottomSheetState.expand()
@@ -261,54 +312,40 @@ fun HomeScreenContent(
                         .height(bottomSheetOffset)
                         .padding(16.dp)
                 ) {
-                    FloatingActionButton(
-                        modifier = Modifier.align(Alignment.TopStart),
-                        backgroundColor = Color.White,
-                        onClick = {
-                            scope.launch {
-                                scaffoldState.drawerState.open()
-                            }
-                        }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .align(Alignment.TopCenter),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(
-                            imageVector = Icons.Rounded.Menu,
-                            contentDescription = null
-                        )
+                        FloatingActionButton(
+                            backgroundColor = Color.White,
+                            onClick = {
+                                scope.launch {
+                                    scaffoldState.drawerState.open()
+                                }
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.Menu,
+                                contentDescription = null
+                            )
+                        }
+                        if (uiState.isLoadingMapContent) {
+                            Spacer(Modifier.width(16.dp))
+                            LoadingBar(modifier = Modifier.weight(1f))
+                            Spacer(Modifier.width(88.dp))
+                        } else {
+                            Spacer(Modifier.weight(1f))
+                        }
                     }
+
                     FloatingActionButton(
                         modifier = Modifier.align(Alignment.BottomEnd),
                         backgroundColor = Color.White,
                         onClick = {
-                            if (context.showLocationRequestPermissionRationale) {
-                                locationPermissionResultLauncher.launchForLocationPermissions()
-                                Timber.d("1")
-                            } else {
-                                if (context.locationPermissionsGranted) {
-                                    Timber.d("2")
-                                    uiState.userLocation?.let {
-                                        scope.launch {
-                                            cameraPositionState.animate(
-                                                CameraUpdateFactory.newCameraPosition(
-                                                    CameraPosition(
-                                                        it.toLatLng(),
-                                                        cameraPositionState.position.zoom,
-                                                        cameraPositionState.position.tilt,
-                                                        cameraPositionState.position.bearing
-                                                    )
-                                                ), 2000
-                                            )
-                                        }
-                                    }
-                                } else {
-                                    if (uiState.wasLocationRequestRationaleShown) {
-                                        Timber.d("3")
-                                        onOpenLocationPermissionDialog()
-                                    } else {
-                                        Timber.d("4")
-                                        locationPermissionResultLauncher.launchForLocationPermissions()
-                                    }
-                                }
-                            }
+                            onLocationButtonClick()
+                            requestPermissionsState.requestPermissions = true
                         }
                     ) {
                         Icon(
@@ -328,10 +365,13 @@ fun HomeScreenPreview() {
     GlideAppTheme {
         HomeScreenContent(
             uiState = HomeUiState(),
-            onFirstTimeLocationPermissionRequested = {},
+            requestPermissionsState = rememberRequestMultiplePermissionState(permissions = emptyList()),
+            onRefreshUserData = {},
+            onLocationButtonClick = {},
             onOpenLocationPermissionDialog = {},
+            onOpenLocationRationaleDialog = {},
             onVehicleSelect = {},
-            onLoadContentWithinBounds = {},
+            onLoadMapDataWithinBounds = {},
             onStartRideClick = {},
             onFinishRideClick = {},
             onMyRidesClick = {},

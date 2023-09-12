@@ -8,49 +8,44 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.provider.Settings
-import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
 
 val Context.locationPermissionsGranted: Boolean
     get() {
-        return ContextCompat.checkSelfPermission(
+        val coarseLocationGranted = ContextCompat.checkSelfPermission(
             this,
             Manifest.permission.ACCESS_COARSE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED
+        ) == PackageManager.PERMISSION_GRANTED
+
+        val fineLocationGranted = ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+
+        return coarseLocationGranted && fineLocationGranted
     }
 
-val Context.showLocationRequestPermissionRationale: Boolean
-    get() = this.findActivity()?.run {
-        shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) &&
-                shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION)
-    } ?: false
-
-fun Context.openAppSettings() {
-    Intent(
-        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-        Uri.fromParts("package", packageName, null)
-    ).run(::startActivity)
-}
-
-private typealias LocationActivityResultLauncher = ManagedActivityResultLauncher<Array<String>, Map<String, @JvmSuppressWildcards Boolean>>
-
-fun LocationActivityResultLauncher.launchForLocationPermissions(): Result<Unit> {
-    return runCatching {
-        this.launch(
-            arrayOf(
-                Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            )
+fun Context.navigateToAppSettings() {
+    this.startActivity(
+        Intent(
+            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+            Uri.fromParts("package", packageName, null)
         )
-    }
+    )
 }
 
 fun Context.findActivity(): Activity? = when (this) {
     is Activity -> this
     is ContextWrapper -> baseContext.findActivity()
     else -> null
+}
+
+fun Lifecycle.addObservers(observers: Iterable<LifecycleObserver>) {
+    observers.forEach(::addObserver)
+}
+
+fun Lifecycle.addObservers(vararg observer: LifecycleObserver) {
+    observer.forEach(::addObserver)
 }

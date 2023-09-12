@@ -7,6 +7,7 @@ sealed class Screen(val route: String) {
     object Home {
         data object Root : Screen("home")
         data object LocationPermission : Screen("locationPermission")
+        data object LocationRationale : Screen("locationRationale")
     }
 
     object Rides {

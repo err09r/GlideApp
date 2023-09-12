@@ -7,14 +7,16 @@ import androidx.room.withTransaction
 import com.apsl.glideapp.common.util.now
 import com.apsl.glideapp.core.database.AppDatabase
 import com.apsl.glideapp.core.database.entities.TransactionEntity
+import com.apsl.glideapp.core.domain.connectivity.ConnectionState
 import com.apsl.glideapp.core.domain.connectivity.ConnectivityObserver
-import com.apsl.glideapp.core.domain.connectivity.isConnected
 import com.apsl.glideapp.core.network.GlideApi
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.datetime.LocalDateTime
 import timber.log.Timber
 
+@Singleton
 class TransactionRemoteMediator @Inject constructor(
     private val api: GlideApi,
     private val appDatabase: AppDatabase,
@@ -40,9 +42,9 @@ class TransactionRemoteMediator @Inject constructor(
                 }
             }
 
-            if (connectivityObserver.connectivityState.firstOrNull()?.isConnected == false) {
+            if (connectivityObserver.connectivityState.firstOrNull() == ConnectionState.Available) {
                 return if (transactionDao.isTableEmpty()) {
-                    MediatorResult.Error(Exception("HAHAHA"))
+                    MediatorResult.Error(Exception("Transaction table is empty"))
                 } else {
                     MediatorResult.Success(true)
                 }
@@ -69,7 +71,7 @@ class TransactionRemoteMediator @Inject constructor(
                         updatedAt = LocalDateTime.now(),
                     )
                 }
-                transactionDao.upsertAllTransactions(transactionEntities)
+                transactionDao.upsertTransactions(transactionEntities)
             }
             MediatorResult.Success(endOfPaginationReached = transactionDtos.size < state.config.pageSize)
         } catch (e: Exception) {

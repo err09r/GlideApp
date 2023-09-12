@@ -9,6 +9,8 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:util"))
+
     implementation(libs.androidx.lifecycle.compose)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.paging.compose)
@@ -17,6 +19,7 @@ dependencies {
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.toolingPreview)
 
+    implementation(libs.accompanist.permissions)
     implementation(libs.accompanist.systemuicontroller)
     implementation(libs.glideapp.common.util)
 

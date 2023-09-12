@@ -53,7 +53,7 @@ fun SheetContent(
 ) {
     AnimatedContent(targetState = rideState, label = "") {
         when (it) {
-            RideState.Started -> {
+            RideState.Active -> {
                 Row(
                     modifier = modifier
                         .fillMaxWidth()
@@ -162,7 +162,7 @@ fun SheetContentPreview() {
             vehicleCode = "0023",
             vehicleRange = 25,
             vehicleCharge = 90,
-            rideState = RideState.Started,
+            rideState = RideState.Active,
             onStartRideClick = {},
             onFinishRideClick = {}
         )

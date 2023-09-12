@@ -2,164 +2,189 @@
 
 package com.apsl.glideapp.core.network
 
-import com.apsl.glideapp.common.dto.MapStateDto
+import com.apsl.glideapp.common.dto.MapContentDto
 import com.apsl.glideapp.common.dto.RideEventDto
 import com.apsl.glideapp.common.models.CoordinatesBounds
 import com.apsl.glideapp.common.models.RideAction
-import com.apsl.glideapp.core.util.DispatcherProvider
-import io.ktor.client.HttpClient
 import io.ktor.client.plugins.websocket.DefaultClientWebSocketSession
+import io.ktor.client.plugins.websocket.receiveDeserialized
 import io.ktor.client.plugins.websocket.sendSerialized
-import io.ktor.client.plugins.websocket.webSocketSession
-import io.ktor.client.request.header
-import io.ktor.client.request.url
 import io.ktor.websocket.Frame
 import io.ktor.websocket.close
 import io.ktor.websocket.readText
 import java.util.concurrent.ConcurrentLinkedQueue
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import timber.log.Timber
 
 class KtorWebSocketClient @Inject constructor(
-    private val httpClient: HttpClient,
-    private val dispatchers: DispatcherProvider
+    private val mapWebSocketSession: WebSocketSession,
+    private val rideWebSocketSession: WebSocketSession,
+    private val json: Json
 ) : WebSocketClient {
 
-    private val scope = CoroutineScope(SupervisorJob() + dispatchers.io)
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     private var mapSession: DefaultClientWebSocketSession? = null
     private var rideSession: DefaultClientWebSocketSession? = null
 
-    private val rideActionsQueue = ConcurrentLinkedQueue<RideAction>()
-    private val mapDataQueue = ConcurrentLinkedQueue<CoordinatesBounds>()
+    private val mapDataToSend = MutableStateFlow<CoordinatesBounds?>(null)
+    private val rideActionsToSend = ConcurrentLinkedQueue<RideAction>()
 
-    override fun getMapStateUpdates(authToken: String?): Flow<MapStateDto> = flow {
-        mapSession = httpClient.webSocketSession {
-//            url("ws://api-glide.herokuapp.com/api/map")
-            url("ws://10.0.2.2/api/map")
-            header("Authorization", "Bearer $authToken")
-        }
+    private val _mapContent = MutableSharedFlow<Flow<MapContentDto>>()
+    override val mapContent = _mapContent
+        .flatMapLatest { it }
+        .shareIn(scope = scope, started = SharingStarted.WhileSubscribed())
 
-        mapSession?.let { session ->
+    private val mapFlow = emptyFlow<MapContentDto>()
+        .onStart {
+            mapSession?.close()
+            mapSession = mapWebSocketSession.open()
+            Timber.d("Map session opened")
+            mapSession?.run {
 
-            onMapSessionInitialized()
+                onMapSessionInitialized()
 
-            for (frame in session.incoming) {
-                frame as? Frame.Text ?: continue
+                for (frame in this.incoming) {
+                    frame as? Frame.Text ?: continue
 
-                val mapStateDto = runCatching {
-                    Json.decodeFromString<MapStateDto>(frame.readText())
-                }.getOrNull()
+                    val mapContentDto = runCatching {
+                        json.decodeFromString<MapContentDto>(frame.readText())
+                    }.getOrNull()
 
-//                Timber.tag("mapStateDto").d(mapStateDto.toString())
+//                Timber.tag("mapContentDto").d(mapContentDto.toString())
 
-                if (mapStateDto != null) {
-                    emit(mapStateDto)
+                    if (mapContentDto != null) {
+                        emit(mapContentDto)
+                    }
                 }
             }
         }
-    }
-        .flowOn(dispatchers.io)
+        .flowOn(Dispatchers.IO)
         .catch {
             Timber.d("Exception in map session: $it")
-        }
-        .onStart {
-            Timber.d("map session opened")
-        }
-        .onCompletion {
-            Timber.d("map session closed, cause: $it")
             closeMapSession()
         }
-        .shareIn(scope = scope, started = SharingStarted.WhileSubscribed())
-
-    override fun getRideStateUpdates(authToken: String?): Flow<RideEventDto> = flow {
-        rideSession = httpClient.webSocketSession {
-//            url("ws://api-glide.herokuapp.com/api/ride")
-            url("ws://10.0.2.2/api/ride")
-            header("Authorization", "Bearer $authToken")
-        }
-
-        rideSession?.let { session ->
-
-            onRideSessionInitialized()
-
-            for (frame in session.incoming) {
-                frame as? Frame.Text ?: continue
-
-                val rideEventDto = runCatching {
-                    Json.decodeFromString<RideEventDto>(frame.readText())
-                }.getOrNull()
-
-                Timber.tag("rideEventDto").d(rideEventDto.toString())
-
-                if (rideEventDto != null) {
-                    emit(rideEventDto)
-                }
-            }
-        }
-    }
-        .flowOn(dispatchers.io)
-        .catch {
-            Timber.d("Exception in ride session: $it")
-        }
-        .onStart {
-            Timber.d("ride session opened")
-        }
         .onCompletion {
-            Timber.d("ride session closed, cause: $it")
-            closeRideSession()
+            Timber.d("Map session closed, cause: $it")
+            closeMapSession()
         }
-        .shareIn(scope = scope, started = SharingStarted.WhileSubscribed())
 
-    override suspend fun sendMapData(data: CoordinatesBounds) {
-//        Timber.d(data.toString())
-        mapSession?.sendSerialized(data) ?: mapDataQueue.add(data)
+    private suspend fun DefaultClientWebSocketSession.onMapSessionInitialized() {
+        withContext(Dispatchers.IO) {
+            mapDataToSend
+                .getAndUpdate { null }
+                ?.let { sendSerialized(it) }
+        }
     }
 
-    override suspend fun sendRideAction(action: RideAction) {
-        Timber.d(action.toString())
-        rideSession?.sendSerialized(action) ?: rideActionsQueue.add(action)
-    }
-
-    override suspend fun closeMapSession() {
-        mapDataQueue.clear()
+    private suspend fun closeMapSession() {
+        mapDataToSend.update { null }
         mapSession?.close()
         mapSession = null
     }
 
-    override suspend fun closeRideSession() {
-        rideActionsQueue.clear()
+    override suspend fun sendMapData(data: CoordinatesBounds) {
+        Timber.d(data.toString())
+        mapSession?.sendSerialized(data) ?: run {
+            mapDataToSend.update { data }
+            _mapContent.emit(mapFlow)
+        }
+    }
+
+    private val _rideEvents = MutableSharedFlow<Flow<RideEventDto>>()
+    override val rideEvents: Flow<RideEventDto> = _rideEvents
+        .onStart { emit(initializingRideFlow) }
+        .flatMapLatest { it }
+        .shareIn(scope = scope, started = SharingStarted.WhileSubscribed())
+
+    override suspend fun sendRideAction(action: RideAction) {
+//        Timber.d("action: $action, rideSession: $rideSession")
+        rideSession?.sendSerialized(action) ?: run {
+            rideActionsToSend.add(action)
+            _rideEvents.emit(rideFlow)
+        }
+    }
+
+    private val initializingRideFlow = emptyFlow<RideEventDto>()
+        .onStart {
+            rideSession?.close()
+            rideSession = rideWebSocketSession.open()
+            Timber.d("Ride session opened")
+            rideSession?.run {
+                sendSerialized<RideAction>(RideAction.RequestCurrentState)
+                while (isActive) {
+                    val rideEventDto = receiveDeserialized<RideEventDto>()
+                    if (rideEventDto is RideEventDto.SessionCancelled) {
+                        closeRideSession()
+                    } else {
+                        emit(rideEventDto)
+                    }
+                }
+            }
+        }
+        .rideFlowOperators()
+
+    private val rideFlow = emptyFlow<RideEventDto>()
+        .onStart {
+            rideSession?.close()
+            rideSession = rideWebSocketSession.open()
+            Timber.d("Ride session opened")
+            rideSession?.run {
+                onRideSessionInitialized()
+                while (isActive) {
+                    val rideEventDto = receiveDeserialized<RideEventDto>()
+                    emit(rideEventDto)
+                }
+            }
+        }
+        .rideFlowOperators()
+
+    private suspend fun DefaultClientWebSocketSession.onRideSessionInitialized() {
+        if (rideActionsToSend.isNotEmpty()) {
+            withContext(Dispatchers.IO) {
+                rideActionsToSend
+                    .filterNotNull()
+                    .forEach { sendSerialized<RideAction>(it) }
+                rideActionsToSend.clear()
+            }
+        }
+    }
+
+    private fun Flow<RideEventDto>.rideFlowOperators(): Flow<RideEventDto> {
+        return this
+            .flowOn(Dispatchers.IO)
+            .catch {
+                Timber.d("Exception in ride session: $it")
+                closeRideSession()
+            }
+            .onCompletion {
+                Timber.d("Ride session closed, cause: $it")
+                closeRideSession()
+            }
+    }
+
+    private suspend fun closeRideSession() {
+        rideActionsToSend.clear()
         rideSession?.close()
         rideSession = null
-    }
-
-    private suspend fun onMapSessionInitialized() {
-        if (mapDataQueue.isNotEmpty()) {
-            withContext(dispatchers.io) {
-                mapDataQueue.filterNotNull().forEach { sendMapData(it) }
-                mapDataQueue.clear()
-            }
-        }
-    }
-
-    private suspend fun onRideSessionInitialized() {
-        if (rideActionsQueue.isNotEmpty()) {
-            withContext(dispatchers.io) {
-                rideActionsQueue.filterNotNull().forEach { sendRideAction(it) }
-                rideActionsQueue.clear()
-            }
-        }
     }
 }

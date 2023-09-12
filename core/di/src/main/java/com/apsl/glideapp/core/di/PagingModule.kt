@@ -18,6 +18,9 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object PagingModule {
 
+    private const val TRANSACTIONS_PAGE_SIZE = 5
+    private const val RIDES_PAGE_SIZE = 5
+
     @Singleton
     @Provides
     fun provideTransactionPager(
@@ -25,7 +28,7 @@ object PagingModule {
         transactionDao: TransactionDao
     ): Pager<Int, TransactionEntity> {
         return Pager(
-            config = PagingConfig(pageSize = 5),
+            config = PagingConfig(pageSize = TRANSACTIONS_PAGE_SIZE),
             remoteMediator = transactionRemoteMediator,
             pagingSourceFactory = { transactionDao.getTransactionPagingSource() }
         )
@@ -38,7 +41,7 @@ object PagingModule {
         rideDao: RideDao
     ): Pager<Int, RideEntity> {
         return Pager(
-            config = PagingConfig(pageSize = 5),
+            config = PagingConfig(pageSize = RIDES_PAGE_SIZE),
             remoteMediator = rideRemoteMediator,
             pagingSourceFactory = { rideDao.getRidePagingSource() }
         )

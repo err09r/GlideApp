@@ -14,25 +14,20 @@ fun NavGraphBuilder.authGraph(navController: NavController) {
 
         composable(route = Screen.Auth.Login.route) {
             LoginScreen(
-                onNavigateToHome = {
-                    navController.navigate(Screen.Home.Root.route) {
-                        popUpTo(Screen.Auth.Login.route) { inclusive = true }
-                        launchSingleTop = true
-                    }
-                },
+                onNavigateToHome = navController::navigateToHome,
                 onNavigateToRegister = { navController.navigate(Screen.Auth.Register.route) }
             )
         }
 
         composable(route = Screen.Auth.Register.route) {
-            RegisterScreen(
-                onNavigateToHome = {
-                    navController.navigate(Screen.Home.Root.route) {
-                        popUpTo(Screen.Auth.Login.route) { inclusive = true }
-                        launchSingleTop = true
-                    }
-                }
-            )
+            RegisterScreen(onNavigateToHome = navController::navigateToHome)
         }
+    }
+}
+
+private fun NavController.navigateToHome() {
+    navigate(Screen.Home.Root.route) {
+        popUpTo(Screen.Auth.Login.route) { inclusive = true }
+        launchSingleTop = true
     }
 }

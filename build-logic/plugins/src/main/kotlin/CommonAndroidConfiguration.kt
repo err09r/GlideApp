@@ -48,6 +48,7 @@ private fun BaseExtension.configureBuildTypes() {
         staging {
             isDebuggable = false
             isMinifyEnabled = true
+            signingConfig = signingConfigs.getByName("debug")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -92,8 +93,12 @@ private fun Project.configureKotlinCompileOptions() {
                     // Use `-Pcom.apsl.glideapp.enableComposeCompilerReports=true` to enable
                     findProperty("${Config.namespace}.enableComposeCompilerReports") == "true" -> {
                         this + listOf(
-                            "-P=plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=$buildDir/composeMetrics",
-                            "-P=plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=$buildDir/composeMetrics"
+                            "-P=plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=${
+                                layout.buildDirectory.dir("composeMetrics").get()
+                            }",
+                            "-P=plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=${
+                                layout.buildDirectory.dir("composeMetrics").get()
+                            }"
                         )
                     }
 

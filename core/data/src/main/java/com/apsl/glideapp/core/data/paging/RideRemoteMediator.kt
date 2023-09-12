@@ -6,17 +6,22 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
+import com.apsl.glideapp.common.dto.RideDto
+import com.apsl.glideapp.common.models.RideStatus
 import com.apsl.glideapp.common.util.now
 import com.apsl.glideapp.core.database.AppDatabase
+import com.apsl.glideapp.core.database.entities.RideCoordinatesEntity
 import com.apsl.glideapp.core.database.entities.RideEntity
+import com.apsl.glideapp.core.domain.connectivity.ConnectionState
 import com.apsl.glideapp.core.domain.connectivity.ConnectivityObserver
-import com.apsl.glideapp.core.domain.connectivity.isConnected
 import com.apsl.glideapp.core.network.GlideApi
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.datetime.LocalDateTime
 import timber.log.Timber
 
+@Singleton
 class RideRemoteMediator @Inject constructor(
     private val api: GlideApi,
     private val appDatabase: AppDatabase,
@@ -24,6 +29,7 @@ class RideRemoteMediator @Inject constructor(
 ) : RemoteMediator<Int, RideEntity>() {
 
     private val rideDao = appDatabase.rideDao()
+    private val rideCoordinatesDao = appDatabase.rideCoordinatesDao()
 
     override suspend fun load(
         loadType: LoadType,
@@ -42,9 +48,9 @@ class RideRemoteMediator @Inject constructor(
                 }
             }
 
-            if (connectivityObserver.connectivityState.firstOrNull()?.isConnected == false) {
+            if (connectivityObserver.connectivityState.firstOrNull() == ConnectionState.Available) {
                 return if (rideDao.isTableEmpty()) {
-                    MediatorResult.Error(Exception("HAHAHA"))
+                    MediatorResult.Error(Exception("Ride table is empty"))
                 } else {
                     MediatorResult.Success(true)
                 }
@@ -52,33 +58,58 @@ class RideRemoteMediator @Inject constructor(
 
             Timber.d("Loadkey: $loadKey")
 
-            val rideDtos = api.getUserRides(page = loadKey, limit = state.config.pageSize)
+            val rideDtos = api.getUserRidesByStatus(
+                status = RideStatus.Finished.name,
+                page = loadKey,
+                limit = state.config.pageSize
+            )
+
+            val rideEntities = rideDtos.mapToEntities()
+            val rideCoordinatesEntities = rideDtos.mapToRideCoordinatesEntities()
 
             appDatabase.withTransaction {
                 if (loadType == LoadType.REFRESH) {
                     rideDao.deleteAllRides()
+                    rideCoordinatesDao.deleteAllRideCoordinates()
                 }
 
-                val rideEntities = rideDtos.map {
-                    RideEntity(
-                        id = it.id,
-                        key = it.key,
-                        startAddress = it.startAddress,
-                        finishAddress = it.finishAddress,
-                        startDateTime = it.startDateTime,
-                        finishDateTime = it.finishDateTime,
-                        route = it.route,
-                        distance = it.distance,
-                        averageSpeed = it.averageSpeed,
-                        createdAt = LocalDateTime.now(),
-                        updatedAt = LocalDateTime.now(),
-                    )
-                }
-                rideDao.upsertAllRides(rideEntities)
+                rideDao.upsertRides(rideEntities)
+                rideCoordinatesDao.upsertRideCoordinates(rideCoordinatesEntities)
             }
             MediatorResult.Success(endOfPaginationReached = rideDtos.size < state.config.pageSize)
         } catch (e: Exception) {
             MediatorResult.Error(e)
+        }
+    }
+
+    private fun List<RideDto>.mapToEntities(): List<RideEntity> {
+        return this.map {
+            RideEntity(
+                id = it.id,
+                key = it.key,
+                startAddress = it.startAddress,
+                finishAddress = it.finishAddress,
+                startDateTime = it.startDateTime,
+                finishDateTime = it.finishDateTime,
+                distance = it.distance,
+                averageSpeed = it.averageSpeed,
+                createdAt = LocalDateTime.now(),
+                updatedAt = LocalDateTime.now(),
+            )
+        }
+    }
+
+    private fun List<RideDto>.mapToRideCoordinatesEntities(): List<RideCoordinatesEntity> {
+        return this.flatMap { ride ->
+            ride.route.map { coordinates ->
+                RideCoordinatesEntity(
+                    rideId = ride.id,
+                    latitude = coordinates.latitude,
+                    longitude = coordinates.longitude,
+                    createdAt = LocalDateTime.now(),
+                    updatedAt = LocalDateTime.now()
+                )
+            }
         }
     }
 }
