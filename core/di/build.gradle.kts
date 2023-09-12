@@ -27,14 +27,17 @@ dependencies {
     implementation(project(":core:network"))
     implementation(project(":core:util"))
 
-    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.datastore)
     implementation(libs.androidx.paging.common)
+    implementation(libs.androidx.security.crypto.ktx)
 
     implementation(libs.bundles.ktor.client)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.kotlinx.serialization.protobuf)
     implementation(libs.okhttp3.loggingInterceptor)
     implementation(libs.retrofit2)
     implementation(libs.retrofit2.kotlinxSerializationConverter)
+    implementation(libs.security.crypto.datastore)
 
     implementation(libs.dagger.hilt.android)
     kapt(libs.dagger.hilt.android.compiler)
