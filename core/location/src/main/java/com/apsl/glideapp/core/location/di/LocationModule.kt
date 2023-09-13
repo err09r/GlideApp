@@ -1,4 +1,4 @@
-package com.apsl.glideapp.core.di
+package com.apsl.glideapp.core.location.di
 
 import com.apsl.glideapp.core.domain.connectivity.ConnectivityObserver
 import com.apsl.glideapp.core.domain.location.AddressDecoder

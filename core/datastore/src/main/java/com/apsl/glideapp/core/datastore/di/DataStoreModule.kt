@@ -1,4 +1,4 @@
-package com.apsl.glideapp.core.di
+package com.apsl.glideapp.core.datastore.di
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -12,6 +12,7 @@ import com.apsl.glideapp.core.datastore.AppPreferences
 import com.apsl.glideapp.core.datastore.AppPreferencesSerializer
 import com.apsl.glideapp.core.datastore.EncryptedAppPreferences
 import com.apsl.glideapp.core.datastore.EncryptedAppPreferencesSerializer
+import com.apsl.glideapp.core.datastore.R
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

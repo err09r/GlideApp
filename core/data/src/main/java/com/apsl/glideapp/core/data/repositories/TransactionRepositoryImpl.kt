@@ -8,7 +8,7 @@ import com.apsl.glideapp.common.models.TransactionType
 import com.apsl.glideapp.core.database.entities.TransactionEntity
 import com.apsl.glideapp.core.domain.transaction.Transaction
 import com.apsl.glideapp.core.domain.transaction.TransactionRepository
-import com.apsl.glideapp.core.network.GlideApi
+import com.apsl.glideapp.core.network.http.GlideApi
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

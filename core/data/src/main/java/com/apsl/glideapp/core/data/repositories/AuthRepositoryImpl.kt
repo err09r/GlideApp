@@ -4,7 +4,7 @@ import com.apsl.glideapp.common.dto.LoginRequest
 import com.apsl.glideapp.common.dto.RegisterRequest
 import com.apsl.glideapp.core.datastore.AppDataStore
 import com.apsl.glideapp.core.domain.auth.AuthRepository
-import com.apsl.glideapp.core.network.GlideApi
+import com.apsl.glideapp.core.network.http.GlideApi
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

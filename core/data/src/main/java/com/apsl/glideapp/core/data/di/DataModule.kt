@@ -1,4 +1,4 @@
-package com.apsl.glideapp.core.di
+package com.apsl.glideapp.core.data.di
 
 import com.apsl.glideapp.core.data.repositories.AppConfigRepositoryImpl
 import com.apsl.glideapp.core.data.repositories.AuthRepositoryImpl

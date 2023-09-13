@@ -1,4 +1,4 @@
-package com.apsl.glideapp.core.di
+package com.apsl.glideapp.core.database.di
 
 import android.content.Context
 import androidx.room.Room

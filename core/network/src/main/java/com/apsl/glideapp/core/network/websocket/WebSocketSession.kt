@@ -1,4 +1,4 @@
-package com.apsl.glideapp.core.network
+package com.apsl.glideapp.core.network.websocket
 
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.websocket.DefaultClientWebSocketSession

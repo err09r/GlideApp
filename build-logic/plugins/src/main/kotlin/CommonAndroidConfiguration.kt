@@ -7,14 +7,13 @@ import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 fun BaseExtension.commonAndroidConfiguration(target: Project) {
-    val kotlinCompilerExtensionVersion = target.libs.versions.androidx.compose.compiler.get()
-    configureDefaultConfig(kotlinCompilerExtensionVersion)
+    configureDefaultConfig()
     configureBuildTypes()
     configureJavaCompileOptions()
     target.configureKotlinCompileOptions()
 }
 
-private fun BaseExtension.configureDefaultConfig(kotlinCompilerExtensionVersion: String) {
+private fun BaseExtension.configureDefaultConfig() {
     namespace = Config.namespace
     compileSdkVersion(Config.compileSdk)
 
@@ -27,10 +26,6 @@ private fun BaseExtension.configureDefaultConfig(kotlinCompilerExtensionVersion:
         testInstrumentationRunner = Config.testInstrumentationRunner
 
         resourceConfigurations += Config.resourceConfigurations
-    }
-
-    composeOptions {
-        this.kotlinCompilerExtensionVersion = kotlinCompilerExtensionVersion
     }
 
     packagingOptions {
@@ -66,45 +61,25 @@ private fun BaseExtension.configureBuildTypes() {
 }
 
 private fun BaseExtension.configureJavaCompileOptions() {
-    compileOptions.sourceCompatibility = Config.javaVersion
-    compileOptions.targetCompatibility = Config.javaVersion
+    compileOptions {
+        sourceCompatibility = Config.javaVersion
+        targetCompatibility = Config.javaVersion
+    }
 }
 
 private fun Project.configureKotlinCompileOptions() {
     tasks.withType<KotlinCompile>().configureEach {
         kotlinOptions {
-            jvmTarget = Config.jvmTarget
+            jvmTarget = Config.javaVersion.toString()
             freeCompilerArgs += listOf(
                 "-opt-in=kotlin.RequiresOptIn",
                 "-opt-in=kotlin.time.ExperimentalTime",
                 "-opt-in=kotlinx.coroutines.FlowPreview",
                 "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
                 "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
-                "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi",
-                "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
-                "-opt-in=androidx.compose.animation.ExperimentalAnimationApi",
-                "-opt-in=androidx.compose.material.ExperimentalMaterialApi",
                 "-opt-in=androidx.paging.ExperimentalPagingApi",
-                "-opt-in=com.google.maps.android.compose.MapsComposeExperimentalApi",
-                "-opt-in=com.google.accompanist.pager.ExperimentalPagerApi",
-                "-opt-in=com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi"
-            ).run {
-                when {
-                    // Use `-Pcom.apsl.glideapp.enableComposeCompilerReports=true` to enable
-                    findProperty("${Config.namespace}.enableComposeCompilerReports") == "true" -> {
-                        this + listOf(
-                            "-P=plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=${
-                                layout.buildDirectory.dir("composeMetrics").get()
-                            }",
-                            "-P=plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=${
-                                layout.buildDirectory.dir("composeMetrics").get()
-                            }"
-                        )
-                    }
-
-                    else -> this
-                }
-            }
+                "-opt-in=com.google.maps.android.compose.MapsComposeExperimentalApi"
+            )
         }
     }
 }
