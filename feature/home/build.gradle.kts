@@ -6,8 +6,8 @@ dependencies {
     implementation(project(":core:datastore"))
     implementation(project(":core:network"))
 
-    implementation(libs.androidx.compose.materialIconsExtended)
     implementation(libs.accompanist.permissions)
+    implementation(libs.androidx.compose.materialIconsExtended)
     implementation(libs.glideapp.common.util)
     implementation(libs.google.gms.playServices.location)
     implementation(libs.google.gms.playServices.maps)

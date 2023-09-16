@@ -6,8 +6,8 @@ plugins {
 
 dependencies {
     implementation(libs.androidx.datastore)
-    implementation(libs.glideapp.common.models)
     implementation(libs.androidx.security.crypto.ktx)
-    implementation(libs.security.crypto.datastore)
+    implementation(libs.glideapp.common.models)
     implementation(libs.kotlinx.serialization.protobuf)
+    implementation(libs.security.crypto.datastore)
 }

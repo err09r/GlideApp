@@ -72,13 +72,13 @@ private fun Project.configureKotlinCompileOptions() {
         kotlinOptions {
             jvmTarget = Config.javaVersion.toString()
             freeCompilerArgs += listOf(
+                "-opt-in=androidx.paging.ExperimentalPagingApi",
+                "-opt-in=com.google.maps.android.compose.MapsComposeExperimentalApi",
                 "-opt-in=kotlin.RequiresOptIn",
                 "-opt-in=kotlin.time.ExperimentalTime",
-                "-opt-in=kotlinx.coroutines.FlowPreview",
                 "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-                "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
-                "-opt-in=androidx.paging.ExperimentalPagingApi",
-                "-opt-in=com.google.maps.android.compose.MapsComposeExperimentalApi"
+                "-opt-in=kotlinx.coroutines.FlowPreview",
+                "-opt-in=kotlinx.serialization.ExperimentalSerializationApi"
             )
         }
     }

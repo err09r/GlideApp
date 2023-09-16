@@ -22,11 +22,7 @@ configure<BaseExtension> {
         applicationId = Config.applicationId
     }
 
-    android {
-        buildFeatures {
-            buildConfig = true
-        }
-    }
+    buildFeatures.buildConfig = true
 
     signingConfigs {
         maybeCreate("release").run {

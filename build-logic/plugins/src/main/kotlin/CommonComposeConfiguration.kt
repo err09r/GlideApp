@@ -33,12 +33,12 @@ private fun Project.configureDependencies() {
 private fun Project.configureKotlinCompileOptions() {
     tasks.withType<KotlinCompile>().configureEach {
         kotlinOptions.freeCompilerArgs += listOf(
-            "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi",
-            "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
             "-opt-in=androidx.compose.animation.ExperimentalAnimationApi",
+            "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
             "-opt-in=androidx.compose.material.ExperimentalMaterialApi",
-            "-opt-in=com.google.accompanist.pager.ExperimentalPagerApi",
-            "-opt-in=com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi"
+            "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi",
+            "-opt-in=com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi",
+            "-opt-in=com.google.accompanist.pager.ExperimentalPagerApi"
         ).run {
             when {
                 // Use `-Pcom.apsl.glideapp.enableComposeCompilerReports=true` to enable
