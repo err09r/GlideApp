@@ -5,12 +5,13 @@ import androidx.compose.runtime.Immutable
 @Immutable
 sealed class Screen(val route: String) {
     object Home {
-        object Root : Screen("home")
-        object LocationPermission : Screen("locationPermission")
+        data object Root : Screen("home")
+        data object LocationPermission : Screen("locationPermission")
+        data object LocationRationale : Screen("locationRationale")
     }
 
     object Rides {
-        object Root : Screen("rides")
+        data object Root : Screen("rides")
         data class RideDetails(val id: String) : Screen("ride/$id") {
             companion object {
                 const val route = "ride/{id}"
@@ -19,14 +20,14 @@ sealed class Screen(val route: String) {
     }
 
     object Wallet {
-        object Root : Screen("wallet")
-        object AllTransactions : Screen("transactions")
-        object TopUp : Screen("topUp")
-        object RedeemVoucher : Screen("redeemVoucher")
+        data object Root : Screen("wallet")
+        data object AllTransactions : Screen("transactions")
+        data object TopUp : Screen("topUp")
+        data object RedeemVoucher : Screen("redeemVoucher")
     }
 
     object Auth {
-        object Login : Screen("login")
-        object Register : Screen("register")
+        data object Login : Screen("login")
+        data object Register : Screen("register")
     }
 }

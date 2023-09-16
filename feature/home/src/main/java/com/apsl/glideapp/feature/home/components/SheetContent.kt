@@ -37,9 +37,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.feature.home.R
 import com.apsl.glideapp.feature.home.viewmodels.RideState
-import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 
 @Composable
 fun SheetContent(
@@ -51,9 +51,9 @@ fun SheetContent(
     onStartRideClick: () -> Unit,
     onFinishRideClick: () -> Unit
 ) {
-    AnimatedContent(targetState = rideState) {
-        when (rideState) {
-            RideState.Started -> {
+    AnimatedContent(targetState = rideState, label = "") {
+        when (it) {
+            RideState.Active -> {
                 Row(
                     modifier = modifier
                         .fillMaxWidth()
@@ -162,7 +162,7 @@ fun SheetContentPreview() {
             vehicleCode = "0023",
             vehicleRange = 25,
             vehicleCharge = 90,
-            rideState = RideState.Started,
+            rideState = RideState.Active,
             onStartRideClick = {},
             onFinishRideClick = {}
         )

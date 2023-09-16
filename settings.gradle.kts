@@ -1,6 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         google()
         mavenCentral()
@@ -13,7 +14,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven { setUrl("https://jitpack.io") }
+        maven("https://jitpack.io")
     }
 }
 
@@ -29,7 +30,6 @@ include(":feature:wallet")
 include(":core:data")
 include(":core:database")
 include(":core:datastore")
-include(":core:di")
 include(":core:domain")
 include(":core:location")
 include(":core:navigation")

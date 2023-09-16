@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_prefs" translatable="false">"com.apsl.glideapp.app_prefs"</string>
+    <string name="encr_prefs" translatable="false">"com.apsl.glideapp.encr_prefs"</string>
+</resources>

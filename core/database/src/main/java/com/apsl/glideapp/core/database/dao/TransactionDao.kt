@@ -7,16 +7,13 @@ import androidx.room.Upsert
 import com.apsl.glideapp.core.database.entities.TransactionEntity
 
 @Dao
-interface TransactionDao {
-
-    @Query("SELECT (SELECT COUNT(*) FROM rides) == 0")
-    fun isTableEmpty(): Boolean
+interface TransactionDao : BaseDao {
 
     @Query("SELECT * FROM transactions")
     fun getTransactionPagingSource(): PagingSource<Int, TransactionEntity>
 
     @Upsert
-    suspend fun upsertAllTransactions(transactions: List<TransactionEntity>)
+    suspend fun upsertTransactions(transactions: List<TransactionEntity>)
 
     @Query("DELETE FROM transactions")
     suspend fun deleteAllTransactions()

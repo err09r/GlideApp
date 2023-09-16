@@ -1,5 +1,6 @@
 plugins {
-    id("com.apsl.glideapp.core")
+    id("com.apsl.glideapp.core-android")
+    id("com.apsl.glideapp.hilt")
 }
 
 dependencies {
@@ -17,5 +18,4 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
 
     implementation(libs.glideapp.common.dto)
-    implementation(libs.javax.inject)
 }

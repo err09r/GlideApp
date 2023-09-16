@@ -1,8 +1,5 @@
 package com.apsl.glideapp.feature.home.screens
 
-import android.content.Intent
-import android.net.Uri
-import android.provider.Settings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -18,9 +15,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
+import com.apsl.glideapp.core.util.navigateToAppSettings
 
 @Composable
-fun LocationPermissionDialog(modifier: Modifier = Modifier) {
+fun LocationPermissionDialog(modifier: Modifier = Modifier, onNavigateBack: () -> Unit) {
     val context = LocalContext.current
 
     Surface(modifier = modifier) {
@@ -34,12 +32,8 @@ fun LocationPermissionDialog(modifier: Modifier = Modifier) {
             )
             Button(
                 onClick = {
-                    Intent(
-                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                        Uri.fromParts("package", context.packageName, null)
-                    ).run {
-                        context.startActivity(this)
-                    }
+                    context.navigateToAppSettings()
+                    onNavigateBack()
                 }
             ) {
                 Text("Go to app settings")
@@ -53,6 +47,6 @@ fun LocationPermissionDialog(modifier: Modifier = Modifier) {
 @Composable
 fun LocationPermissionDialogPreview() {
     GlideAppTheme {
-        LocationPermissionDialog()
+        LocationPermissionDialog(onNavigateBack = {})
     }
 }

@@ -30,13 +30,11 @@ import com.apsl.glideapp.feature.rides.models.RideDetailsUiModel
 import com.apsl.glideapp.feature.rides.viewmodels.RideDetailsUiState
 import com.apsl.glideapp.feature.rides.viewmodels.RideDetailsViewModel
 import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Polyline
-import com.apsl.glideapp.core.ui.R as CoreR
 
 @Composable
 fun RideDetailsScreen(
@@ -116,10 +114,10 @@ fun RideDetailsScreenContent(uiState: RideDetailsUiState, onBackClick: () -> Uni
                 cameraPositionState = cameraPositionState,
                 properties = MapProperties(
                     latLngBoundsForCameraTarget = uiState.mapCameraBounds,
-                    mapStyleOptions = MapStyleOptions.loadRawResourceStyle(
-                        context,
-                        CoreR.raw.map_style
-                    ),
+//                    mapStyleOptions = MapStyleOptions.loadRawResourceStyle(
+//                        context,
+//                        CoreR.raw.map_style
+//                    ),
                     maxZoomPreference = 20f,
                     minZoomPreference = 11f
                 ),

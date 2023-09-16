@@ -4,14 +4,17 @@ import com.apsl.glideapp.common.dto.LoginRequest
 import com.apsl.glideapp.common.dto.RegisterRequest
 import com.apsl.glideapp.core.datastore.AppDataStore
 import com.apsl.glideapp.core.domain.auth.AuthRepository
-import com.apsl.glideapp.core.network.GlideApi
+import com.apsl.glideapp.core.network.http.GlideApi
 import javax.inject.Inject
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class AuthRepositoryImpl @Inject constructor(
     private val api: GlideApi,
     private val appDataStore: AppDataStore
 ) : AuthRepository {
+
+    override val isUserAuthenticated: Flow<Boolean> = appDataStore.authToken.map { it != null }
 
     override suspend fun login(username: String, password: String): String {
         val authResponse = api.login(
@@ -31,11 +34,7 @@ class AuthRepositoryImpl @Inject constructor(
         appDataStore.saveAuthToken(token)
     }
 
-    override suspend fun deleteAuthToken() {
+    override suspend fun logout() {
         appDataStore.deleteAuthToken()
-    }
-
-    override suspend fun getIsUserAuthenticated(): Boolean {
-        return appDataStore.getAuthToken().firstOrNull() != null
     }
 }

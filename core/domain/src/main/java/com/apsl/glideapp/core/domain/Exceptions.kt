@@ -6,4 +6,3 @@ class InvalidAuthTokenException(
 
 class AddressDecoderException(message: String) : Exception(message)
 
-class LocationException(message: String) : Exception(message)

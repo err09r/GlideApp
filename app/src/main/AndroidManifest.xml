@@ -9,8 +9,15 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
+    <uses-feature
+        android:name="android.hardware.location"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.location.gps"
+        android:required="true" />
+
     <application
-        android:name=".GlideApplication"
+        android:name="com.apsl.glideapp.app.GlideApplication"
         android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -20,10 +27,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.GlideApp"
         android:usesCleartextTraffic="true"
-        tools:targetApi="33">
+        tools:targetApi="34">
 
         <activity
-            android:name=".MainActivity"
+            android:name="com.apsl.glideapp.app.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.GlideApp"
@@ -36,7 +43,7 @@
         </activity>
 
         <service
-            android:name=".feature.home.RideService"
+            android:name="com.apsl.glideapp.feature.home.rideservice.RideService"
             android:foregroundServiceType="location" />
 
         <provider
@@ -45,7 +52,7 @@
             android:exported="false"
             tools:node="merge">
             <meta-data
-                android:name="com.apsl.glideapp.initializers.TimberInitializer"
+                android:name="com.apsl.glideapp.app.initializers.TimberInitializer"
                 android:value="androidx.startup" />
         </provider>
 
