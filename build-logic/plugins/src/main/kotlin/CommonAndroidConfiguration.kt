@@ -39,10 +39,12 @@ private fun BaseExtension.configureBuildTypes() {
     buildTypes {
         debug {
             isDebuggable = true
+            manifestPlaceholders["performanceLogcatEnabled"] = true
         }
         staging {
             isDebuggable = false
             isMinifyEnabled = true
+            manifestPlaceholders["performanceLogcatEnabled"] = true
             signingConfig = signingConfigs.getByName("debug")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -52,6 +54,7 @@ private fun BaseExtension.configureBuildTypes() {
         release {
             isDebuggable = false
             isMinifyEnabled = true
+            manifestPlaceholders["performanceLogcatEnabled"] = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

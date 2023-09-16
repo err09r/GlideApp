@@ -37,9 +37,10 @@ google-maps-utils-ktx = "3.4.0"
 
 accompanist = "0.32.0"
 dagger-hilt-android = "2.48"
-firebase-analytics = "21.3.0"
 firebase-crashlytics = "18.4.3"
 firebase-crashlytics-plugin = "2.9.9"
+firebase-perf = "20.4.1"
+firebase-perf-plugin = "1.4.2"
 glideapp-common = "0.1.0"
 javax-inject = "1"
 ktor = "2.3.4"
@@ -117,8 +118,8 @@ accompanist-pager = { module = "com.google.accompanist:accompanist-pager", versi
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
 accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
 
-firebase-analytics-ktx = { module = "com.google.firebase:firebase-analytics-ktx", version.ref = "firebase-analytics" }
 firebase-crashlytics-ktx = { module = "com.google.firebase:firebase-crashlytics-ktx", version.ref = "firebase-crashlytics" }
+firebase-perf-ktx = { module = "com.google.firebase:firebase-perf-ktx", version.ref = "firebase-perf" }
 javax-inject = { module = "javax.inject:javax.inject", version.ref = "javax-inject" }
 lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
 okhttp3-loggingInterceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttp3-loggingInterceptor" }
@@ -132,6 +133,7 @@ android-application = { id = "com.android.application", version.ref = "android-g
 android-library = { id = "com.android.library", version.ref = "android-gradlePlugin" }
 dagger-hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "dagger-hilt-android" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-crashlytics-plugin" }
+firebase-perf = { id = "com.google.firebase.firebase-perf", version.ref = "firebase-perf-plugin" }
 google-gms-googleServices = { id = "com.google.gms.google-services", version.ref = "google-gms-googleServices" }
 google-gradleSecrets = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "secretsGradle" }
 google-ksp = { id = "com.google.devtools.ksp", version.ref = "google-ksp" }

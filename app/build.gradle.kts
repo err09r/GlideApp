@@ -1,6 +1,7 @@
 plugins {
     id("com.apsl.glideapp.android-application")
     alias(libs.plugins.firebase.crashlytics)
+    alias(libs.plugins.firebase.perf)
     alias(libs.plugins.google.gms.googleServices)
     alias(libs.plugins.google.gradleSecrets)
 }
@@ -26,7 +27,7 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.startup.runtime)
 
-    implementation(libs.firebase.analytics.ktx)
+    implementation(libs.firebase.perf.ktx)
     implementation(libs.glideapp.common.dto)
     implementation(libs.timber)
 }
