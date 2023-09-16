@@ -1,5 +1,6 @@
 plugins {
-    id("com.apsl.glideapp.core")
+    id("com.apsl.glideapp.core-android")
+    id("com.apsl.glideapp.hilt")
 }
 
 dependencies {
@@ -7,7 +8,5 @@ dependencies {
     implementation(project(":core:domain"))
     implementation(project(":core:util"))
 
-    implementation(libs.dagger.hilt.android)
-    implementation(libs.javax.inject)
     implementation(libs.kotlinx.coroutines.core)
 }

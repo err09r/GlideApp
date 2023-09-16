@@ -1,9 +1,11 @@
-package com.apsl.glideapp.core.di
+package com.apsl.glideapp.core.network.di
 
-import com.apsl.glideapp.core.network.GlideApi
-import com.apsl.glideapp.core.network.KtorWebSocketClient
-import com.apsl.glideapp.core.network.WebSocketClient
-import com.apsl.glideapp.core.network.WebSocketSession
+import com.apsl.glideapp.core.network.BuildConfig
+import com.apsl.glideapp.core.network.http.GlideApi
+import com.apsl.glideapp.core.network.util.AuthInterceptor
+import com.apsl.glideapp.core.network.websocket.KtorWebSocketClient
+import com.apsl.glideapp.core.network.websocket.WebSocketClient
+import com.apsl.glideapp.core.network.websocket.WebSocketSession
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
@@ -14,6 +16,7 @@ import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.websocket.WebSockets
 import io.ktor.client.request.url
 import io.ktor.serialization.kotlinx.KotlinxWebsocketSerializationConverter
+import io.ktor.serialization.kotlinx.json.DefaultJson
 import javax.inject.Qualifier
 import javax.inject.Singleton
 import kotlinx.serialization.json.Json
@@ -23,17 +26,18 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Converter
 import retrofit2.Retrofit
 
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-private annotation class MapWebSocket
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-private annotation class RideWebSocket
-
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
+
+    @Singleton
+    @Provides
+    fun provideNetworkJson(): Json {
+        return Json(DefaultJson) {
+            decodeEnumsCaseInsensitive = true
+            ignoreUnknownKeys = true
+        }
+    }
 
     @MapWebSocket
     @Singleton
@@ -135,3 +139,11 @@ object NetworkModule {
         }
     }
 }
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+private annotation class MapWebSocket
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+private annotation class RideWebSocket

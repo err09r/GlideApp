@@ -9,7 +9,7 @@ import com.apsl.glideapp.core.database.entities.ZoneCoordinatesEntity
 import com.apsl.glideapp.core.database.entities.ZoneEntity
 import com.apsl.glideapp.core.domain.home.Zone
 import com.apsl.glideapp.core.domain.zone.ZoneRepository
-import com.apsl.glideapp.core.network.GlideApi
+import com.apsl.glideapp.core.network.http.GlideApi
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

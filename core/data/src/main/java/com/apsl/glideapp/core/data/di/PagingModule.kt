@@ -1,4 +1,4 @@
-package com.apsl.glideapp.core.di
+package com.apsl.glideapp.core.data.di
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig

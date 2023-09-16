@@ -1,6 +1,6 @@
 plugins {
-    id("com.apsl.glideapp.core")
-    alias(libs.plugins.google.ksp)
+    id("com.apsl.glideapp.core-android")
+    id("com.apsl.glideapp.hilt")
 }
 
 ksp {

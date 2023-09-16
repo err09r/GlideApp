@@ -4,7 +4,7 @@ import com.apsl.glideapp.common.models.CoordinatesBounds
 import com.apsl.glideapp.core.domain.home.Vehicle
 import com.apsl.glideapp.core.domain.map.MapRepository
 import com.apsl.glideapp.core.domain.map.RemoteMapContent
-import com.apsl.glideapp.core.network.WebSocketClient
+import com.apsl.glideapp.core.network.websocket.WebSocketClient
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

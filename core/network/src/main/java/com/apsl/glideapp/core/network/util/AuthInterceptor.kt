@@ -1,4 +1,4 @@
-package com.apsl.glideapp.core.di
+package com.apsl.glideapp.core.network.util
 
 import com.apsl.glideapp.core.datastore.AppDataStore
 import javax.inject.Inject

@@ -1,5 +1,5 @@
 plugins {
-    id("com.apsl.glideapp.core")
+    id("com.apsl.glideapp.core-android")
 }
 
 dependencies {

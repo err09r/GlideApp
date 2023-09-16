@@ -1,4 +1,4 @@
-package com.apsl.glideapp.core.network
+package com.apsl.glideapp.core.network.websocket
 
 import com.apsl.glideapp.common.dto.MapContentDto
 import com.apsl.glideapp.common.dto.RideEventDto

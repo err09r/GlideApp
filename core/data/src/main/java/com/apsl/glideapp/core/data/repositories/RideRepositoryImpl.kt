@@ -10,8 +10,8 @@ import com.apsl.glideapp.core.datastore.AppDataStore
 import com.apsl.glideapp.core.domain.ride.Ride
 import com.apsl.glideapp.core.domain.ride.RideEvent
 import com.apsl.glideapp.core.domain.ride.RideRepository
-import com.apsl.glideapp.core.network.GlideApi
-import com.apsl.glideapp.core.network.WebSocketClient
+import com.apsl.glideapp.core.network.http.GlideApi
+import com.apsl.glideapp.core.network.websocket.WebSocketClient
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

@@ -1,4 +1,4 @@
-package com.apsl.glideapp.core.di
+package com.apsl.glideapp.core.data.di
 
 import com.apsl.glideapp.core.data.repositories.AppConfigRepositoryImpl
 import com.apsl.glideapp.core.data.repositories.AuthRepositoryImpl
@@ -8,6 +8,7 @@ import com.apsl.glideapp.core.data.repositories.RideRepositoryImpl
 import com.apsl.glideapp.core.data.repositories.TransactionRepositoryImpl
 import com.apsl.glideapp.core.data.repositories.UserRepositoryImpl
 import com.apsl.glideapp.core.data.repositories.ZoneRepositoryImpl
+import com.apsl.glideapp.core.domain.auth.AuthRepository
 import com.apsl.glideapp.core.domain.config.AppConfigRepository
 import com.apsl.glideapp.core.domain.location.LocationRepository
 import com.apsl.glideapp.core.domain.map.MapRepository
@@ -27,7 +28,7 @@ interface DataModule {
 
     @Singleton
     @Binds
-    fun bindAuthRepository(repository: AuthRepositoryImpl): com.apsl.glideapp.core.domain.auth.AuthRepository
+    fun bindAuthRepository(repository: AuthRepositoryImpl): AuthRepository
 
     @Singleton
     @Binds

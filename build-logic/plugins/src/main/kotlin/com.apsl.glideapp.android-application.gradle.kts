@@ -4,6 +4,7 @@ import java.util.Properties
 
 plugins {
     id("com.android.application")
+    id("com.apsl.glideapp.hilt")
     kotlin("android")
 }
 
@@ -13,6 +14,7 @@ keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 
 configure<BaseExtension> {
     commonAndroidConfiguration(project)
+    commonComposeConfiguration(project)
 
     namespace = "${Config.namespace}.app"
 
@@ -20,12 +22,7 @@ configure<BaseExtension> {
         applicationId = Config.applicationId
     }
 
-    android {
-        buildFeatures {
-            buildConfig = true
-            compose = true
-        }
-    }
+    buildFeatures.buildConfig = true
 
     signingConfigs {
         maybeCreate("release").run {
