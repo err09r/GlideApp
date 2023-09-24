@@ -13,9 +13,7 @@ import com.apsl.glideapp.core.network.http.GlideApi
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.datetime.LocalDateTime
-import timber.log.Timber
 
 class ZoneRepositoryImpl @Inject constructor(
     private val api: GlideApi,
@@ -73,8 +71,5 @@ class ZoneRepositoryImpl @Inject constructor(
                     }
                 )
             }
-        }
-        .onEach {
-            Timber.d("getAllZones each")
         }
 }

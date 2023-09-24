@@ -80,6 +80,9 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             getUserUseCase()
                 .onSuccess { user ->
+                    if (user == null) {
+                        return@onSuccess
+                    }
                     _uiState.update { state ->
                         state.copy(
                             username = user.username,

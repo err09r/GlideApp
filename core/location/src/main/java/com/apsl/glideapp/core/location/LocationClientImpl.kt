@@ -3,11 +3,11 @@ package com.apsl.glideapp.core.location
 import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
-import android.location.LocationListener
 import android.location.LocationManager
 import android.location.LocationRequest
 import android.os.Build
 import androidx.core.content.ContextCompat
+import androidx.core.location.LocationListenerCompat
 import com.apsl.glideapp.common.util.asResult
 import com.apsl.glideapp.core.datastore.AppDataStore
 import com.apsl.glideapp.core.domain.location.GpsDisabledException
@@ -91,7 +91,7 @@ class LocationClientImpl @Inject constructor(
         ensureLocationPermissionsGranted()
         ensureProvidersEnabled()
 
-        val locationListener = LocationListener { location ->
+        val locationListener = LocationListenerCompat { location ->
             val userLocation = location.toUserLocation()
             scope.launch {
                 Timber.d("Latitude: ${userLocation.latitudeDegrees}, Longitude: ${userLocation.longitudeDegrees}")

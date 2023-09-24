@@ -18,9 +18,6 @@ import androidx.compose.material.BottomSheetScaffold
 import androidx.compose.material.BottomSheetValue
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Menu
-import androidx.compose.material.icons.rounded.NearMe
 import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material.rememberBottomSheetState
 import androidx.compose.runtime.Composable
@@ -45,6 +42,9 @@ import com.apsl.glideapp.core.ui.LoadingBar
 import com.apsl.glideapp.core.ui.RequestMultiplePermissions
 import com.apsl.glideapp.core.ui.RequestMultiplePermissionsState
 import com.apsl.glideapp.core.ui.getOffset
+import com.apsl.glideapp.core.ui.icons.GlideIcons
+import com.apsl.glideapp.core.ui.icons.Gps
+import com.apsl.glideapp.core.ui.icons.Menu
 import com.apsl.glideapp.core.ui.rememberRequestMultiplePermissionState
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.feature.home.components.DrawerContent
@@ -274,7 +274,6 @@ fun HomeScreenContent(
                 username = uiState.username,
                 userTotalDistance = uiState.userTotalDistance,
                 userTotalRides = uiState.userTotalRides,
-                onRefreshData = onRefreshUserData,
                 onMyRidesClick = onMyRidesClick,
                 onWalletClick = onWalletClick
             )
@@ -326,10 +325,7 @@ fun HomeScreenContent(
                                 }
                             }
                         ) {
-                            Icon(
-                                imageVector = Icons.Rounded.Menu,
-                                contentDescription = null
-                            )
+                            Icon(imageVector = GlideIcons.Menu, contentDescription = null)
                         }
                         if (uiState.isLoadingMapContent) {
                             Spacer(Modifier.width(16.dp))
@@ -348,10 +344,7 @@ fun HomeScreenContent(
                             requestPermissionsState.requestPermissions = true
                         }
                     ) {
-                        Icon(
-                            imageVector = Icons.Rounded.NearMe,
-                            contentDescription = null
-                        )
+                        Icon(imageVector = GlideIcons.Gps, contentDescription = null)
                     }
                 }
             }

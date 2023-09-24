@@ -6,25 +6,27 @@ import com.apsl.glideapp.core.network.util.AuthInterceptor
 import com.apsl.glideapp.core.network.websocket.KtorWebSocketClient
 import com.apsl.glideapp.core.network.websocket.WebSocketClient
 import com.apsl.glideapp.core.network.websocket.WebSocketSession
-import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import de.jensklingenberg.ktorfit.Ktorfit
 import io.ktor.client.HttpClient
+import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.okhttp.OkHttp
+import io.ktor.client.plugins.DefaultRequest
+import io.ktor.client.plugins.HttpResponseValidator
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.websocket.WebSockets
+import io.ktor.client.request.header
 import io.ktor.client.request.url
 import io.ktor.serialization.kotlinx.KotlinxWebsocketSerializationConverter
 import io.ktor.serialization.kotlinx.json.DefaultJson
+import io.ktor.serialization.kotlinx.json.json
 import javax.inject.Qualifier
 import javax.inject.Singleton
 import kotlinx.serialization.json.Json
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Converter
-import retrofit2.Retrofit
+import timber.log.Timber
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -73,69 +75,49 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideHttpClient(
-        loggingInterceptor: HttpLoggingInterceptor,
-        authInterceptor: AuthInterceptor,
-        json: Json
-    ): HttpClient {
-        return HttpClient(OkHttp) {
-            engine {
-                addInterceptor(authInterceptor)
-                if (BuildConfig.DEBUG) {
-                    addInterceptor(loggingInterceptor)
-                }
-            }
+    fun provideHttpClient(engine: HttpClientEngine, json: Json): HttpClient {
+        return HttpClient(engine) {
+            expectSuccess = true
             install(WebSockets) {
                 contentConverter = KotlinxWebsocketSerializationConverter(json)
+            }
+            install(ContentNegotiation) {
+                json(json)
+            }
+            install(DefaultRequest) {
+                header("Content-Type", "application/json")
+            }
+            HttpResponseValidator {
+                if (BuildConfig.DEBUG) {
+                    validateResponse {
+                        Timber.tag("KtorHttpResponse").d(it.toString())
+                    }
+                }
+                handleResponseExceptionWithRequest { cause, request ->
+                    Timber.tag("KtorHttpResponse").d(cause)
+                }
             }
         }
     }
 
     @Singleton
     @Provides
-    fun provideApi(retrofit: Retrofit): GlideApi {
-        return retrofit.create(GlideApi::class.java)
-    }
+    fun provideApi(ktorfit: Ktorfit): GlideApi = ktorfit.create()
 
     @Singleton
     @Provides
-    fun provideJsonConverterFactory(json: Json): Converter.Factory {
-        val contentType = "application/json".toMediaType()
-        return json.asConverterFactory(contentType)
-    }
-
-    @Singleton
-    @Provides
-    fun provideRetrofit(
-        jsonConverterFactory: Converter.Factory,
-        okHttpClient: OkHttpClient
-    ): Retrofit {
-        return Retrofit.Builder()
+    fun provideKtorfit(httpClient: HttpClient): Ktorfit {
+        return Ktorfit.Builder()
             .baseUrl(BuildConfig.GLIDE_API_BASE_URL_HTTP)
-            .addConverterFactory(jsonConverterFactory)
-            .client(okHttpClient)
+            .httpClient(httpClient)
             .build()
     }
 
     @Singleton
     @Provides
-    fun provideOkHttpClient(
-        loggingInterceptor: HttpLoggingInterceptor,
-        authInterceptor: AuthInterceptor
-    ): OkHttpClient {
-        return OkHttpClient.Builder().apply {
+    fun provideOkHttpEngine(authInterceptor: AuthInterceptor): HttpClientEngine {
+        return OkHttp.create {
             addInterceptor(authInterceptor)
-            if (BuildConfig.DEBUG) {
-                addInterceptor(loggingInterceptor)
-            }
-        }.build()
-    }
-
-    @Singleton
-    @Provides
-    fun provideLoggingInterceptor(): HttpLoggingInterceptor {
-        return HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
         }
     }
 }
