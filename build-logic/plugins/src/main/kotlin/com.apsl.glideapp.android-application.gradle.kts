@@ -1,6 +1,4 @@
-import com.android.build.gradle.AbstractAppExtension
 import com.android.build.gradle.BaseExtension
-import com.android.build.gradle.internal.api.BaseVariantOutputImpl
 import java.io.FileInputStream
 import java.util.Properties
 
@@ -46,16 +44,6 @@ configure<BaseExtension> {
         release {
             signingConfig = signingConfigs.getByName("release")
             isShrinkResources = true
-        }
-    }
-}
-
-configure<AbstractAppExtension> {
-    applicationVariants.all {
-        if (this.name == "release") {
-            outputs.all {
-                (this as BaseVariantOutputImpl).outputFileName = Config.releaseOutputFileName
-            }
         }
     }
 }

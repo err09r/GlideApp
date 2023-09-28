@@ -13,8 +13,6 @@ object Config {
 
     val javaVersion = JavaVersion.VERSION_17
 
-    const val releaseOutputFileName = "GlideApp - $versionName"
-
     const val testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
     val resourceConfigurations = arrayOf("en")
