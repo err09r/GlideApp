@@ -8,6 +8,7 @@ dependencies {
     implementation(libs.androidx.datastore)
     implementation(libs.androidx.security.crypto.ktx)
     implementation(libs.glideapp.common.models)
+    implementation(libs.kotlinx.datetime)
     implementation(libs.kotlinx.serialization.protobuf)
     implementation(libs.security.crypto.datastore)
 }

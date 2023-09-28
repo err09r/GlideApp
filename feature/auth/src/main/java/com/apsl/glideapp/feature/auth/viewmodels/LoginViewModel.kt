@@ -1,5 +1,6 @@
 package com.apsl.glideapp.feature.auth.viewmodels
 
+import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
 import com.apsl.glideapp.core.domain.auth.LoginUseCase
 import com.apsl.glideapp.core.ui.BaseViewModel
@@ -58,3 +59,13 @@ class LoginViewModel @Inject constructor(private val loginUseCase: LoginUseCase)
         _uiState.update { it.copy(isLoading = false) }
     }
 }
+
+@Immutable
+data class LoginUiState(
+    val isLoading: Boolean = false,
+    val isLoggedIn: Boolean = false,
+    val usernameTextFieldValue: String? = null,
+    val passwordTextFieldValue: String? = null,
+    val exception: Exception? = null
+)
+

@@ -21,6 +21,13 @@ class AppDataStoreImpl @Inject constructor(
         encryptedDataStore.updateData { it.copy(authToken = null) }
     }
 
+    override val currentUser: Flow<CurrentUser?> = dataStore.data.map { it.currentUser }
+
+    override suspend fun saveCurrentUser(user: CurrentUser): CurrentUser? {
+        val updated = dataStore.updateData { it.copy(currentUser = user) }
+        return updated.currentUser
+    }
+
     override val lastUserLocation: Flow<Coordinates?> = dataStore.data.map { it.lastUserLocation }
 
     override suspend fun saveLastUserLocation(location: Coordinates): Coordinates? {

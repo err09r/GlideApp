@@ -12,6 +12,7 @@ import timber.log.Timber
 
 @Serializable
 data class AppPreferences(
+    val currentUser: CurrentUser? = null,
     val lastUserLocation: Coordinates? = null,
     val isRideModeActive: Boolean? = null,
     val unlockDistance: Double? = null

@@ -7,6 +7,8 @@ interface AppDataStore {
     val authToken: Flow<String?>
     suspend fun saveAuthToken(token: String)
     suspend fun deleteAuthToken()
+    val currentUser: Flow<CurrentUser?>
+    suspend fun saveCurrentUser(user: CurrentUser): CurrentUser?
     val lastUserLocation: Flow<Coordinates?>
     suspend fun saveLastUserLocation(location: Coordinates): Coordinates?
     val isRideModeActive: Flow<Boolean?>

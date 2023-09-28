@@ -16,7 +16,7 @@ androidx-hilt-compiler = "1.0.0"
 androidx-hilt-navigationCompose = "1.0.0"
 androidx-hilt-work = "1.0.0"
 androidx-lifecycle = "2.6.2"
-androidx-navigation = "2.7.2"
+androidx-navigation = "2.7.3"
 androidx-paging = "3.2.1"
 androidx-room = "2.5.2"
 androidx-security-crypto = "1.1.0-alpha06"
@@ -31,7 +31,7 @@ kotlinx-serialization = "1.6.0"
 google-gms-playServices-location = "21.0.1"
 google-gms-playServices-maps = "18.1.0"
 google-ksp = "1.9.10-1.0.13"
-google-maps-compose = "2.14.1"
+google-maps-compose = "2.15.0"
 google-maps-utils = "3.5.3"
 google-maps-utils-ktx = "3.4.0"
 
@@ -110,6 +110,7 @@ glideapp-common-dto = { module = "com.github.err09r.glideapp-common:dto", versio
 glideapp-common-models = { module = "com.github.err09r.glideapp-common:models", version.ref = "glideapp-common" }
 glideapp-common-util = { module = "com.github.err09r.glideapp-common:util", version.ref = "glideapp-common" }
 
+ktor-client-contentNegotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-websockets = { module = "io.ktor:ktor-client-websockets", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
@@ -144,4 +145,9 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 
 [bundles]
 room = ["androidx-room-runtime", "androidx-room-ktx", "androidx-room-paging"]
-ktor-client = ["ktor-client-okhttp", "ktor-client-websockets", "ktor-serialization-kotlinx-json"]
+ktor-client = [
+    "ktor-client-contentNegotiation",
+    "ktor-client-okhttp",
+    "ktor-client-websockets",
+    "ktor-serialization-kotlinx-json"
+]
