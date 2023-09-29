@@ -27,7 +27,7 @@ jobs:
         - name: Create google-services.json
           env:
             GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
-          run: echo $GOOGLE_SERVICES_JSON | base64 -di > /home/runner/work/${{ github.event.repository.name }}/${{ github.event.repository.name }}/app/google-services.json
+          run: echo $GOOGLE_SERVICES_JSON | base64 -di > app/google-services.json
 
         - name: Create local.properties
           env:
@@ -37,7 +37,7 @@ jobs:
         - name: Create keystore.jks
           env: 
             KEYSTORE_JKS: ${{ secrets.KEYSTORE_JKS }}
-          run: echo $KEYSTORE_JKS | base64 -di > /home/runner/work/${{ github.event.repository.name }}/${{ github.event.repository.name }}/app/keystore.jks
+          run: echo $KEYSTORE_JKS | base64 -di > app/keystore.jks
 
         - name: Create keystore.properties
           env:
@@ -59,6 +59,11 @@ jobs:
           with:
             apk-path: app/build/outputs/apk/release/app-release.apk
 
+        - name: Zip mapping.txt
+          run: |
+            cd app/build/outputs/mapping/release
+            zip -r mapping.zip mapping.txt
+
         - name: Rename release APK
           run: |
             cd app/build/outputs/apk/release
@@ -78,7 +83,7 @@ jobs:
           with:
             name: GlideApp v${{ steps.apk-info.outputs.version-name }}
             tag: v${{ steps.apk-info.outputs.version-name }}
-            artifacts: app/build/outputs/apk/release/GlideApp-v${{ steps.apk-info.outputs.version-name }}.apk, app/build/outputs/mapping/release/mapping.txt
+            artifacts: app/build/outputs/apk/release/GlideApp-v${{ steps.apk-info.outputs.version-name }}.apk, app/build/outputs/mapping/release/mapping.zip
             allowUpdates: true
             removeArtifacts: true
             generateReleaseNotes: true
