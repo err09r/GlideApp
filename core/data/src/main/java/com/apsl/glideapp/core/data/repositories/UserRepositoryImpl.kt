@@ -4,8 +4,8 @@ import com.apsl.glideapp.common.dto.UserDto
 import com.apsl.glideapp.common.util.now
 import com.apsl.glideapp.core.datastore.AppDataStore
 import com.apsl.glideapp.core.datastore.CurrentUser
-import com.apsl.glideapp.core.domain.home.User
 import com.apsl.glideapp.core.domain.user.UserRepository
+import com.apsl.glideapp.core.model.User
 import com.apsl.glideapp.core.network.http.GlideApi
 import javax.inject.Inject
 import kotlinx.coroutines.flow.firstOrNull

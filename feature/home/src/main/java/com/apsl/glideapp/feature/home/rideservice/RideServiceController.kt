@@ -3,7 +3,7 @@ package com.apsl.glideapp.feature.home.rideservice
 import com.apsl.glideapp.core.domain.location.DecodeAddressUseCase
 import com.apsl.glideapp.core.domain.location.ObserveUserLocationUseCase
 import com.apsl.glideapp.core.domain.ride.UpdateRideRouteUseCase
-import com.apsl.glideapp.feature.home.maps.toCoordinates
+import com.apsl.glideapp.core.util.maps.toCoordinates
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject

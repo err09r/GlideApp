@@ -3,8 +3,8 @@ package com.apsl.glideapp.feature.rides.viewmodels
 import androidx.lifecycle.viewModelScope
 import com.apsl.glideapp.core.domain.ride.GetRideByIdUseCase
 import com.apsl.glideapp.core.ui.BaseViewModel
+import com.apsl.glideapp.core.util.maps.toLatLngBounds
 import com.apsl.glideapp.feature.rides.models.toRideDetailsUiModel
-import com.apsl.glideapp.feature.rides.toLatLngBounds
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,7 +30,7 @@ class RideDetailsViewModel @Inject constructor(
                         state.copy(
                             isLoading = false,
                             ride = ride.toRideDetailsUiModel(),
-                            mapCameraBounds = ride.route.toLatLngBounds()
+                            mapCameraBounds = ride.route.points.toLatLngBounds()
                         )
                     }
                 }

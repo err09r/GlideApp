@@ -6,7 +6,7 @@ import androidx.paging.cachedIn
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.map
 import com.apsl.glideapp.core.domain.transaction.GetUserTransactionsPaginatedUseCase
-import com.apsl.glideapp.core.domain.transaction.Transaction
+import com.apsl.glideapp.core.model.Transaction
 import com.apsl.glideapp.core.ui.BaseViewModel
 import com.apsl.glideapp.feature.wallet.models.TransactionUiModel
 import com.apsl.glideapp.feature.wallet.models.toTransactionUiModel

@@ -2,7 +2,6 @@ package com.apsl.glideapp.core.location
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.location.Location
 import android.location.LocationManager
 import android.location.LocationRequest
 import android.os.Build
@@ -13,8 +12,9 @@ import com.apsl.glideapp.core.datastore.AppDataStore
 import com.apsl.glideapp.core.domain.location.GpsDisabledException
 import com.apsl.glideapp.core.domain.location.LocationClient
 import com.apsl.glideapp.core.domain.location.MissingLocationPermissionsException
-import com.apsl.glideapp.core.domain.location.UserLocation
-import com.apsl.glideapp.core.util.locationPermissionsGranted
+import com.apsl.glideapp.core.model.UserLocation
+import com.apsl.glideapp.core.util.android.locationPermissionsGranted
+import com.apsl.glideapp.core.util.maps.toUserLocation
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
@@ -149,23 +149,6 @@ class LocationClientImpl @Inject constructor(
         } catch (e: Exception) {
             false
         }
-
-    private fun Location.toUserLocation(): UserLocation {
-        return UserLocation(
-            provider = provider,
-            timeMs = time,
-            elapsedRealtimeNs = elapsedRealtimeNanos,
-            latitudeDegrees = latitude,
-            longitudeDegrees = longitude,
-            horizontalAccuracyMeters = accuracy,
-            altitudeMeters = altitude,
-            altitudeAccuracyMeters = verticalAccuracyMeters,
-            speedMetersPerSecond = speed,
-            speedAccuracyMetersPerSecond = speedAccuracyMetersPerSecond,
-            bearingDegrees = bearing,
-            bearingAccuracyDegrees = bearingAccuracyDegrees
-        )
-    }
 
     private companion object {
         private const val LOCATION_UPDATE_MIN_DISTANCE = 0.8f

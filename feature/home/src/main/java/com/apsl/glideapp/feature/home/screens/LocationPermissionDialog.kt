@@ -15,7 +15,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
-import com.apsl.glideapp.core.util.navigateToAppSettings
+import com.apsl.glideapp.core.util.android.navigateToAppSettings
 
 @Composable
 fun LocationPermissionDialog(modifier: Modifier = Modifier, onNavigateBack: () -> Unit) {

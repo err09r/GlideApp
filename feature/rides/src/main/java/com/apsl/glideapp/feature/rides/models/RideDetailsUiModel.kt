@@ -1,9 +1,9 @@
 package com.apsl.glideapp.feature.rides.models
 
 import androidx.compose.runtime.Immutable
-import com.apsl.glideapp.common.models.Coordinates
 import com.apsl.glideapp.common.util.format
-import com.apsl.glideapp.core.domain.ride.Ride
+import com.apsl.glideapp.core.model.Ride
+import com.apsl.glideapp.core.util.maps.mapToLatLng
 import com.google.android.gms.maps.model.LatLng
 import kotlin.math.roundToInt
 import kotlinx.datetime.TimeZone
@@ -20,9 +20,6 @@ data class RideDetailsUiModel(
     val timeInMinutes: Int?
 )
 
-//TODO: MOVE TO COMMON
-fun Coordinates.toLatLng() = LatLng(this.latitude, this.longitude)
-
 fun Ride.toRideDetailsUiModel(): RideDetailsUiModel {
     val timeInMinutes =
         (finishDateTime.toInstant(TimeZone.currentSystemDefault()) -
@@ -35,8 +32,8 @@ fun Ride.toRideDetailsUiModel(): RideDetailsUiModel {
         startAddress = startAddress,
         finishAddress = finishAddress,
         fromTimeToTime = "$startTime - $finishTime",
-        route = route.map(Coordinates::toLatLng),
-        distance = distance.roundToInt(),
+        route = route.points.mapToLatLng(),
+        distance = route.distance.roundToInt(),
         averageSpeed = "${averageSpeed.format(1)} km/h",
         timeInMinutes = if (timeInMinutes > 1) timeInMinutes.toInt() else null
     )

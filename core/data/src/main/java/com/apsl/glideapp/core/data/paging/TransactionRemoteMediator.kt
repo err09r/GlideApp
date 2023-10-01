@@ -7,8 +7,8 @@ import androidx.room.withTransaction
 import com.apsl.glideapp.common.util.now
 import com.apsl.glideapp.core.database.AppDatabase
 import com.apsl.glideapp.core.database.entities.TransactionEntity
-import com.apsl.glideapp.core.domain.connectivity.ConnectionState
 import com.apsl.glideapp.core.domain.connectivity.ConnectivityObserver
+import com.apsl.glideapp.core.model.ConnectionState
 import com.apsl.glideapp.core.network.http.GlideApi
 import javax.inject.Inject
 import javax.inject.Singleton

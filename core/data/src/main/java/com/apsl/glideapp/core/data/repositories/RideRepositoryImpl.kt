@@ -5,11 +5,12 @@ import androidx.paging.PagingData
 import androidx.paging.map
 import com.apsl.glideapp.common.dto.RideEventDto
 import com.apsl.glideapp.common.models.RideAction
+import com.apsl.glideapp.common.models.Route
 import com.apsl.glideapp.core.database.entities.RideEntity
 import com.apsl.glideapp.core.datastore.AppDataStore
-import com.apsl.glideapp.core.domain.ride.Ride
-import com.apsl.glideapp.core.domain.ride.RideEvent
 import com.apsl.glideapp.core.domain.ride.RideRepository
+import com.apsl.glideapp.core.model.Ride
+import com.apsl.glideapp.core.model.RideEvent
 import com.apsl.glideapp.core.network.http.GlideApi
 import com.apsl.glideapp.core.network.websocket.WebSocketClient
 import javax.inject.Inject
@@ -67,16 +68,15 @@ class RideRepositoryImpl @Inject constructor(
 
     override fun getUserRidesPaginated(): Flow<PagingData<Ride>> {
         return ridePager.flow.map { pagingData ->
-            pagingData.map { dto ->
+            pagingData.map { entity ->
                 Ride(
-                    id = dto.id,
-                    startAddress = dto.startAddress,
-                    finishAddress = dto.finishAddress,
-                    startDateTime = dto.startDateTime,
-                    finishDateTime = dto.finishDateTime,
-                    route = emptyList(),// dto.route,
-                    distance = dto.distance,
-                    averageSpeed = dto.averageSpeed
+                    id = entity.id,
+                    startAddress = entity.startAddress,
+                    finishAddress = entity.finishAddress,
+                    startDateTime = entity.startDateTime,
+                    finishDateTime = entity.finishDateTime,
+                    route = Route(emptyList()), //Route(entity.),
+                    averageSpeed = entity.averageSpeed
                 )
             }
         }
@@ -91,7 +91,6 @@ class RideRepositoryImpl @Inject constructor(
             startDateTime = dto.startDateTime,
             finishDateTime = dto.finishDateTime,
             route = dto.route,
-            distance = dto.distance,
             averageSpeed = dto.averageSpeed
         )
     }

@@ -7,7 +7,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.setPadding
 import com.apsl.glideapp.core.ui.asDp
-import com.apsl.glideapp.core.util.toBitmap
+import com.apsl.glideapp.core.util.android.toBitmap
 import com.apsl.glideapp.feature.home.R
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptor

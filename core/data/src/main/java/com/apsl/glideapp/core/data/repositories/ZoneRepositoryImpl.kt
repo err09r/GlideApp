@@ -7,8 +7,8 @@ import com.apsl.glideapp.common.util.now
 import com.apsl.glideapp.core.database.AppDatabase
 import com.apsl.glideapp.core.database.entities.ZoneCoordinatesEntity
 import com.apsl.glideapp.core.database.entities.ZoneEntity
-import com.apsl.glideapp.core.domain.home.Zone
 import com.apsl.glideapp.core.domain.zone.ZoneRepository
+import com.apsl.glideapp.core.model.Zone
 import com.apsl.glideapp.core.network.http.GlideApi
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -41,7 +41,7 @@ class ZoneRepositoryImpl @Inject constructor(
         }
 
         val zoneCoordinatesEntities = zones.flatMap { zone ->
-            zone.coordinates.map { coordinates ->
+            zone.border.points.map { coordinates ->
                 ZoneCoordinatesEntity(
                     zoneId = zone.id,
                     latitude = coordinates.latitude,

@@ -9,7 +9,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
-import com.apsl.glideapp.core.util.findActivity
+import com.apsl.glideapp.core.util.android.findActivity
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState

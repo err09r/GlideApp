@@ -13,8 +13,8 @@ import androidx.core.view.WindowCompat
 import androidx.lifecycle.LifecycleObserver
 import androidx.navigation.compose.rememberNavController
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
-import com.apsl.glideapp.core.util.LoggingLifecycleObserver
-import com.apsl.glideapp.core.util.addObservers
+import com.apsl.glideapp.core.util.android.LoggingLifecycleObserver
+import com.apsl.glideapp.core.util.android.addObservers
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -34,10 +34,14 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun init() {
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+        configureEdgeToEdge()
         registerLifecycleObservers()
         requestNotificationPermission()
         viewModel.updateAppConfiguration()
+    }
+
+    private fun configureEdgeToEdge() {
+        WindowCompat.setDecorFitsSystemWindows(window, false)
     }
 
     private fun registerLifecycleObservers() {

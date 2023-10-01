@@ -17,10 +17,12 @@ class MainActivityViewModel @Inject constructor(
 
     fun updateAppConfiguration() {
         viewModelScope.launch {
-            runCatching {
+            try {
                 appConfigRepository.updateAppConfig()
                 zoneRepository.updateAllZones()
-            }.onFailure(Timber::d)
+            } catch (e: Exception) {
+                Timber.d(e.message)
+            }
         }
     }
 }

@@ -19,7 +19,7 @@ dependencies {
     implementation(project(":core:navigation"))
     implementation(project(":core:network"))
     implementation(project(":core:ui"))
-    implementation(project(":core:util"))
+    implementation(project(":core:util:android"))
 
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.appcompat)

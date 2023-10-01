@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.apsl.glideapp.core.domain.auth.UserAuthState
+import com.apsl.glideapp.core.model.UserAuthState
 import com.apsl.glideapp.core.ui.ComposableLifecycle
 import com.apsl.glideapp.core.ui.LoadingBar
 import com.apsl.glideapp.core.ui.RequestMultiplePermissions
@@ -47,10 +47,10 @@ import com.apsl.glideapp.core.ui.icons.Gps
 import com.apsl.glideapp.core.ui.icons.Menu
 import com.apsl.glideapp.core.ui.rememberRequestMultiplePermissionState
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
+import com.apsl.glideapp.core.util.maps.toLatLng
 import com.apsl.glideapp.feature.home.components.DrawerContent
 import com.apsl.glideapp.feature.home.components.SheetContent
 import com.apsl.glideapp.feature.home.maps.VehicleClusterItem
-import com.apsl.glideapp.feature.home.maps.toLatLng
 import com.apsl.glideapp.feature.home.viewmodels.HomeUiState
 import com.apsl.glideapp.feature.home.viewmodels.HomeViewModel
 import com.apsl.glideapp.feature.home.viewmodels.RideState

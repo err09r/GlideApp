@@ -15,15 +15,15 @@ import com.apsl.glideapp.core.domain.map.ObserveMapContentUseCase
 import com.apsl.glideapp.core.domain.ride.FinishRideUseCase
 import com.apsl.glideapp.core.domain.ride.IsRideModeActiveUseCase
 import com.apsl.glideapp.core.domain.ride.ObserveRideEventsUseCase
-import com.apsl.glideapp.core.domain.ride.RideEvent
 import com.apsl.glideapp.core.domain.ride.StartRideUseCase
 import com.apsl.glideapp.core.domain.user.GetUserUseCase
+import com.apsl.glideapp.core.model.RideEvent
 import com.apsl.glideapp.core.ui.BaseViewModel
+import com.apsl.glideapp.core.util.maps.toCoordinates
+import com.apsl.glideapp.core.util.maps.toCoordinatesBounds
+import com.apsl.glideapp.core.util.maps.toLatLng
 import com.apsl.glideapp.feature.home.maps.NoParkingZone
 import com.apsl.glideapp.feature.home.maps.VehicleClusterItem
-import com.apsl.glideapp.feature.home.maps.toCoordinates
-import com.apsl.glideapp.feature.home.maps.toCoordinatesBounds
-import com.apsl.glideapp.feature.home.maps.toLatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -173,8 +173,8 @@ class HomeViewModel @Inject constructor(
 
             if (currentUserLocation != null && selectedVehicle != null) {
                 val distanceFromVehicle = Geometry.calculateDistance(
-                    currentUserLocation.toCoordinates(),
-                    selectedVehicle.itemPosition.toCoordinates()
+                    currentUserLocation.toCoordinates().asPair(),
+                    selectedVehicle.itemPosition.toCoordinates().asPair()
                 )
 
                 Timber.d("Distance from vehicle: $distanceFromVehicle")

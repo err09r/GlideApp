@@ -1,8 +1,8 @@
 package com.apsl.glideapp.feature.home.viewmodels
 
 import androidx.compose.runtime.Immutable
-import com.apsl.glideapp.core.domain.auth.UserAuthState
-import com.apsl.glideapp.core.domain.location.UserLocation
+import com.apsl.glideapp.core.model.UserAuthState
+import com.apsl.glideapp.core.model.UserLocation
 import com.apsl.glideapp.feature.home.maps.NoParkingZone
 import com.apsl.glideapp.feature.home.maps.VehicleClusterItem
 import com.google.android.gms.maps.model.LatLng

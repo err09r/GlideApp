@@ -3,7 +3,7 @@ package com.apsl.glideapp.feature.wallet.models
 import androidx.compose.runtime.Immutable
 import com.apsl.glideapp.common.models.TransactionType
 import com.apsl.glideapp.common.util.format
-import com.apsl.glideapp.core.domain.transaction.Transaction
+import com.apsl.glideapp.core.model.Transaction
 import java.time.format.DateTimeFormatter
 import kotlin.math.abs
 import kotlinx.datetime.toJavaLocalDateTime

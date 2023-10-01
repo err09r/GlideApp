@@ -7,7 +7,7 @@ secretsGradle = "2.0.1"
 
 androidx-activity-compose = "1.7.2"
 androidx-appcompat = "1.6.1"
-androidx-compose = "1.5.1"
+androidx-compose = "1.5.2"
 androidx-compose-compiler = "1.5.3"
 androidx-core-ktx = "1.12.0"
 androidx-core-splashscreen = "1.0.1"
@@ -33,7 +33,7 @@ google-gms-playServices-maps = "18.1.0"
 google-ksp = "1.9.10-1.0.13"
 google-maps-compose = "2.15.0"
 google-maps-utils = "3.5.3"
-google-maps-utils-ktx = "3.4.0"
+google-maps-utils-ktx = "4.0.0"
 
 accompanist = "0.32.0"
 dagger-hilt-android = "2.48"
@@ -41,7 +41,7 @@ firebase-crashlytics = "18.4.3"
 firebase-crashlytics-plugin = "2.9.9"
 firebase-perf = "20.4.1"
 firebase-perf-plugin = "1.4.2"
-glideapp-common = "0.1.0"
+glideapp-common = "0.1.7"
 javax-inject = "1"
 ktor = "2.3.4"
 lottie = "6.1.0"
@@ -50,6 +50,7 @@ retrofit2 = "2.9.0"
 retrofit2-kotlinxSerializationConverter = "1.0.0"
 security-crypto-datastore = "1.0.0-beta01"
 timber = "5.0.1"
+org-jetbrains-kotlin-jvm = "1.9.10"
 
 [libraries]
 android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "android-gradlePlugin" }
@@ -83,7 +84,6 @@ google-gms-playServices-maps = { module = "com.google.android.gms:play-services-
 google-maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "google-maps-compose" }
 google-maps-compose-utils = { module = "com.google.maps.android:maps-compose-utils", version.ref = "google-maps-compose" }
 google-maps-compose-widgets = { module = "com.google.maps.android:maps-compose-widgets", version.ref = "google-maps-compose" }
-google-maps-utils = { module = "com.google.maps.android:android-maps-utils", version.ref = "google-maps-utils" }
 google-maps-utils-ktx = { module = "com.google.maps.android:maps-utils-ktx", version.ref = "google-maps-utils-ktx" }
 
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "androidx-room" }
@@ -142,6 +142,7 @@ gradleVersions = { id = "com.github.ben-manes.versions", version.ref = "gradleVe
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+org-jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "org-jetbrains-kotlin-jvm" }
 
 [bundles]
 room = ["androidx-room-runtime", "androidx-room-ktx", "androidx-room-paging"]
