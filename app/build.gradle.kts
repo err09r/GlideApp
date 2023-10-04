@@ -22,6 +22,7 @@ dependencies {
     implementation(project(":core:util:android"))
 
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.navigation.compose)

@@ -7,9 +7,9 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.core.view.WindowCompat
 import androidx.lifecycle.LifecycleObserver
 import androidx.navigation.compose.rememberNavController
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
@@ -34,14 +34,10 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun init() {
-        configureEdgeToEdge()
+        enableEdgeToEdge()
         registerLifecycleObservers()
         requestNotificationPermission()
         viewModel.updateAppConfiguration()
-    }
-
-    private fun configureEdgeToEdge() {
-        WindowCompat.setDecorFitsSystemWindows(window, false)
     }
 
     private fun registerLifecycleObservers() {
