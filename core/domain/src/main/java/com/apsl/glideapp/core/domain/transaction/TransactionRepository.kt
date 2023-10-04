@@ -2,6 +2,7 @@ package com.apsl.glideapp.core.domain.transaction
 
 import androidx.paging.PagingData
 import com.apsl.glideapp.common.models.TransactionType
+import com.apsl.glideapp.core.model.Transaction
 import kotlinx.coroutines.flow.Flow
 
 interface TransactionRepository {

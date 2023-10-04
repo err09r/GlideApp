@@ -7,7 +7,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.setPadding
 import com.apsl.glideapp.core.ui.asDp
-import com.apsl.glideapp.core.util.toBitmap
+import com.apsl.glideapp.core.util.android.toBitmap
 import com.apsl.glideapp.feature.home.R
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptor
@@ -28,7 +28,7 @@ class ClusterRendererImpl(
         setPadding(2.asDp)
         background = ContextCompat.getDrawable(context, R.drawable.bg_marker_vehicle)
         setImageDrawable(
-            ContextCompat.getDrawable(context, R.drawable.baseline_electric_scooter_24)
+            ContextCompat.getDrawable(context, R.drawable.ic_electric_scooter)
         )
     }
 
@@ -36,7 +36,7 @@ class ClusterRendererImpl(
         setPadding(4.asDp)
         background = ContextCompat.getDrawable(context, R.drawable.bg_marker_vehicle)
         setImageDrawable(
-            ContextCompat.getDrawable(context, R.drawable.baseline_electric_scooter_24)
+            ContextCompat.getDrawable(context, R.drawable.ic_electric_scooter)
         )
     }
 
@@ -44,10 +44,7 @@ class ClusterRendererImpl(
         setPadding(2.asDp)
         background = ContextCompat.getDrawable(context, R.drawable.bg_marker_vehicle_selected)
         setImageDrawable(
-            ContextCompat.getDrawable(
-                context,
-                R.drawable.baseline_electric_scooter_24
-            )
+            ContextCompat.getDrawable(context, R.drawable.ic_electric_scooter)
         )
         DrawableCompat.setTint(drawable, Color.WHITE)
     }

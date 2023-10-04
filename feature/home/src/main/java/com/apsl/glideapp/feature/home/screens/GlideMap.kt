@@ -15,13 +15,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.core.content.ContextCompat
-import com.apsl.glideapp.core.domain.location.UserLocation
+import com.apsl.glideapp.core.model.UserLocation
+import com.apsl.glideapp.core.util.maps.toLocation
 import com.apsl.glideapp.feature.home.R
 import com.apsl.glideapp.feature.home.maps.ClusterRendererImpl
-import com.apsl.glideapp.feature.home.maps.LocationSourceImpl
+import com.apsl.glideapp.feature.home.maps.HomeLocationSource
 import com.apsl.glideapp.feature.home.maps.NoParkingZone
 import com.apsl.glideapp.feature.home.maps.VehicleClusterItem
-import com.apsl.glideapp.feature.home.maps.toLocation
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.JointType
@@ -63,7 +63,7 @@ fun GlideMap(
 
     LaunchedEffect(userLocation) {
         userLocation?.let {
-            LocationSourceImpl.onLocationChanged(it.toLocation())
+            HomeLocationSource.onLocationChanged(it.toLocation())
         }
     }
 
@@ -77,7 +77,7 @@ fun GlideMap(
             maxZoomPreference = 20f,
             minZoomPreference = 9f//11f
         ),
-        locationSource = LocationSourceImpl,
+        locationSource = HomeLocationSource,
         uiSettings = MapUiSettings(
             compassEnabled = false,
             indoorLevelPickerEnabled = false,

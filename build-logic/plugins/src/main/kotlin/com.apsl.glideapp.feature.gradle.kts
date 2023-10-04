@@ -14,7 +14,7 @@ dependencies {
     implementation(project(":core:domain"))
     implementation(project(":core:navigation"))
     implementation(project(":core:ui"))
-    implementation(project(":core:util"))
+    implementation(project(":core:util:android"))
 
     implementation(libs.androidx.hilt.navigationCompose)
     implementation(libs.androidx.navigation.compose)

@@ -1,6 +1,6 @@
 package com.apsl.glideapp.core.domain.zone
 
-import com.apsl.glideapp.core.domain.home.Zone
+import com.apsl.glideapp.core.model.Zone
 import kotlinx.coroutines.flow.Flow
 
 interface ZoneRepository {

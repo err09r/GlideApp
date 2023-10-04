@@ -8,32 +8,68 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.Divider
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ElectricScooter
-import androidx.compose.material.icons.rounded.Help
-import androidx.compose.material.icons.rounded.History
-import androidx.compose.material.icons.rounded.Route
-import androidx.compose.material.icons.rounded.Settings
-import androidx.compose.material.icons.rounded.Wallet
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.apsl.glideapp.core.ui.icons.ElectricScooter
+import com.apsl.glideapp.core.ui.icons.GlideIcons
+import com.apsl.glideapp.core.ui.icons.Help
+import com.apsl.glideapp.core.ui.icons.MyRides
+import com.apsl.glideapp.core.ui.icons.Route
+import com.apsl.glideapp.core.ui.icons.Settings
+import com.apsl.glideapp.core.ui.icons.Wallet
+import com.apsl.glideapp.core.ui.rippleClickable
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
+
+@Immutable
+data class DrawerMenuItem(
+    val icon: ImageVector,
+    val title: String,
+    val onClick: () -> Unit
+)
 
 @Composable
 fun DrawerContent(
     username: String?,
     userTotalDistance: Int,
     userTotalRides: Int,
-    onRefreshData: () -> Unit,
+    modifier: Modifier = Modifier,
     onMyRidesClick: () -> Unit,
-    onWalletClick: () -> Unit,
-    modifier: Modifier = Modifier
+    onWalletClick: () -> Unit
 ) {
+    val items = remember {
+        listOf(
+            DrawerMenuItem(
+                icon = GlideIcons.Wallet,
+                title = "Wallet",
+                onClick = onWalletClick
+            ),
+            DrawerMenuItem(
+                icon = GlideIcons.MyRides,
+                title = "My Rides",
+                onClick = onMyRidesClick
+            ),
+            DrawerMenuItem(
+                icon = GlideIcons.Help,
+                title = "Help",
+                onClick = {}
+            ),
+            DrawerMenuItem(
+                icon = GlideIcons.Settings,
+                title = "Settings",
+                onClick = {}
+            )
+        )
+    }
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -49,39 +85,39 @@ fun DrawerContent(
 
             Row(horizontalArrangement = Arrangement.spacedBy(32.dp)) {
                 DrawerStatsComponent(
-                    icon = Icons.Rounded.Route,
+                    icon = GlideIcons.Route,
                     value = userTotalDistance,
                     units = "meters"
                 )
                 DrawerStatsComponent(
-                    icon = Icons.Rounded.ElectricScooter,
+                    icon = GlideIcons.ElectricScooter,
                     value = userTotalRides,
                     units = "rides"
                 )
             }
         }
         Spacer(modifier = Modifier.height(32.dp))
-        Divider(thickness = 4.dp)
-        Spacer(modifier = Modifier.height(16.dp))
-        Column(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(32.dp),
-        ) {
-            DrawerMenuElement(
-                icon = Icons.Rounded.Wallet,
-                title = "Wallet",
-                onClick = onWalletClick
-            )
-            DrawerMenuElement(
-                icon = Icons.Rounded.History,
-                title = "My Rides",
-                onClick = onMyRidesClick
-            )
-            DrawerMenuElement(icon = Icons.Rounded.Help, title = "Help", onClick = {})
-            DrawerMenuElement(icon = Icons.Rounded.Settings, title = "Settings", onClick = {})
+
+        Column {
+            items.forEachIndexed { index, item ->
+                if (index == 0) {
+                    Divider(thickness = 2.dp)
+                }
+                Row(
+                    modifier = Modifier
+                        .rippleClickable(onClick = item.onClick)
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 16.dp)
+                ) {
+                    Icon(imageVector = item.icon, contentDescription = "")
+                    Spacer(Modifier.width(16.dp))
+                    Text(text = item.title)
+                }
+                if (index == items.lastIndex) {
+                    Divider(thickness = 2.dp)
+                }
+            }
         }
-        Spacer(modifier = Modifier.height(16.dp))
-        Divider(thickness = 4.dp)
     }
 }
 
@@ -93,7 +129,6 @@ fun DrawerContentPreview() {
             username = "err09r",
             userTotalDistance = 1405,
             userTotalRides = 23,
-            onRefreshData = {},
             onMyRidesClick = {},
             onWalletClick = {}
         )

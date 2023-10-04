@@ -27,6 +27,9 @@ class WalletViewModel @Inject constructor(
         viewModelScope.launch {
             getUserUseCase()
                 .onSuccess { user ->
+                    if (user == null) {
+                        return@onSuccess
+                    }
                     _uiState.update { state ->
                         state.copy(
                             userBalance = "${user.balance.format(2)} PLN",

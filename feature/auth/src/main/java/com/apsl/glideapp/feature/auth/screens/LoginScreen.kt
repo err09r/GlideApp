@@ -91,7 +91,7 @@ fun LoginScreenContent(
                     ) {
                         keyboardController?.hide()
                         focusManager.clearFocus(true)
-                    },
+                    }
             ) {
                 Column(
                     modifier = Modifier.padding(horizontal = 16.dp),

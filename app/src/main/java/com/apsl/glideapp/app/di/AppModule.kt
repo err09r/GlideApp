@@ -1,6 +1,6 @@
 package com.apsl.glideapp.app.di
 
-import com.apsl.glideapp.core.util.DispatcherProvider
+import com.apsl.glideapp.core.util.android.DispatcherProvider
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

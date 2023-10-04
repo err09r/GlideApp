@@ -4,8 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
-import com.apsl.glideapp.core.domain.connectivity.ConnectionState
 import com.apsl.glideapp.core.domain.connectivity.ConnectivityObserver
+import com.apsl.glideapp.core.model.ConnectionState
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope

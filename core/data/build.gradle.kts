@@ -8,7 +8,7 @@ dependencies {
     implementation(project(":core:datastore"))
     implementation(project(":core:domain"))
     implementation(project(":core:network"))
-    implementation(project(":core:util"))
+    implementation(project(":core:util:android"))
 
     implementation(libs.androidx.paging.common)
     implementation(libs.androidx.room.ktx)

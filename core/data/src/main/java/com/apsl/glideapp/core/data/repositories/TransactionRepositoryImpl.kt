@@ -6,8 +6,8 @@ import androidx.paging.map
 import com.apsl.glideapp.common.dto.TransactionRequest
 import com.apsl.glideapp.common.models.TransactionType
 import com.apsl.glideapp.core.database.entities.TransactionEntity
-import com.apsl.glideapp.core.domain.transaction.Transaction
 import com.apsl.glideapp.core.domain.transaction.TransactionRepository
+import com.apsl.glideapp.core.model.Transaction
 import com.apsl.glideapp.core.network.http.GlideApi
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow

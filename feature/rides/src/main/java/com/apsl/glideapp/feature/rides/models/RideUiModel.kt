@@ -2,7 +2,7 @@ package com.apsl.glideapp.feature.rides.models
 
 import androidx.compose.runtime.Immutable
 import com.apsl.glideapp.common.util.format
-import com.apsl.glideapp.core.domain.ride.Ride
+import com.apsl.glideapp.core.model.Ride
 import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 import kotlinx.datetime.TimeZone
@@ -30,7 +30,7 @@ fun Ride.toRideUiModel(): RideUiModel {
         id = id,
         startTime = startDateTime.time.toString().substringBeforeLast(':'),
         finishTime = finishDateTime.time.toString().substringBeforeLast(':'),
-        distance = distance.roundToInt(),
+        distance = route.distance.roundToInt(),
         fare = (timeDifference.inWholeMinutes * 3.3).coerceAtLeast(3.3).format(2),
         separatorText = finishDateTime.toJavaLocalDateTime().format(separatorFormatter)
     )

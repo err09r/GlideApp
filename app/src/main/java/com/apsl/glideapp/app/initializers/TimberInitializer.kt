@@ -3,7 +3,7 @@ package com.apsl.glideapp.app.initializers
 import android.content.Context
 import androidx.startup.Initializer
 import com.apsl.glideapp.app.BuildConfig
-import com.apsl.glideapp.core.util.CrashReportingTree
+import com.apsl.glideapp.core.util.android.CrashReportingTree
 import timber.log.Timber
 
 @Suppress("Unused")

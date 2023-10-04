@@ -1,5 +1,6 @@
 package com.apsl.glideapp.feature.auth.viewmodels
 
+import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
 import com.apsl.glideapp.core.domain.auth.RegisterUseCase
 import com.apsl.glideapp.core.ui.BaseViewModel
@@ -65,3 +66,12 @@ class RegisterViewModel @Inject constructor(
         _uiState.update { it.copy(isLoading = false) }
     }
 }
+
+@Immutable
+data class RegisterUiState(
+    val isLoading: Boolean = false,
+    val isRegistered: Boolean = false,
+    val usernameTextFieldValue: String? = null,
+    val passwordTextFieldValue: String? = null,
+    val exception: Exception? = null
+)

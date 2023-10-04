@@ -2,7 +2,7 @@ package com.apsl.glideapp.feature.wallet.models
 
 import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Immutable
-import com.apsl.glideapp.core.domain.transaction.PaymentMethod
+import com.apsl.glideapp.core.model.PaymentMethod
 import com.apsl.glideapp.feature.wallet.R
 
 @Immutable

@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":core:util"))
+    implementation(project(":core:util:android"))
 
     implementation(libs.accompanist.permissions)
     implementation(libs.accompanist.systemuicontroller)

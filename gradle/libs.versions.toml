@@ -1,13 +1,13 @@
 [versions]
-android-gradlePlugin = "8.1.1"
+android-gradlePlugin = "8.1.2"
 google-gms-googleServices = "4.4.0"
 gradleVersions = "0.48.0"
 kotlin = "1.9.10"
 secretsGradle = "2.0.1"
 
-androidx-activity-compose = "1.7.2"
+androidx-activity = "1.8.0"
 androidx-appcompat = "1.6.1"
-androidx-compose = "1.5.1"
+androidx-compose = "1.5.3"
 androidx-compose-compiler = "1.5.3"
 androidx-core-ktx = "1.12.0"
 androidx-core-splashscreen = "1.0.1"
@@ -16,7 +16,7 @@ androidx-hilt-compiler = "1.0.0"
 androidx-hilt-navigationCompose = "1.0.0"
 androidx-hilt-work = "1.0.0"
 androidx-lifecycle = "2.6.2"
-androidx-navigation = "2.7.2"
+androidx-navigation = "2.7.4"
 androidx-paging = "3.2.1"
 androidx-room = "2.5.2"
 androidx-security-crypto = "1.1.0-alpha06"
@@ -31,17 +31,17 @@ kotlinx-serialization = "1.6.0"
 google-gms-playServices-location = "21.0.1"
 google-gms-playServices-maps = "18.1.0"
 google-ksp = "1.9.10-1.0.13"
-google-maps-compose = "2.14.1"
+google-maps-compose = "3.0.0"
 google-maps-utils = "3.5.3"
-google-maps-utils-ktx = "3.4.0"
+google-maps-utils-ktx = "4.0.0"
 
 accompanist = "0.32.0"
-dagger-hilt-android = "2.48"
+dagger-hilt-android = "2.48.1"
 firebase-crashlytics = "18.4.3"
 firebase-crashlytics-plugin = "2.9.9"
 firebase-perf = "20.4.1"
 firebase-perf-plugin = "1.4.2"
-glideapp-common = "0.1.0"
+glideapp-common = "0.1.7"
 javax-inject = "1"
 ktor = "2.3.4"
 lottie = "6.1.0"
@@ -50,6 +50,7 @@ retrofit2 = "2.9.0"
 retrofit2-kotlinxSerializationConverter = "1.0.0"
 security-crypto-datastore = "1.0.0-beta01"
 timber = "5.0.1"
+org-jetbrains-kotlin-jvm = "1.9.10"
 
 [libraries]
 android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "android-gradlePlugin" }
@@ -57,7 +58,8 @@ dagger-hilt-android-gradlePlugin = { module = "com.google.dagger:hilt-android-gr
 google-ksp-gradlePlugin = { module = "com.google.devtools.ksp:symbol-processing-gradle-plugin", version.ref = "google-ksp" }
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 
-androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity-compose" }
+androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "androidx-activity" }
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidx-appcompat" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core-ktx" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "androidx-core-splashscreen" }
@@ -83,7 +85,6 @@ google-gms-playServices-maps = { module = "com.google.android.gms:play-services-
 google-maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "google-maps-compose" }
 google-maps-compose-utils = { module = "com.google.maps.android:maps-compose-utils", version.ref = "google-maps-compose" }
 google-maps-compose-widgets = { module = "com.google.maps.android:maps-compose-widgets", version.ref = "google-maps-compose" }
-google-maps-utils = { module = "com.google.maps.android:android-maps-utils", version.ref = "google-maps-utils" }
 google-maps-utils-ktx = { module = "com.google.maps.android:maps-utils-ktx", version.ref = "google-maps-utils-ktx" }
 
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "androidx-room" }
@@ -110,6 +111,7 @@ glideapp-common-dto = { module = "com.github.err09r.glideapp-common:dto", versio
 glideapp-common-models = { module = "com.github.err09r.glideapp-common:models", version.ref = "glideapp-common" }
 glideapp-common-util = { module = "com.github.err09r.glideapp-common:util", version.ref = "glideapp-common" }
 
+ktor-client-contentNegotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-websockets = { module = "io.ktor:ktor-client-websockets", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
@@ -141,7 +143,13 @@ gradleVersions = { id = "com.github.ben-manes.versions", version.ref = "gradleVe
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+org-jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "org-jetbrains-kotlin-jvm" }
 
 [bundles]
 room = ["androidx-room-runtime", "androidx-room-ktx", "androidx-room-paging"]
-ktor-client = ["ktor-client-okhttp", "ktor-client-websockets", "ktor-serialization-kotlinx-json"]
+ktor-client = [
+    "ktor-client-contentNegotiation",
+    "ktor-client-okhttp",
+    "ktor-client-websockets",
+    "ktor-serialization-kotlinx-json"
+]

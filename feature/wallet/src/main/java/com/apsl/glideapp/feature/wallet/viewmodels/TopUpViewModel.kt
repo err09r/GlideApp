@@ -4,7 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.apsl.glideapp.common.models.TransactionType
 import com.apsl.glideapp.core.domain.transaction.CreateTransactionUseCase
 import com.apsl.glideapp.core.domain.transaction.GetAllPaymentMethodsUseCase
-import com.apsl.glideapp.core.domain.transaction.PaymentMethod
+import com.apsl.glideapp.core.model.PaymentMethod
 import com.apsl.glideapp.core.ui.BaseViewModel
 import com.apsl.glideapp.feature.wallet.models.toPaymentUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel

@@ -12,8 +12,8 @@ import com.apsl.glideapp.common.util.now
 import com.apsl.glideapp.core.database.AppDatabase
 import com.apsl.glideapp.core.database.entities.RideCoordinatesEntity
 import com.apsl.glideapp.core.database.entities.RideEntity
-import com.apsl.glideapp.core.domain.connectivity.ConnectionState
 import com.apsl.glideapp.core.domain.connectivity.ConnectivityObserver
+import com.apsl.glideapp.core.model.ConnectionState
 import com.apsl.glideapp.core.network.http.GlideApi
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -91,7 +91,7 @@ class RideRemoteMediator @Inject constructor(
                 finishAddress = it.finishAddress,
                 startDateTime = it.startDateTime,
                 finishDateTime = it.finishDateTime,
-                distance = it.distance,
+                distance = it.route.distance,
                 averageSpeed = it.averageSpeed,
                 createdAt = LocalDateTime.now(),
                 updatedAt = LocalDateTime.now(),
@@ -101,7 +101,7 @@ class RideRemoteMediator @Inject constructor(
 
     private fun List<RideDto>.mapToRideCoordinatesEntities(): List<RideCoordinatesEntity> {
         return this.flatMap { ride ->
-            ride.route.map { coordinates ->
+            ride.route.points.map { coordinates ->
                 RideCoordinatesEntity(
                     rideId = ride.id,
                     latitude = coordinates.latitude,

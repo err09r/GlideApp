@@ -18,9 +18,6 @@ import androidx.compose.material.BottomSheetScaffold
 import androidx.compose.material.BottomSheetValue
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Menu
-import androidx.compose.material.icons.rounded.NearMe
 import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material.rememberBottomSheetState
 import androidx.compose.runtime.Composable
@@ -39,18 +36,21 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.apsl.glideapp.core.domain.auth.UserAuthState
+import com.apsl.glideapp.core.model.UserAuthState
 import com.apsl.glideapp.core.ui.ComposableLifecycle
 import com.apsl.glideapp.core.ui.LoadingBar
 import com.apsl.glideapp.core.ui.RequestMultiplePermissions
 import com.apsl.glideapp.core.ui.RequestMultiplePermissionsState
 import com.apsl.glideapp.core.ui.getOffset
+import com.apsl.glideapp.core.ui.icons.GlideIcons
+import com.apsl.glideapp.core.ui.icons.Gps
+import com.apsl.glideapp.core.ui.icons.Menu
 import com.apsl.glideapp.core.ui.rememberRequestMultiplePermissionState
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
+import com.apsl.glideapp.core.util.maps.toLatLng
 import com.apsl.glideapp.feature.home.components.DrawerContent
 import com.apsl.glideapp.feature.home.components.SheetContent
 import com.apsl.glideapp.feature.home.maps.VehicleClusterItem
-import com.apsl.glideapp.feature.home.maps.toLatLng
 import com.apsl.glideapp.feature.home.viewmodels.HomeUiState
 import com.apsl.glideapp.feature.home.viewmodels.HomeViewModel
 import com.apsl.glideapp.feature.home.viewmodels.RideState
@@ -233,23 +233,24 @@ fun HomeScreenContent(
         onShowRationale = onOpenLocationRationaleDialog,
         onPermanentlyDenied = onOpenLocationPermissionDialog
     )
-//
-//    val visibleBounds = cameraPositionState.projection?.visibleRegion?.latLngBounds
-//    LaunchedEffect(cameraPositionState.isMoving) {
-//        if (!cameraPositionState.isMoving) {
-//            visibleBounds?.let { onLoadMapDataWithinBounds(it) }
-//        }
-//    }
 
-//    val timesVisibleBoundsChanged = remember { mutableIntStateOf(0) }
-//    LaunchedEffect(cameraPositionState.projection) {
-//        Timber.d("load block")
-//        timesVisibleBoundsChanged.intValue++
-//        if (timesVisibleBoundsChanged.intValue == 2 && visibleBounds != null && uiState.vehicleClusterItems.isEmpty()) {
-//            Timber.d("onLoad: $visibleBounds")
-//            onLoadMapDataWithinBounds(visibleBounds)
-//        }
-//    }
+    //TODO to be completely refactored to load data on first dispay
+    //TODO **********************************************************
+    val visibleBounds = cameraPositionState.projection?.visibleRegion?.latLngBounds
+    LaunchedEffect(cameraPositionState.isMoving) {
+        if (!cameraPositionState.isMoving) {
+            visibleBounds?.let { onLoadMapDataWithinBounds(it) }
+        }
+    }
+
+    LaunchedEffect(cameraPositionState.projection) {
+        Timber.d("load block")
+        if (visibleBounds != null && uiState.vehicleClusterItems.isEmpty()) {
+            Timber.d("onLoad: $visibleBounds")
+            onLoadMapDataWithinBounds(visibleBounds)
+        }
+    }
+    //TODO **********************************************************
 
     BottomSheetScaffold(
         scaffoldState = scaffoldState,
@@ -274,7 +275,6 @@ fun HomeScreenContent(
                 username = uiState.username,
                 userTotalDistance = uiState.userTotalDistance,
                 userTotalRides = uiState.userTotalRides,
-                onRefreshData = onRefreshUserData,
                 onMyRidesClick = onMyRidesClick,
                 onWalletClick = onWalletClick
             )
@@ -326,10 +326,7 @@ fun HomeScreenContent(
                                 }
                             }
                         ) {
-                            Icon(
-                                imageVector = Icons.Rounded.Menu,
-                                contentDescription = null
-                            )
+                            Icon(imageVector = GlideIcons.Menu, contentDescription = null)
                         }
                         if (uiState.isLoadingMapContent) {
                             Spacer(Modifier.width(16.dp))
@@ -348,10 +345,7 @@ fun HomeScreenContent(
                             requestPermissionsState.requestPermissions = true
                         }
                     ) {
-                        Icon(
-                            imageVector = Icons.Rounded.NearMe,
-                            contentDescription = null
-                        )
+                        Icon(imageVector = GlideIcons.Gps, contentDescription = null)
                     }
                 }
             }

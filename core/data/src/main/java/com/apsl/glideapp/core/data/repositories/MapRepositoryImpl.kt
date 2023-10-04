@@ -1,9 +1,9 @@
 package com.apsl.glideapp.core.data.repositories
 
 import com.apsl.glideapp.common.models.CoordinatesBounds
-import com.apsl.glideapp.core.domain.home.Vehicle
 import com.apsl.glideapp.core.domain.map.MapRepository
-import com.apsl.glideapp.core.domain.map.RemoteMapContent
+import com.apsl.glideapp.core.model.RemoteMapContent
+import com.apsl.glideapp.core.model.Vehicle
 import com.apsl.glideapp.core.network.websocket.WebSocketClient
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
