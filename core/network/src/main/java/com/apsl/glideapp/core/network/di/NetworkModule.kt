@@ -23,6 +23,7 @@ import io.ktor.client.request.url
 import io.ktor.serialization.kotlinx.KotlinxWebsocketSerializationConverter
 import io.ktor.serialization.kotlinx.json.DefaultJson
 import io.ktor.serialization.kotlinx.json.json
+import java.time.Duration
 import javax.inject.Qualifier
 import javax.inject.Singleton
 import kotlinx.serialization.json.Json
@@ -118,6 +119,9 @@ object NetworkModule {
     fun provideOkHttpEngine(authInterceptor: AuthInterceptor): HttpClientEngine {
         return OkHttp.create {
             addInterceptor(authInterceptor)
+            config {
+                pingInterval(Duration.ofSeconds(10))
+            }
         }
     }
 }
