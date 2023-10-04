@@ -130,7 +130,7 @@ fun SheetContent(
                         Image(
                             modifier = Modifier.size(64.dp),
                             contentScale = ContentScale.Crop,
-                            painter = painterResource(R.drawable.ic_scooter),
+                            painter = painterResource(R.drawable.img_scooter),
                             contentDescription = null
                         )
                     }

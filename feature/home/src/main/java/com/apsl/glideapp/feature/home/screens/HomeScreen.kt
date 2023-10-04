@@ -233,23 +233,24 @@ fun HomeScreenContent(
         onShowRationale = onOpenLocationRationaleDialog,
         onPermanentlyDenied = onOpenLocationPermissionDialog
     )
-//
-//    val visibleBounds = cameraPositionState.projection?.visibleRegion?.latLngBounds
-//    LaunchedEffect(cameraPositionState.isMoving) {
-//        if (!cameraPositionState.isMoving) {
-//            visibleBounds?.let { onLoadMapDataWithinBounds(it) }
-//        }
-//    }
 
-//    val timesVisibleBoundsChanged = remember { mutableIntStateOf(0) }
-//    LaunchedEffect(cameraPositionState.projection) {
-//        Timber.d("load block")
-//        timesVisibleBoundsChanged.intValue++
-//        if (timesVisibleBoundsChanged.intValue == 2 && visibleBounds != null && uiState.vehicleClusterItems.isEmpty()) {
-//            Timber.d("onLoad: $visibleBounds")
-//            onLoadMapDataWithinBounds(visibleBounds)
-//        }
-//    }
+    //TODO to be completely refactored to load data on first dispay
+    //TODO **********************************************************
+    val visibleBounds = cameraPositionState.projection?.visibleRegion?.latLngBounds
+    LaunchedEffect(cameraPositionState.isMoving) {
+        if (!cameraPositionState.isMoving) {
+            visibleBounds?.let { onLoadMapDataWithinBounds(it) }
+        }
+    }
+
+    LaunchedEffect(cameraPositionState.projection) {
+        Timber.d("load block")
+        if (visibleBounds != null && uiState.vehicleClusterItems.isEmpty()) {
+            Timber.d("onLoad: $visibleBounds")
+            onLoadMapDataWithinBounds(visibleBounds)
+        }
+    }
+    //TODO **********************************************************
 
     BottomSheetScaffold(
         scaffoldState = scaffoldState,

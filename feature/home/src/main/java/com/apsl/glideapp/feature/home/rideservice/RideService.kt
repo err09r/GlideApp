@@ -49,7 +49,7 @@ class RideService : Service() {
         NotificationCompat.Builder(this, "location")
             .setContentTitle("Tracking location...")
             .setContentText("Location")
-            .setSmallIcon(R.drawable.ic_scooter)
+            .setSmallIcon(R.drawable.img_scooter)
             .setOngoing(true)
             .setAutoCancel(false)
             .setOnlyAlertOnce(true)
