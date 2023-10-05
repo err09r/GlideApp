@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Text
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
@@ -31,6 +32,7 @@ import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.apsl.glideapp.core.ui.FeatureScreen
 import com.apsl.glideapp.core.ui.LoadingScreen
+import com.apsl.glideapp.core.ui.components.Graph
 import com.apsl.glideapp.core.ui.receiveAsLazyPagingItems
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.feature.rides.models.RideUiModel
@@ -125,6 +127,11 @@ fun AllRidesScreenContent(
                                             Spacer(Modifier.height(16.dp))
                                             Text(text = "${ride.distance} meters")
                                         }
+                                        Graph(
+                                            points = ride.route,
+                                            modifier = Modifier.size(64.dp),
+                                            contentPadding = PaddingValues(2.dp)
+                                        )
                                         Text(
                                             text = "${ride.fare} PLN", fontSize = 20.sp,
                                             fontWeight = FontWeight.Bold
@@ -159,6 +166,7 @@ fun AllRidesScreenPreview() {
                         id = "1",
                         startTime = "16:01",
                         finishTime = "16:02",
+                        route = listOf(1f to 1f),
                         distance = 426,
                         fare = "4.05",
                         separatorText = "Monday, February 25"
@@ -167,6 +175,7 @@ fun AllRidesScreenPreview() {
                         id = "2",
                         startTime = "16:01",
                         finishTime = "16:02",
+                        route = listOf(1f to 1f),
                         distance = 426,
                         fare = "4.05",
                         separatorText = "Monday, February 25"
@@ -175,6 +184,7 @@ fun AllRidesScreenPreview() {
                         id = "3",
                         startTime = "16:01",
                         finishTime = "16:02",
+                        route = listOf(1f to 1f),
                         distance = 426,
                         fare = "4.05",
                         separatorText = "Monday, February 26"
