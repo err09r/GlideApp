@@ -12,20 +12,16 @@ import com.apsl.glideapp.common.util.now
 import com.apsl.glideapp.core.database.AppDatabase
 import com.apsl.glideapp.core.database.entities.RideCoordinatesEntity
 import com.apsl.glideapp.core.database.entities.RideEntity
-import com.apsl.glideapp.core.domain.connectivity.ConnectivityObserver
-import com.apsl.glideapp.core.model.ConnectionState
 import com.apsl.glideapp.core.network.http.GlideApi
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.datetime.LocalDateTime
 import timber.log.Timber
 
 @Singleton
 class RideRemoteMediator @Inject constructor(
     private val api: GlideApi,
-    private val appDatabase: AppDatabase,
-    private val connectivityObserver: ConnectivityObserver
+    private val appDatabase: AppDatabase
 ) : RemoteMediator<Int, RideEntity>() {
 
     private val rideDao = appDatabase.rideDao()
@@ -48,13 +44,14 @@ class RideRemoteMediator @Inject constructor(
                 }
             }
 
-            if (connectivityObserver.connectivityState.firstOrNull() == ConnectionState.Available) {
-                return if (rideDao.isTableEmpty()) {
-                    MediatorResult.Error(Exception("Ride table is empty"))
-                } else {
-                    MediatorResult.Success(true)
-                }
-            }
+            //TODO: to change (empty table error)
+//            if (connectivityObserver.connectivityState.firstOrNull() == ConnectionState.Available) {
+//                return if (rideDao.isTableEmpty()) {
+//                    MediatorResult.Error(Exception("Ride table is empty"))
+//                } else {
+//                    MediatorResult.Success(true)
+//                }
+//            }
 
             Timber.d("Loadkey: $loadKey")
 

@@ -8,6 +8,9 @@ import com.apsl.glideapp.core.database.entities.RideCoordinatesEntity
 @Dao
 interface RideCoordinatesDao : BaseDao {
 
+    @Query("SELECT * FROM ride_coordinates WHERE ride_id = :id")
+    suspend fun getRideCoordinatesByRideId(id: String): List<RideCoordinatesEntity>
+
     @Upsert
     suspend fun upsertRideCoordinates(coordinates: List<RideCoordinatesEntity>)
 
