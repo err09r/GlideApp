@@ -12,4 +12,5 @@ interface RideRepository {
     suspend fun updateRideState(action: RideAction)
     fun getUserRidesPaginated(): Flow<PagingData<Ride>>
     suspend fun getRideById(id: String): Ride
+    fun getAllRideCoordinates(): Flow<List<RideCoordinates>>
 }

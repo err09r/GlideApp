@@ -35,7 +35,7 @@ class RideRemoteMediator @Inject constructor(
         loadType: LoadType,
         state: PagingState<Int, RideEntity>
     ): MediatorResult {
-        return try {
+        try {
             val loadKey = when (loadType) {
                 LoadType.REFRESH -> 1
                 LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
@@ -48,6 +48,7 @@ class RideRemoteMediator @Inject constructor(
                 }
             }
 
+            //TODO: to change (empty table error)
             if (connectivityObserver.connectivityState.firstOrNull() == ConnectionState.Available) {
                 return if (rideDao.isTableEmpty()) {
                     MediatorResult.Error(Exception("Ride table is empty"))
@@ -76,9 +77,9 @@ class RideRemoteMediator @Inject constructor(
                 rideDao.upsertRides(rideEntities)
                 rideCoordinatesDao.upsertRideCoordinates(rideCoordinatesEntities)
             }
-            MediatorResult.Success(endOfPaginationReached = rideDtos.size < state.config.pageSize)
+            return MediatorResult.Success(endOfPaginationReached = rideDtos.size < state.config.pageSize)
         } catch (e: Exception) {
-            MediatorResult.Error(e)
+            return MediatorResult.Error(e)
         }
     }
 

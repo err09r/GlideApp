@@ -18,9 +18,9 @@ object DatabaseModule {
     @Provides
     fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase {
         return Room.databaseBuilder(
-            context,
-            AppDatabase::class.java,
-            AppDatabase.NAME
+            context = context,
+            klass = AppDatabase::class.java,
+            name = AppDatabase.NAME
         )
             .fallbackToDestructiveMigration()
             .build()
@@ -33,6 +33,10 @@ object DatabaseModule {
     @Singleton
     @Provides
     fun provideRideDao(database: AppDatabase) = database.rideDao()
+
+    @Singleton
+    @Provides
+    fun provideRideCoordinatesDao(database: AppDatabase) = database.rideCoordinatesDao()
 
     @Singleton
     @Provides

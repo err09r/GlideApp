@@ -7,20 +7,16 @@ import androidx.room.withTransaction
 import com.apsl.glideapp.common.util.now
 import com.apsl.glideapp.core.database.AppDatabase
 import com.apsl.glideapp.core.database.entities.TransactionEntity
-import com.apsl.glideapp.core.domain.connectivity.ConnectivityObserver
-import com.apsl.glideapp.core.model.ConnectionState
 import com.apsl.glideapp.core.network.http.GlideApi
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.datetime.LocalDateTime
 import timber.log.Timber
 
 @Singleton
 class TransactionRemoteMediator @Inject constructor(
     private val api: GlideApi,
-    private val appDatabase: AppDatabase,
-    private val connectivityObserver: ConnectivityObserver
+    private val appDatabase: AppDatabase
 ) : RemoteMediator<Int, TransactionEntity>() {
 
     private val transactionDao = appDatabase.transactionDao()
@@ -42,13 +38,14 @@ class TransactionRemoteMediator @Inject constructor(
                 }
             }
 
-            if (connectivityObserver.connectivityState.firstOrNull() == ConnectionState.Available) {
-                return if (transactionDao.isTableEmpty()) {
-                    MediatorResult.Error(Exception("Transaction table is empty"))
-                } else {
-                    MediatorResult.Success(true)
-                }
-            }
+            //TODO: to change (empty table error)
+//            if (connectivityObserver.connectivityState.firstOrNull() == ConnectionState.Available) {
+//                return if (transactionDao.isTableEmpty()) {
+//                    MediatorResult.Error(Exception("Transaction table is empty"))
+//                } else {
+//                    MediatorResult.Success(true)
+//                }
+//            }
 
             Timber.d("Loadkey: $loadKey")
 
