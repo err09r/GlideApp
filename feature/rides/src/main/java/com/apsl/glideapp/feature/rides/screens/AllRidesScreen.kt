@@ -129,8 +129,8 @@ fun AllRidesScreenContent(
                                         }
                                         Graph(
                                             points = ride.route,
-                                            modifier = Modifier.size(64.dp),
-                                            contentPadding = PaddingValues(2.dp)
+                                            modifier = Modifier.size(48.dp),
+                                            contentPadding = PaddingValues(8.dp)
                                         )
                                         Text(
                                             text = "${ride.fare} PLN", fontSize = 20.sp,

@@ -1,6 +1,7 @@
 package com.apsl.glideapp.feature.rides.models
 
 import androidx.compose.runtime.Immutable
+import com.apsl.glideapp.common.util.compress
 import com.apsl.glideapp.common.util.format
 import com.apsl.glideapp.core.model.Ride
 import java.time.format.DateTimeFormatter
@@ -20,7 +21,7 @@ data class RideUiModel(
     val separatorText: String
 )
 
-private val separatorFormatter = DateTimeFormatter.ofPattern("EEEE, d MMMM")
+private val separatorFormatter by lazy { DateTimeFormatter.ofPattern("EEEE, d MMMM") }
 
 fun Ride.toRideUiModel(): RideUiModel {
     val timeDifference =
@@ -32,15 +33,10 @@ fun Ride.toRideUiModel(): RideUiModel {
         startTime = startDateTime.time.toString().substringBeforeLast(':'),
         finishTime = finishDateTime.time.toString().substringBeforeLast(':'),
         route = route.points
-            .mapIndexed { index, (latitude, longitude) ->
-                //TODO: introduce compression rate
-                if (index % 10 == 0) {
-                    longitude.toFloat() to (((latitude.toFloat() + -90f) % 180f + 180f) % 180f + -90f)
-                } else {
-                    null
-                }
-            }
-            .filterNotNull(),
+            .compress(40)
+            .map { (latitude, longitude) ->
+                longitude.toFloat() to if (latitude >= 0) 90f - latitude.toFloat() else latitude.toFloat()
+            },
         distance = route.distance.roundToInt(),
         fare = (timeDifference.inWholeMinutes * 3.3).coerceAtLeast(3.3).format(2),
         separatorText = finishDateTime.toJavaLocalDateTime().format(separatorFormatter)

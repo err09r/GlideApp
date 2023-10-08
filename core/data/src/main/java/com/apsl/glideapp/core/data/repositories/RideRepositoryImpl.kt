@@ -10,6 +10,7 @@ import com.apsl.glideapp.common.models.Route
 import com.apsl.glideapp.core.database.dao.RideCoordinatesDao
 import com.apsl.glideapp.core.database.entities.RideEntity
 import com.apsl.glideapp.core.datastore.AppDataStore
+import com.apsl.glideapp.core.domain.ride.RideCoordinates
 import com.apsl.glideapp.core.domain.ride.RideRepository
 import com.apsl.glideapp.core.model.Ride
 import com.apsl.glideapp.core.model.RideEvent
@@ -98,5 +99,12 @@ class RideRepositoryImpl @Inject constructor(
             route = dto.route,
             averageSpeed = dto.averageSpeed
         )
+    }
+
+    // Used ONLY for Paging3 workaround
+    override fun getAllRideCoordinates(): Flow<List<RideCoordinates>> {
+        return rideCoordinatesDao
+            .getAllRideCoordinates()
+            .map { flow -> flow.map { RideCoordinates(it.rideId, it.latitude, it.longitude) } }
     }
 }
