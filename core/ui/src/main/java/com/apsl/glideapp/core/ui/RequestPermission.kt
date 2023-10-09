@@ -1,3 +1,5 @@
+@file:Suppress("Unused")
+
 package com.apsl.glideapp.core.ui
 
 import android.content.Context
@@ -10,7 +12,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
 import com.apsl.glideapp.core.util.android.findActivity
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 
@@ -26,7 +27,6 @@ fun rememberRequestPermissionState(
     return remember { RequestPermissionState(initRequest, permission) }
 }
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun RequestPermission(
     context: Context = LocalContext.current,

@@ -22,6 +22,7 @@ import com.apsl.glideapp.core.ui.BaseViewModel
 import com.apsl.glideapp.core.util.maps.toCoordinates
 import com.apsl.glideapp.core.util.maps.toCoordinatesBounds
 import com.apsl.glideapp.core.util.maps.toLatLng
+import com.apsl.glideapp.core.util.maps.toLatLngBounds
 import com.apsl.glideapp.feature.home.maps.NoParkingZone
 import com.apsl.glideapp.feature.home.maps.VehicleClusterItem
 import com.google.android.gms.maps.model.LatLngBounds
@@ -284,7 +285,10 @@ class HomeViewModel @Inject constructor(
                                         zone.coordinates.map { it.toLatLng() }
                                     },
                                     noParkingZones = mapContent.noParkingZones.map { zone ->
-                                        NoParkingZone(zone.coordinates.map { it.toLatLng() })
+                                        NoParkingZone(
+                                            coordinates = zone.coordinates.map { it.toLatLng() },
+                                            center = zone.coordinates.toLatLngBounds().center
+                                        )
                                     }
                                 )
                             }

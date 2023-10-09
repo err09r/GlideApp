@@ -8,17 +8,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.BottomSheetScaffold
-import androidx.compose.material.BottomSheetState
-import androidx.compose.material.BottomSheetValue
-import androidx.compose.material.Text
-import androidx.compose.material.rememberBottomSheetScaffoldState
+import androidx.compose.material3.BottomSheetScaffold
+import androidx.compose.material3.SheetState
+import androidx.compose.material3.SheetValue
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -52,11 +51,12 @@ fun RideDetailsScreen(
 
 @Composable
 fun RideDetailsScreenContent(uiState: RideDetailsUiState, onBackClick: () -> Unit) {
-    val context = LocalContext.current
-
     val scaffoldState =
         rememberBottomSheetScaffoldState(
-            bottomSheetState = BottomSheetState(initialValue = BottomSheetValue.Expanded)
+            bottomSheetState = SheetState(
+                skipPartiallyExpanded = true,
+                initialValue = SheetValue.Expanded
+            )
         )
 
     val cameraPositionState = remember(uiState.mapCameraBounds.center) {
@@ -101,9 +101,8 @@ fun RideDetailsScreenContent(uiState: RideDetailsUiState, onBackClick: () -> Uni
             }
         },
         scaffoldState = scaffoldState,
-        sheetGesturesEnabled = false,
-        sheetShape = RoundedCornerShape(top = 16.dp),
-        sheetElevation = 8.dp
+        sheetSwipeEnabled = false,
+        sheetShape = RoundedCornerShape(top = 16.dp)
     ) {
         FeatureScreen(
             topBarText = "Ride Details",

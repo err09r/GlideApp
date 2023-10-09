@@ -6,7 +6,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -26,7 +26,7 @@ fun Graph(
     points: List<Pair<Float, Float>>,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
-    color: Color = MaterialTheme.colors.primary,
+    color: Color = MaterialTheme.colorScheme.primary,
     thickness: Dp = 1.dp
 ) {
     val (minX, maxX) = remember(points) {
@@ -91,25 +91,25 @@ fun Graph(
     }
 }
 
-//@Preview(showBackground = true)
-//@Composable
-//fun GraphPreview() {
-//    GlideAppTheme {
-//        Graph(
-//            modifier = Modifier.size(120.dp),
-//            contentPadding = PaddingValues(4.dp),
-//            thickness = 2.dp,
-//            points = listOf(
-//                1f to 150f,
-//                2f to 100f,
-//                3f to 150f,
-//                4f to 25f,
-//                5f to 325f,
-//                6f to 275f
-//            )
-//        )
-//    }
-//}
+@Preview(showBackground = true)
+@Composable
+fun GraphPreview() {
+    GlideAppTheme {
+        Graph(
+            modifier = Modifier.size(120.dp),
+            contentPadding = PaddingValues(4.dp),
+            thickness = 2.dp,
+            points = listOf(
+                1f to 150f,
+                2f to 100f,
+                3f to 150f,
+                4f to 25f,
+                5f to 325f,
+                6f to 275f
+            )
+        )
+    }
+}
 
 @Preview(showBackground = true)
 @Composable

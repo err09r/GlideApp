@@ -1,4 +1,4 @@
-@file:SuppressLint("ComposableNaming", "StateFlowValueCalledInComposition")
+@file:SuppressLint("Unused", "ComposableNaming", "StateFlowValueCalledInComposition")
 
 package com.apsl.glideapp.core.ui
 

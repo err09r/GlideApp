@@ -14,10 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Button
-import androidx.compose.material.Icon
-import androidx.compose.material.OutlinedButton
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Battery1Bar
 import androidx.compose.material.icons.rounded.Battery2Bar
@@ -27,6 +23,10 @@ import androidx.compose.material.icons.rounded.Battery5Bar
 import androidx.compose.material.icons.rounded.Battery6Bar
 import androidx.compose.material.icons.rounded.BatteryFull
 import androidx.compose.material.icons.rounded.QrCodeScanner
+import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier

@@ -22,7 +22,7 @@ private fun BaseExtension.configureCompose(target: Project) {
 
 private fun Project.configureDependencies() {
     dependencies {
-        add("implementation", libs.androidx.compose.material)
+        add("implementation", libs.androidx.compose.material3)
         add("implementation", libs.androidx.compose.ui)
         add("implementation", libs.androidx.compose.ui.toolingPreview)
         add("implementation", libs.androidx.lifecycle.compose)
@@ -36,9 +36,11 @@ private fun Project.configureKotlinCompileOptions() {
             "-opt-in=androidx.compose.animation.ExperimentalAnimationApi",
             "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
             "-opt-in=androidx.compose.material.ExperimentalMaterialApi",
+            "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
             "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi",
             "-opt-in=com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi",
-            "-opt-in=com.google.accompanist.pager.ExperimentalPagerApi"
+            "-opt-in=com.google.accompanist.pager.ExperimentalPagerApi",
+            "-opt-in=com.google.accompanist.permissions.ExperimentalPermissionsApi"
         ).run {
             when {
                 // Use `-Pcom.apsl.glideapp.enableComposeCompilerReports=true` to enable

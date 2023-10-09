@@ -8,10 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Text
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -26,6 +23,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.apsl.glideapp.core.ui.FeatureScreen
 import com.apsl.glideapp.core.ui.LoadingScreen
 import com.apsl.glideapp.core.ui.noRippleClickable
+import com.apsl.glideapp.core.ui.pullrefresh.PullRefreshIndicator
+import com.apsl.glideapp.core.ui.pullrefresh.pullRefresh
+import com.apsl.glideapp.core.ui.pullrefresh.rememberPullRefreshState
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.feature.wallet.components.BalanceItem
 import com.apsl.glideapp.feature.wallet.components.TopUpItem

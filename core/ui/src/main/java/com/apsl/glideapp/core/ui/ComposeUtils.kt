@@ -1,3 +1,5 @@
+@file:Suppress("Unused")
+
 package com.apsl.glideapp.core.ui
 
 import androidx.compose.foundation.clickable
@@ -5,7 +7,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.BottomSheetState
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -46,12 +47,4 @@ fun Modifier.noRippleClickable(enabled: Boolean = true, onClick: () -> Unit): Mo
         enabled = enabled,
         onClick = onClick
     )
-}
-
-fun BottomSheetState.getOffset(): Float {
-    return try {
-        requireOffset()
-    } catch (e: IllegalStateException) {
-        0f
-    }
 }

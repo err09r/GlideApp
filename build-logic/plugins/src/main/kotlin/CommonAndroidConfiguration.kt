@@ -27,12 +27,6 @@ private fun BaseExtension.configureDefaultConfig() {
 
         resourceConfigurations += Config.resourceConfigurations
     }
-
-    packagingOptions {
-        resources {
-            excludes.add("/META-INF/{AL2.0,LGPL2.1}")
-        }
-    }
 }
 
 private fun BaseExtension.configureBuildTypes() {

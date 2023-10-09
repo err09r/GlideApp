@@ -15,11 +15,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -140,7 +139,6 @@ fun LoginScreenContent(
                         contentAlignment = Alignment.CenterEnd
                     ) {
                         Button(
-                            elevation = ButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp, 0.dp),
                             shape = CircleShape,
                             onClick = {
                                 keyboardController?.hide()
@@ -166,7 +164,7 @@ fun LoginScreenContent(
                         Text(
                             modifier = Modifier.clickable(onClick = onSignUpClick),
                             text = " Sign up",
-                            color = MaterialTheme.colors.primary,
+                            color = MaterialTheme.colorScheme.primary,
                         )
                     }
 

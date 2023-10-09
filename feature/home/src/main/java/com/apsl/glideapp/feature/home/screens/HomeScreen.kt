@@ -14,12 +14,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.BottomSheetScaffold
-import androidx.compose.material.BottomSheetValue
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.rememberBottomSheetScaffoldState
-import androidx.compose.material.rememberBottomSheetState
+import androidx.compose.material3.BottomSheetScaffold
+import androidx.compose.material3.DismissibleNavigationDrawer
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.SheetState
+import androidx.compose.material3.SheetValue
+import androidx.compose.material3.rememberBottomSheetScaffoldState
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -27,7 +30,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -41,7 +43,6 @@ import com.apsl.glideapp.core.ui.ComposableLifecycle
 import com.apsl.glideapp.core.ui.LoadingBar
 import com.apsl.glideapp.core.ui.RequestMultiplePermissions
 import com.apsl.glideapp.core.ui.RequestMultiplePermissionsState
-import com.apsl.glideapp.core.ui.getOffset
 import com.apsl.glideapp.core.ui.icons.GlideIcons
 import com.apsl.glideapp.core.ui.icons.Gps
 import com.apsl.glideapp.core.ui.icons.Menu
@@ -145,14 +146,17 @@ fun HomeScreenContent(
     val scope = rememberCoroutineScope()
 
     val scaffoldState = rememberBottomSheetScaffoldState(
-        bottomSheetState = rememberBottomSheetState(initialValue = BottomSheetValue.Expanded)
+        bottomSheetState = SheetState(
+            skipPartiallyExpanded = true,
+            initialValue = SheetValue.Expanded
+        ),
     )
 
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val statusBarHeightPx = WindowInsets.statusBars.getTop(density)
     val navigationBarHeightPx = WindowInsets.navigationBars.getBottom(density)
 
-    val bottomSheetOffsetPx = scaffoldState.bottomSheetState.getOffset()
+    val bottomSheetOffsetPx = 0f//scaffoldState.bottomSheetState.requireOffset()
     val bottomSheetOffset = with(density) {
         (bottomSheetOffsetPx - statusBarHeightPx).toDp()
     }
@@ -252,24 +256,11 @@ fun HomeScreenContent(
     }
     //TODO **********************************************************
 
-    BottomSheetScaffold(
-        scaffoldState = scaffoldState,
-        sheetGesturesEnabled = !uiState.isInRideMode,
-        sheetPeekHeight = 0.dp,
-        sheetContent = {
-//            if (uiState.selectedVehicle != null) {
-            SheetContent(
-                vehicleCode = uiState.selectedVehicle?.code ?: "",
-                vehicleRange = uiState.selectedVehicle?.range ?: 0,
-                vehicleCharge = uiState.selectedVehicle?.charge ?: 0,
-                rideState = uiState.rideState,
-                onStartRideClick = onStartRideClick,
-                onFinishRideClick = onFinishRideClick
-            )
-//            }
-        },
-        drawerGesturesEnabled = scaffoldState.drawerState.isOpen,
-        drawerElevation = 8.dp,
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+
+    DismissibleNavigationDrawer(
+        modifier = Modifier.fillMaxSize(),
+        gesturesEnabled = drawerState.isOpen,
         drawerContent = {
             DrawerContent(
                 username = uiState.username,
@@ -279,77 +270,95 @@ fun HomeScreenContent(
                 onWalletClick = onWalletClick
             )
         }
-    ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            GlideMap(
-                cameraPositionState = cameraPositionState,
-                vehicleClusterItems = uiState.vehicleClusterItems,
-                ridingZones = uiState.ridingZones,
-                noParkingZones = uiState.noParkingZones,
-                userLocation = uiState.userLocation,
-                mapPaddingBottom = mapPaddingBottom,
-                rideRoute = uiState.rideRoute,
-                onLoadMapDataWithinBounds = onLoadMapDataWithinBounds,
-                onVehicleSelect = {
-                    scope.launch {
-                        scaffoldState.bottomSheetState.expand()
-                        onVehicleSelect(it)
-                    }
-                }
-            )
+    ) {
+
+        BottomSheetScaffold(
+            scaffoldState = scaffoldState,
+            sheetSwipeEnabled = !uiState.isInRideMode,
+            sheetPeekHeight = 0.dp,
+            sheetContent = {
+//            if (uiState.selectedVehicle != null) {
+                SheetContent(
+                    vehicleCode = uiState.selectedVehicle?.code ?: "",
+                    vehicleRange = uiState.selectedVehicle?.range ?: 0,
+                    vehicleCharge = uiState.selectedVehicle?.charge ?: 0,
+                    rideState = uiState.rideState,
+                    onStartRideClick = onStartRideClick,
+                    onFinishRideClick = onFinishRideClick
+                )
+//            }
+            }
+        ) { paddingValues ->
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .systemBarsPadding()
+                    .padding(paddingValues)
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(bottomSheetOffset)
-                        .padding(16.dp)
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .align(Alignment.TopCenter),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        FloatingActionButton(
-                            backgroundColor = Color.White,
-                            onClick = {
-                                scope.launch {
-                                    scaffoldState.drawerState.open()
-                                }
-                            }
-                        ) {
-                            Icon(imageVector = GlideIcons.Menu, contentDescription = null)
-                        }
-                        if (uiState.isLoadingMapContent) {
-                            Spacer(Modifier.width(16.dp))
-                            LoadingBar(modifier = Modifier.weight(1f))
-                            Spacer(Modifier.width(88.dp))
-                        } else {
-                            Spacer(Modifier.weight(1f))
+                GlideMap(
+                    cameraPositionState = cameraPositionState,
+                    vehicleClusterItems = uiState.vehicleClusterItems,
+                    ridingZones = uiState.ridingZones,
+                    noParkingZones = uiState.noParkingZones,
+                    userLocation = uiState.userLocation,
+                    mapPaddingBottom = mapPaddingBottom,
+                    rideRoute = uiState.rideRoute,
+                    onLoadMapDataWithinBounds = onLoadMapDataWithinBounds,
+                    onVehicleSelect = {
+                        scope.launch {
+                            scaffoldState.bottomSheetState.expand()
+                            onVehicleSelect(it)
                         }
                     }
-
-                    FloatingActionButton(
-                        modifier = Modifier.align(Alignment.BottomEnd),
-                        backgroundColor = Color.White,
-                        onClick = {
-                            onLocationButtonClick()
-                            requestPermissionsState.requestPermissions = true
-                        }
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .systemBarsPadding()
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(bottomSheetOffset)
+                            .padding(16.dp)
                     ) {
-                        Icon(imageVector = GlideIcons.Gps, contentDescription = null)
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .align(Alignment.TopCenter),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            FloatingActionButton(
+                                onClick = {
+                                    scope.launch {
+                                        drawerState.open()
+                                    }
+                                }
+                            ) {
+                                Icon(imageVector = GlideIcons.Menu, contentDescription = null)
+                            }
+                            if (uiState.isLoadingMapContent) {
+                                Spacer(Modifier.width(16.dp))
+                                LoadingBar(modifier = Modifier.weight(1f))
+                                Spacer(Modifier.width(88.dp))
+                            } else {
+                                Spacer(Modifier.weight(1f))
+                            }
+                        }
+
+                        FloatingActionButton(
+                            modifier = Modifier.align(Alignment.BottomEnd),
+                            onClick = {
+                                onLocationButtonClick()
+                                requestPermissionsState.requestPermissions = true
+                            }
+                        ) {
+                            Icon(imageVector = GlideIcons.Gps, contentDescription = null)
+                        }
                     }
                 }
             }
         }
+
     }
 }
 
