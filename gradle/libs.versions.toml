@@ -17,7 +17,9 @@ androidx-hilt-compiler = "1.0.0"
 androidx-hilt-navigationCompose = "1.0.0"
 androidx-hilt-work = "1.0.0"
 androidx-lifecycle = "2.6.2"
-androidx-navigation = "2.7.4"
+#Leave until animation on app startup is fixed
+#noinspection GradleDependency
+androidx-navigation = "2.6.0"
 androidx-paging = "3.2.1"
 androidx-room = "2.5.2"
 androidx-security-crypto = "1.1.0-alpha06"
