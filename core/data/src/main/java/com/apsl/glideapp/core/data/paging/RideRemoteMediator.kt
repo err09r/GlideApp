@@ -13,13 +13,13 @@ import com.apsl.glideapp.core.database.AppDatabase
 import com.apsl.glideapp.core.database.entities.RideCoordinatesEntity
 import com.apsl.glideapp.core.database.entities.RideEntity
 import com.apsl.glideapp.core.domain.connectivity.ConnectivityObserver
-import com.apsl.glideapp.core.model.ConnectionState
+import com.apsl.glideapp.core.model.ConnectivityState
 import com.apsl.glideapp.core.network.http.GlideApi
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.datetime.LocalDateTime
 import timber.log.Timber
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 class RideRemoteMediator @Inject constructor(
@@ -49,7 +49,7 @@ class RideRemoteMediator @Inject constructor(
             }
 
             //TODO: to change (empty table error)
-            if (connectivityObserver.connectivityState.firstOrNull() == ConnectionState.Available) {
+            if (connectivityObserver.connectivityState.firstOrNull() == ConnectivityState.Available) {
                 return if (rideDao.isTableEmpty()) {
                     MediatorResult.Error(Exception("Ride table is empty"))
                 } else {

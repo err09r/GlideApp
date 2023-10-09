@@ -5,9 +5,8 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
 import com.apsl.glideapp.core.domain.connectivity.ConnectivityObserver
-import com.apsl.glideapp.core.model.ConnectionState
+import com.apsl.glideapp.core.model.ConnectivityState
 import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.awaitClose
@@ -17,6 +16,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
 @SuppressLint("MissingPermission")
 class ConnectivityObserverImpl @Inject constructor(
@@ -35,28 +35,28 @@ class ConnectivityObserverImpl @Inject constructor(
             override fun onAvailable(network: Network) {
                 super.onAvailable(network)
                 launch {
-                    send(ConnectionState.Available)
+                    send(ConnectivityState.Available)
                 }
             }
 
             override fun onLosing(network: Network, maxMsToLive: Int) {
                 super.onLosing(network, maxMsToLive)
                 launch {
-                    send(ConnectionState.Losing)
+                    send(ConnectivityState.Losing)
                 }
             }
 
             override fun onLost(network: Network) {
                 super.onLost(network)
                 launch {
-                    send(ConnectionState.Lost)
+                    send(ConnectivityState.Lost)
                 }
             }
 
             override fun onUnavailable() {
                 super.onUnavailable()
                 launch {
-                    send(ConnectionState.Unavailable)
+                    send(ConnectivityState.Unavailable)
                 }
             }
         }
@@ -72,6 +72,6 @@ class ConnectivityObserverImpl @Inject constructor(
         .stateIn(
             scope = scope,
             started = SharingStarted.Eagerly,
-            initialValue = ConnectionState.Initial
+            initialValue = ConnectivityState.Initial
         )
 }
