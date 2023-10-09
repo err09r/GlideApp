@@ -1,4 +1,4 @@
-package com.apsl.glideapp.feature.home.maps
+package com.apsl.glideapp.feature.home.map
 
 import android.content.Context
 import android.graphics.Color

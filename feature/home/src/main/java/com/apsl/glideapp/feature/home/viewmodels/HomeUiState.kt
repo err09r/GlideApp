@@ -3,8 +3,8 @@ package com.apsl.glideapp.feature.home.viewmodels
 import androidx.compose.runtime.Immutable
 import com.apsl.glideapp.core.model.UserAuthState
 import com.apsl.glideapp.core.model.UserLocation
-import com.apsl.glideapp.feature.home.maps.NoParkingZone
-import com.apsl.glideapp.feature.home.maps.VehicleClusterItem
+import com.apsl.glideapp.feature.home.map.VehicleClusterItem
+import com.apsl.glideapp.feature.home.map.ZoneUiModel
 import com.google.android.gms.maps.model.LatLng
 
 @Immutable
@@ -17,8 +17,8 @@ data class HomeUiState(
     val userBalance: Double = 0.0,
     val selectedVehicle: VehicleClusterItem? = null,
     val vehicleClusterItems: List<VehicleClusterItem> = emptyList(),
-    val ridingZones: List<List<LatLng>> = emptyList(),
-    val noParkingZones: List<NoParkingZone> = emptyList(),
+    val ridingZones: List<List<LatLng>> = emptyList(), // Designed like this because of 'Polygon' composable implementation
+    val noParkingZones: List<ZoneUiModel> = emptyList(),
     val initialCameraPosition: LatLng? = null,
     val userLocation: UserLocation? = null,
     val wasLocationPermissionRequested: Boolean = false,

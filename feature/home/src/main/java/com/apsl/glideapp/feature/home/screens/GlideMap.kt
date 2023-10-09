@@ -18,10 +18,10 @@ import androidx.core.content.ContextCompat
 import com.apsl.glideapp.core.model.UserLocation
 import com.apsl.glideapp.core.util.maps.toLocation
 import com.apsl.glideapp.feature.home.R
-import com.apsl.glideapp.feature.home.maps.ClusterRendererImpl
-import com.apsl.glideapp.feature.home.maps.HomeLocationSource
-import com.apsl.glideapp.feature.home.maps.NoParkingZone
-import com.apsl.glideapp.feature.home.maps.VehicleClusterItem
+import com.apsl.glideapp.feature.home.map.ClusterRendererImpl
+import com.apsl.glideapp.feature.home.map.HomeLocationSource
+import com.apsl.glideapp.feature.home.map.VehicleClusterItem
+import com.apsl.glideapp.feature.home.map.ZoneUiModel
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.JointType
@@ -47,7 +47,7 @@ fun GlideMap(
     cameraPositionState: CameraPositionState,
     vehicleClusterItems: List<VehicleClusterItem>,
     ridingZones: List<List<LatLng>>,
-    noParkingZones: List<NoParkingZone>,
+    noParkingZones: List<ZoneUiModel>,
     userLocation: UserLocation?,
     mapPaddingBottom: Dp,
     modifier: Modifier = Modifier,

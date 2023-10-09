@@ -1,4 +1,4 @@
-package com.apsl.glideapp.feature.home.maps
+package com.apsl.glideapp.feature.home.map
 
 import android.location.Location
 import com.google.android.gms.maps.LocationSource

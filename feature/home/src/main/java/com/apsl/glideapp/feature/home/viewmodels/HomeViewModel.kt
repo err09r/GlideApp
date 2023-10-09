@@ -19,16 +19,14 @@ import com.apsl.glideapp.core.domain.ride.StartRideUseCase
 import com.apsl.glideapp.core.domain.user.GetUserUseCase
 import com.apsl.glideapp.core.model.RideEvent
 import com.apsl.glideapp.core.ui.BaseViewModel
+import com.apsl.glideapp.core.util.maps.mapToLatLng
 import com.apsl.glideapp.core.util.maps.toCoordinates
 import com.apsl.glideapp.core.util.maps.toCoordinatesBounds
 import com.apsl.glideapp.core.util.maps.toLatLng
-import com.apsl.glideapp.core.util.maps.toLatLngBounds
-import com.apsl.glideapp.feature.home.maps.NoParkingZone
-import com.apsl.glideapp.feature.home.maps.VehicleClusterItem
+import com.apsl.glideapp.feature.home.map.VehicleClusterItem
+import com.apsl.glideapp.feature.home.map.mapToUiModel
 import com.google.android.gms.maps.model.LatLngBounds
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
-import kotlin.math.roundToInt
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.channels.Channel
@@ -43,6 +41,8 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
+import kotlin.math.roundToInt
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
@@ -281,15 +281,8 @@ class HomeViewModel @Inject constructor(
                                             itemPosition = vehicle.coordinates.toLatLng()
                                         )
                                     },
-                                    ridingZones = mapContent.ridingZones.map { zone ->
-                                        zone.coordinates.map { it.toLatLng() }
-                                    },
-                                    noParkingZones = mapContent.noParkingZones.map { zone ->
-                                        NoParkingZone(
-                                            coordinates = zone.coordinates.map { it.toLatLng() },
-                                            center = zone.coordinates.toLatLngBounds().center
-                                        )
-                                    }
+                                    ridingZones = mapContent.ridingZones.map { it.coordinates.mapToLatLng() },
+                                    noParkingZones = mapContent.noParkingZones.mapToUiModel()
                                 )
                             }
                         }

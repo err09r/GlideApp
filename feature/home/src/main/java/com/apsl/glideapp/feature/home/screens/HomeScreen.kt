@@ -52,7 +52,7 @@ import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.core.util.maps.toLatLng
 import com.apsl.glideapp.feature.home.components.DrawerContent
 import com.apsl.glideapp.feature.home.components.SheetContent
-import com.apsl.glideapp.feature.home.maps.VehicleClusterItem
+import com.apsl.glideapp.feature.home.map.VehicleClusterItem
 import com.apsl.glideapp.feature.home.viewmodels.HomeUiState
 import com.apsl.glideapp.feature.home.viewmodels.HomeViewModel
 import com.apsl.glideapp.feature.home.viewmodels.RideState
