@@ -46,6 +46,7 @@ import com.apsl.glideapp.core.ui.RequestMultiplePermissionsState
 import com.apsl.glideapp.core.ui.icons.GlideIcons
 import com.apsl.glideapp.core.ui.icons.Gps
 import com.apsl.glideapp.core.ui.icons.Menu
+import com.apsl.glideapp.core.ui.offset
 import com.apsl.glideapp.core.ui.rememberRequestMultiplePermissionState
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.core.util.maps.toLatLng
@@ -156,7 +157,7 @@ fun HomeScreenContent(
     val statusBarHeightPx = WindowInsets.statusBars.getTop(density)
     val navigationBarHeightPx = WindowInsets.navigationBars.getBottom(density)
 
-    val bottomSheetOffsetPx = 0f//scaffoldState.bottomSheetState.requireOffset()
+    val bottomSheetOffsetPx = scaffoldState.bottomSheetState.offset ?: 0f
     val bottomSheetOffset = with(density) {
         (bottomSheetOffsetPx - statusBarHeightPx).toDp()
     }
