@@ -150,7 +150,7 @@ fun HomeScreenContent(
         bottomSheetState = SheetState(
             skipPartiallyExpanded = true,
             initialValue = SheetValue.Expanded
-        ),
+        )
     )
 
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
