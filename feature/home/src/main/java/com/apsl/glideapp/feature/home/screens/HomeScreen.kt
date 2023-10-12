@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.DrawerValue
@@ -49,9 +48,11 @@ import com.apsl.glideapp.core.ui.RequestMultiplePermissionsState
 import com.apsl.glideapp.core.ui.icons.GlideIcons
 import com.apsl.glideapp.core.ui.icons.Gps
 import com.apsl.glideapp.core.ui.icons.Menu
+import com.apsl.glideapp.core.ui.navigationBarHeight
 import com.apsl.glideapp.core.ui.offset
 import com.apsl.glideapp.core.ui.rememberRequestMultiplePermissionState
 import com.apsl.glideapp.core.ui.screenHeight
+import com.apsl.glideapp.core.ui.statusBarHeight
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.core.ui.toDp
 import com.apsl.glideapp.core.util.maps.toLatLng
@@ -279,8 +280,8 @@ fun HomeScreenContent(
                     .fillMaxSize()
                     .padding(padding)
             ) {
-                val statusBarHeight = WindowInsets.systemBars.getTop(density).toDp()
-                val navigationBarHeight = WindowInsets.systemBars.getBottom(density).toDp()
+                val statusBarHeight = WindowInsets.statusBarHeight
+                val navigationBarHeight = WindowInsets.navigationBarHeight
                 val bottomSheetOffset = scaffoldState.bottomSheetState.offset.toDp()
                 val bottomSheetHeight = screenHeight - bottomSheetOffset + statusBarHeight
                 val mapPaddingBottom = if (bottomSheetHeight > 0.dp) {

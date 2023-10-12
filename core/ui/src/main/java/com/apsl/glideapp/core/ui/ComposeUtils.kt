@@ -3,6 +3,7 @@
 package com.apsl.glideapp.core.ui
 
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.SheetState
@@ -30,6 +31,13 @@ fun RoundedCornerShape(top: Dp = 0.dp, bottom: Dp = 0.dp) = RoundedCornerShape(
     bottomStart = CornerSize(bottom)
 )
 
+val SheetState.offset: Float?
+    get() = try {
+        requireOffset()
+    } catch (e: IllegalStateException) {
+        null
+    }
+
 val screenHeight: Dp
     @Composable
     get() = LocalConfiguration.current.screenHeightDp.dp
@@ -40,12 +48,13 @@ val screenWidth: Dp
 
 val WindowInsets.Companion.None: WindowInsets get() = WindowInsets(0, 0, 0, 0)
 
-val SheetState.offset: Float?
-    get() = try {
-        requireOffset()
-    } catch (e: IllegalStateException) {
-        null
-    }
+val WindowInsets.Companion.statusBarHeight: Dp
+    @Composable
+    get() = WindowInsets.systemBars.getTop(LocalDensity.current).toDp()
+
+val WindowInsets.Companion.navigationBarHeight: Dp
+    @Composable
+    get() = WindowInsets.systemBars.getBottom(LocalDensity.current).toDp()
 
 @Composable
 fun Float.toDp(density: Density = LocalDensity.current): Dp {
