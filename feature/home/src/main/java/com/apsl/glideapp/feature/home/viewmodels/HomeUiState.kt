@@ -21,7 +21,6 @@ data class HomeUiState(
     val noParkingZones: List<ZoneUiModel> = emptyList(),
     val initialCameraPosition: LatLng? = null,
     val userLocation: UserLocation? = null,
-    val wasLocationPermissionRequested: Boolean = false,
     val rideState: RideState? = null,
     val rideRoute: List<LatLng>? = null,
     val error: HomeUiError? = null

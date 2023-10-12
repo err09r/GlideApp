@@ -6,7 +6,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -20,12 +19,11 @@ fun DrawerStatsComponent(icon: ImageVector, value: Int, units: String) {
     Column {
         Icon(
             modifier = Modifier.size(32.dp),
-            tint = Color(246, 151, 39),
             imageVector = icon,
             contentDescription = null
         )
         Text(text = value.toString(), fontSize = 24.sp)
-        Text(text = units, color = Color.DarkGray)
+        Text(text = units)
     }
 }
 

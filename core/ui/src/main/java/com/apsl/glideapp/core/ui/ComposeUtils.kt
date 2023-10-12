@@ -2,17 +2,15 @@
 
 package com.apsl.glideapp.core.ui
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.SheetState
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlin.random.Random
@@ -21,7 +19,7 @@ fun Color.Companion.random(): Color {
     return Color(
         red = Random.nextInt(0, 256),
         green = Random.nextInt(0, 256),
-        blue = Random.nextInt(0, 256),
+        blue = Random.nextInt(0, 256)
     )
 }
 
@@ -32,23 +30,15 @@ fun RoundedCornerShape(top: Dp = 0.dp, bottom: Dp = 0.dp) = RoundedCornerShape(
     bottomStart = CornerSize(bottom)
 )
 
-fun Modifier.rippleClickable(enabled: Boolean = true, onClick: () -> Unit): Modifier = composed {
-    this.clickable(
-        interactionSource = remember { MutableInteractionSource() },
-        indication = rememberRipple(color = if (isSystemInDarkTheme()) Color.White else Color.Black),
-        enabled = enabled,
-        onClick = onClick
-    )
-}
+val screenHeight: Dp
+    @Composable
+    get() = LocalConfiguration.current.screenHeightDp.dp
 
-fun Modifier.noRippleClickable(enabled: Boolean = true, onClick: () -> Unit): Modifier = composed {
-    this.clickable(
-        interactionSource = remember { MutableInteractionSource() },
-        indication = null,
-        enabled = enabled,
-        onClick = onClick
-    )
-}
+val screenWidth: Dp
+    @Composable
+    get() = LocalConfiguration.current.screenWidthDp.dp
+
+val WindowInsets.Companion.None: WindowInsets get() = WindowInsets(0, 0, 0, 0)
 
 val SheetState.offset: Float?
     get() = try {
@@ -56,3 +46,23 @@ val SheetState.offset: Float?
     } catch (e: IllegalStateException) {
         null
     }
+
+@Composable
+fun Float.toDp(density: Density = LocalDensity.current): Dp {
+    return with(density) { this@toDp.toDp() }
+}
+
+@Composable
+fun Float?.toDp(density: Density = LocalDensity.current): Dp {
+    return with(density) { this@toDp?.toDp() ?: 0.dp }
+}
+
+@Composable
+fun Int.toDp(density: Density = LocalDensity.current): Dp {
+    return with(density) { this@toDp.toDp() }
+}
+
+@Composable
+fun Int?.toDp(density: Density = LocalDensity.current): Dp {
+    return with(density) { this@toDp?.toDp() ?: 0.dp }
+}

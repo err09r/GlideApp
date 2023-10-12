@@ -1,5 +1,7 @@
 package com.apsl.glideapp.feature.wallet.screens
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -12,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,7 +25,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.apsl.glideapp.core.ui.FeatureScreen
 import com.apsl.glideapp.core.ui.LoadingScreen
-import com.apsl.glideapp.core.ui.noRippleClickable
 import com.apsl.glideapp.core.ui.pullrefresh.PullRefreshIndicator
 import com.apsl.glideapp.core.ui.pullrefresh.pullRefresh
 import com.apsl.glideapp.core.ui.pullrefresh.rememberPullRefreshState
@@ -144,7 +146,11 @@ fun WalletScreenContent(
 
                         Text(
                             text = "See all transactions",
-                            modifier = Modifier.noRippleClickable(onClick = onSeeAllTransactionsClick),
+                            modifier = Modifier.clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null,
+                                onClick = onSeeAllTransactionsClick
+                            ),
                             fontWeight = FontWeight.Medium
                         )
 

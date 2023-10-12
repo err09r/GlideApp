@@ -2,23 +2,25 @@ package com.apsl.glideapp.feature.home.screens
 
 import android.Manifest
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.BottomSheetScaffold
-import androidx.compose.material3.DismissibleNavigationDrawer
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.rememberBottomSheetScaffoldState
@@ -30,7 +32,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
@@ -48,14 +51,15 @@ import com.apsl.glideapp.core.ui.icons.Gps
 import com.apsl.glideapp.core.ui.icons.Menu
 import com.apsl.glideapp.core.ui.offset
 import com.apsl.glideapp.core.ui.rememberRequestMultiplePermissionState
+import com.apsl.glideapp.core.ui.screenHeight
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
+import com.apsl.glideapp.core.ui.toDp
 import com.apsl.glideapp.core.util.maps.toLatLng
-import com.apsl.glideapp.feature.home.components.DrawerContent
-import com.apsl.glideapp.feature.home.components.SheetContent
+import com.apsl.glideapp.feature.home.components.HomeBottomSheet
+import com.apsl.glideapp.feature.home.components.HomeDrawerSheet
 import com.apsl.glideapp.feature.home.map.VehicleClusterItem
 import com.apsl.glideapp.feature.home.viewmodels.HomeUiState
 import com.apsl.glideapp.feature.home.viewmodels.HomeViewModel
-import com.apsl.glideapp.feature.home.viewmodels.RideState
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLngBounds
@@ -146,47 +150,23 @@ fun HomeScreenContent(
     val density = LocalDensity.current
     val scope = rememberCoroutineScope()
 
-    val scaffoldState = rememberBottomSheetScaffoldState(
-        bottomSheetState = SheetState(
-            skipPartiallyExpanded = true,
-            initialValue = SheetValue.Expanded
-        )
-    )
-
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
-    val statusBarHeightPx = WindowInsets.statusBars.getTop(density)
-    val navigationBarHeightPx = WindowInsets.navigationBars.getBottom(density)
-
-    val bottomSheetOffsetPx = scaffoldState.bottomSheetState.offset ?: 0f
-    val bottomSheetOffset = with(density) {
-        (bottomSheetOffsetPx - statusBarHeightPx).toDp()
-    }
-
-    val mapPaddingBottom = remember(bottomSheetOffset) {
-        with(density) {
-            if (screenHeight - bottomSheetOffset > 0.dp) {
-                screenHeight - bottomSheetOffset + navigationBarHeightPx.toDp()
-            } else {
-                navigationBarHeightPx.toDp()
-            }
-        }
-    }
-
     BackHandler(enabled = uiState.selectedVehicle != null) {
         onVehicleSelect(null)
     }
 
 //    LaunchedEffect(uiState.selectedVehicle) {
 //        if (uiState.selectedVehicle == null) {
-//            scaffoldState.bottomSheetState.collapse()
+//            scaffoldState.bottomSheetState.hide()
+//        } else {
+//            scaffoldState.bottomSheetState.show()
 //        }
 //    }
 
-    LaunchedEffect(uiState.rideState) {
-        if (uiState.rideState == RideState.Active) {
-            scaffoldState.bottomSheetState.expand()
-        }
-    }
+//    LaunchedEffect(uiState.rideState) {
+//        if (uiState.rideState == RideState.Active) {
+//            scaffoldState.bottomSheetState.expand()
+//        }
+//    }
 
     val cameraPositionState = remember(uiState.initialCameraPosition) {
         CameraPositionState().apply {
@@ -247,23 +227,23 @@ fun HomeScreenContent(
             visibleBounds?.let { onLoadMapDataWithinBounds(it) }
         }
     }
-
-    LaunchedEffect(cameraPositionState.projection) {
-        Timber.d("load block")
-        if (visibleBounds != null && uiState.vehicleClusterItems.isEmpty()) {
-            Timber.d("onLoad: $visibleBounds")
-            onLoadMapDataWithinBounds(visibleBounds)
-        }
-    }
+//
+//    LaunchedEffect(cameraPositionState.projection) {
+//        Timber.d("load block")
+//        if (visibleBounds != null && uiState.vehicleClusterItems.isEmpty()) {
+//            Timber.d("onLoad: $visibleBounds")
+//            onLoadMapDataWithinBounds(visibleBounds)
+//        }
+//    }
     //TODO **********************************************************
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
-    DismissibleNavigationDrawer(
-        modifier = Modifier.fillMaxSize(),
+    ModalNavigationDrawer(
+        drawerState = drawerState,
         gesturesEnabled = drawerState.isOpen,
         drawerContent = {
-            DrawerContent(
+            HomeDrawerSheet(
                 username = uiState.username,
                 userTotalDistance = uiState.userTotalDistance,
                 userTotalRides = uiState.userTotalRides,
@@ -272,14 +252,19 @@ fun HomeScreenContent(
             )
         }
     ) {
-
+        val scaffoldState = rememberBottomSheetScaffoldState(
+            bottomSheetState = SheetState(
+                skipPartiallyExpanded = true,
+                initialValue = SheetValue.Expanded
+            )
+        )
         BottomSheetScaffold(
             scaffoldState = scaffoldState,
             sheetSwipeEnabled = !uiState.isInRideMode,
             sheetPeekHeight = 0.dp,
+            sheetShape = RectangleShape,
             sheetContent = {
-//            if (uiState.selectedVehicle != null) {
-                SheetContent(
+                HomeBottomSheet(
                     vehicleCode = uiState.selectedVehicle?.code ?: "",
                     vehicleRange = uiState.selectedVehicle?.range ?: 0,
                     vehicleCharge = uiState.selectedVehicle?.charge ?: 0,
@@ -287,23 +272,30 @@ fun HomeScreenContent(
                     onStartRideClick = onStartRideClick,
                     onFinishRideClick = onFinishRideClick
                 )
-//            }
             }
-        ) { paddingValues ->
+        ) { padding ->
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues)
+                    .padding(padding)
             ) {
+                val statusBarHeight = WindowInsets.systemBars.getTop(density).toDp()
+                val navigationBarHeight = WindowInsets.systemBars.getBottom(density).toDp()
+                val bottomSheetOffset = scaffoldState.bottomSheetState.offset.toDp()
+                val bottomSheetHeight = screenHeight - bottomSheetOffset + statusBarHeight
+                val mapPaddingBottom = if (bottomSheetHeight > 0.dp) {
+                    bottomSheetHeight + navigationBarHeight
+                } else {
+                    navigationBarHeight
+                }
                 GlideMap(
                     cameraPositionState = cameraPositionState,
                     vehicleClusterItems = uiState.vehicleClusterItems,
                     ridingZones = uiState.ridingZones,
                     noParkingZones = uiState.noParkingZones,
                     userLocation = uiState.userLocation,
-                    mapPaddingBottom = mapPaddingBottom,
+                    contentPadding = PaddingValues(bottom = mapPaddingBottom),
                     rideRoute = uiState.rideRoute,
-                    onLoadMapDataWithinBounds = onLoadMapDataWithinBounds,
                     onVehicleSelect = {
                         scope.launch {
                             scaffoldState.bottomSheetState.expand()
@@ -311,15 +303,16 @@ fun HomeScreenContent(
                         }
                     }
                 )
-                Box(
+                Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .systemBarsPadding()
+                        .safeContentPadding()
+                        .background(Color.Red.copy(0.1f))
                 ) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(bottomSheetOffset)
+                            .weight(1f)
                             .padding(16.dp)
                     ) {
                         Row(
@@ -356,10 +349,15 @@ fun HomeScreenContent(
                             Icon(imageVector = GlideIcons.Gps, contentDescription = null)
                         }
                     }
+                    Spacer(
+                        Modifier
+                            .height(bottomSheetHeight)
+                            .fillMaxWidth()
+                            .background(Color.Green)
+                    )
                 }
             }
         }
-
     }
 }
 

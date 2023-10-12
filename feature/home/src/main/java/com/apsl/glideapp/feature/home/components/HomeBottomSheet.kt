@@ -42,7 +42,7 @@ import com.apsl.glideapp.feature.home.R
 import com.apsl.glideapp.feature.home.viewmodels.RideState
 
 @Composable
-fun SheetContent(
+fun HomeBottomSheet(
     vehicleCode: String,
     vehicleRange: Int,
     vehicleCharge: Int,
@@ -156,9 +156,9 @@ fun SheetContent(
 
 @Preview(showBackground = true)
 @Composable
-fun SheetContentPreview() {
+fun HomeBottomSheetPreview() {
     GlideAppTheme {
-        SheetContent(
+        HomeBottomSheet(
             vehicleCode = "0023",
             vehicleRange = 25,
             vehicleCharge = 90,

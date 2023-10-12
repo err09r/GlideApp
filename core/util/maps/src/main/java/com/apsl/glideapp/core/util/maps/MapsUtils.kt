@@ -63,8 +63,8 @@ fun LatLngBounds.toCoordinatesBounds() = CoordinatesBounds(
 @JvmName("listToLatLngBounds")
 fun List<LatLng>.toLatLngBounds(): LatLngBounds {
     val topmostLatitude = this.maxOf { it.latitude }
-    val bottommostLatitude = this.maxOf { it.latitude }
-    val leftmostLongitude = this.maxOf { it.longitude }
+    val bottommostLatitude = this.minOf { it.latitude }
+    val leftmostLongitude = this.minOf { it.longitude }
     val rightmostLongitude = this.maxOf { it.longitude }
 
     val southwest = LatLng(bottommostLatitude, leftmostLongitude)

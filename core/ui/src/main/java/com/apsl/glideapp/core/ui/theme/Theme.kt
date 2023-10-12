@@ -12,14 +12,12 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
@@ -36,7 +34,6 @@ private val LightColorScheme = lightColorScheme(
 @Composable
 fun GlideAppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
@@ -54,22 +51,15 @@ fun GlideAppTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
+            window.run {
+                statusBarColor = Color.Transparent.toArgb()
+                navigationBarColor = Color.Transparent.toArgb()
+            }
+            WindowCompat.getInsetsController(window, view).run {
+                isAppearanceLightStatusBars = !darkTheme
+                isAppearanceLightNavigationBars = !darkTheme
+            }
         }
-    }
-
-    val systemUiController = rememberSystemUiController()
-
-    LaunchedEffect(systemUiController, darkTheme) {
-        systemUiController.setStatusBarColor(
-            color = Color.Transparent,
-            darkIcons = !darkTheme
-        )
-        systemUiController.setNavigationBarColor(
-            color = Color.White,
-            darkIcons = !darkTheme
-        )
     }
 
     CompositionLocalProvider(

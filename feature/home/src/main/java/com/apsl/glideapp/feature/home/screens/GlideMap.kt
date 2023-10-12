@@ -13,7 +13,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import com.apsl.glideapp.core.model.UserLocation
 import com.apsl.glideapp.core.util.maps.toLocation
@@ -49,10 +49,9 @@ fun GlideMap(
     ridingZones: List<List<LatLng>>,
     noParkingZones: List<ZoneUiModel>,
     userLocation: UserLocation?,
-    mapPaddingBottom: Dp,
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(0.dp),
     rideRoute: List<LatLng>? = null,
-    onLoadMapDataWithinBounds: (LatLngBounds) -> Unit,
     onVehicleSelect: (VehicleClusterItem?) -> Unit
 ) {
     val context = LocalContext.current
@@ -86,17 +85,9 @@ fun GlideMap(
             zoomControlsEnabled = false
         ),
         onMapClick = { onVehicleSelect(null) },
-        contentPadding = PaddingValues(bottom = mapPaddingBottom)
+        contentPadding = contentPadding
     ) {
         MapEffect(vehicleClusterItems) { map ->
-
-            map.setOnCameraIdleListener {
-                val visibleBounds =
-                    cameraPositionState.projection?.visibleRegion?.latLngBounds
-                if (visibleBounds != null) {
-                    onLoadMapDataWithinBounds(visibleBounds)
-                }
-            }
 
             if (clusterManager == null) {
                 clusterManager = ClusterManager<VehicleClusterItem>(context, map).apply {

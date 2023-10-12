@@ -25,10 +25,10 @@ fun FeatureScreen(
         topBar = {
             ScreenTopBar(text = topBarText, onBackClick = onBackClick)
         }
-    ) { paddingValues ->
+    ) { padding ->
         Box(
             modifier = Modifier
-                .padding(paddingValues)
+                .padding(padding)
                 .fillMaxSize()
         ) {
             content()
