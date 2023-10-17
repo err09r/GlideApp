@@ -23,6 +23,8 @@ class MapRepositoryImpl @Inject constructor(
                     type = it.type,
                     status = it.status,
                     coordinates = it.coordinates,
+                    unlockingFee = it.unlockingFee,
+                    farePerMinute = it.farePerMinute
                 )
             }
             RemoteMapContent(availableVehicles = availableVehicles)
