@@ -75,3 +75,8 @@ fun Int.toDp(density: Density = LocalDensity.current): Dp {
 fun Int?.toDp(density: Density = LocalDensity.current): Dp {
     return with(density) { this@toDp?.toDp() ?: 0.dp }
 }
+
+@Composable
+fun Dp.toPx(density: Density = LocalDensity.current): Float {
+    return with(density) { this@toPx.toPx() }
+}
