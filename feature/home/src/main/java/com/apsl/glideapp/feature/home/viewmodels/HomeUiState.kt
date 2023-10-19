@@ -2,27 +2,22 @@ package com.apsl.glideapp.feature.home.viewmodels
 
 import androidx.compose.runtime.Immutable
 import com.apsl.glideapp.core.model.UserAuthState
-import com.apsl.glideapp.core.model.UserLocation
-import com.apsl.glideapp.feature.home.map.VehicleClusterItem
-import com.apsl.glideapp.feature.home.map.ZoneUiModel
+import com.apsl.glideapp.feature.home.map.MapState
+import com.apsl.glideapp.feature.home.screens.SelectedVehicleUiModel
 import com.google.android.gms.maps.model.LatLng
 
 @Immutable
 data class HomeUiState(
-    val isLoadingMapContent: Boolean = false,
     val userAuthState: UserAuthState = UserAuthState.Undefined,
     val userTotalDistance: Int = 0,
     val userTotalRides: Int = 0,
     val username: String? = null,
     val userBalance: Double = 0.0,
-    val selectedVehicle: VehicleClusterItem? = null,
-    val vehicleClusterItems: List<VehicleClusterItem> = emptyList(),
-    val ridingZones: List<List<LatLng>> = emptyList(), // Designed like this because of 'Polygon' composable implementation
-    val noParkingZones: List<ZoneUiModel> = emptyList(),
     val initialCameraPosition: LatLng? = null,
-    val userLocation: UserLocation? = null,
+    val isLoadingMapContent: Boolean = false,
+    val mapState: MapState = MapState(),
+    val selectedVehicle: SelectedVehicleUiModel? = null,
     val rideState: RideState? = null,
-    val rideRoute: List<LatLng>? = null,
     val error: HomeUiError? = null
 ) {
     val isInRideMode: Boolean get() = rideState == RideState.Active
