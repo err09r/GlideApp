@@ -23,7 +23,10 @@ import com.apsl.glideapp.core.ui.toPx
 @Composable
 fun NoParkingMarker(modifier: Modifier = Modifier) {
     val backgroundColor = MaterialTheme.colorScheme.surface
-    val textStyle = MaterialTheme.typography.titleMedium.copy(fontSize = 11.sp)
+    val textStyle = MaterialTheme.typography.titleMedium.copy(
+        color = MaterialTheme.colorScheme.onSurface,
+        fontSize = 11.sp
+    )
     val borderWidth = 1.5.dp.toPx()
     val borderColor = Color.Red.copy(alpha = 0.8f)
     val textMeasurer = rememberTextMeasurer()
