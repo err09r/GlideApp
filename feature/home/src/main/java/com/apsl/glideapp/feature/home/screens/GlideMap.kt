@@ -1,177 +1,145 @@
 package com.apsl.glideapp.feature.home.screens
 
-import android.content.Context
-import android.graphics.Bitmap
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
-import com.apsl.glideapp.core.model.UserLocation
-import com.apsl.glideapp.core.util.maps.toLocation
-import com.apsl.glideapp.feature.home.R
-import com.apsl.glideapp.feature.home.map.ClusterRendererImpl
+import com.apsl.glideapp.core.ui.toDp
+import com.apsl.glideapp.core.ui.toPx
+import com.apsl.glideapp.core.util.maps.MapsConfiguration
+import com.apsl.glideapp.feature.home.components.NoParkingMarker
+import com.apsl.glideapp.feature.home.components.VehicleCluster
+import com.apsl.glideapp.feature.home.components.VehicleMarker
 import com.apsl.glideapp.feature.home.map.HomeLocationSource
-import com.apsl.glideapp.feature.home.map.VehicleClusterItem
-import com.apsl.glideapp.feature.home.map.ZoneUiModel
-import com.google.android.gms.maps.model.BitmapDescriptor
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.apsl.glideapp.feature.home.map.MapState
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.JointType
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.RoundCap
-import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.compose.CameraPositionState
+import com.google.maps.android.compose.Circle
 import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.MapEffect
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapUiSettings
-import com.google.maps.android.compose.Marker
-import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.MarkerComposable
 import com.google.maps.android.compose.Polygon
 import com.google.maps.android.compose.Polyline
-import timber.log.Timber
+import com.google.maps.android.compose.clustering.Clustering
+import com.google.maps.android.compose.rememberMarkerState
+import kotlinx.coroutines.launch
 import com.apsl.glideapp.core.ui.R as CoreR
 
 @Composable
 fun GlideMap(
     cameraPositionState: CameraPositionState,
-    vehicleClusterItems: List<VehicleClusterItem>,
-    ridingZones: List<List<LatLng>>,
-    noParkingZones: List<ZoneUiModel>,
-    userLocation: UserLocation?,
+    mapState: MapState,
     modifier: Modifier = Modifier,
+    selectedVehicle: SelectedVehicleUiModel? = null,
     contentPadding: PaddingValues = PaddingValues(0.dp),
-    rideRoute: List<LatLng>? = null,
-    onVehicleSelect: (VehicleClusterItem?) -> Unit
+    onVehicleSelect: (String?) -> Unit
 ) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
-    var clusterManager by remember {
-        mutableStateOf<ClusterManager<VehicleClusterItem>?>(null)
+    LaunchedEffect(mapState.userLocation) {
+        mapState.userLocation?.let { HomeLocationSource.onLocationChanged(it) }
     }
 
-    LaunchedEffect(userLocation) {
-        userLocation?.let {
-            HomeLocationSource.onLocationChanged(it.toLocation())
-        }
-    }
-
-    GoogleMap(
-        modifier = modifier,
-        cameraPositionState = cameraPositionState,
-        properties = MapProperties(
+    val mapProperties = remember {
+        MapProperties(
             isMyLocationEnabled = true,
-            latLngBoundsForCameraTarget = LatLngBounds(LatLng(48.45, 13.9), LatLng(55.75, 23.15)),
+            latLngBoundsForCameraTarget = MapsConfiguration.homeCameraBounds,
             mapStyleOptions = MapStyleOptions.loadRawResourceStyle(context, CoreR.raw.map_style),
             maxZoomPreference = 20f,
             minZoomPreference = 9f//11f
-        ),
-        locationSource = HomeLocationSource,
-        uiSettings = MapUiSettings(
+        )
+    }
+
+    val mapUiSettings = remember {
+        MapUiSettings(
             compassEnabled = false,
             indoorLevelPickerEnabled = false,
             mapToolbarEnabled = false,
             myLocationButtonEnabled = false,
             zoomControlsEnabled = false
-        ),
-        onMapClick = { onVehicleSelect(null) },
+        )
+    }
+
+    GoogleMap(
+        modifier = modifier,
+        cameraPositionState = cameraPositionState,
+        properties = mapProperties,
+        locationSource = HomeLocationSource,
+        uiSettings = mapUiSettings,
+        onMapClick = remember { { onVehicleSelect(null) } },
         contentPadding = contentPadding
     ) {
-        MapEffect(vehicleClusterItems) { map ->
-
-            if (clusterManager == null) {
-                clusterManager = ClusterManager<VehicleClusterItem>(context, map).apply {
-                    renderer = ClusterRendererImpl(context, map, this)
-
-                    setOnClusterItemClickListener {
-                        onVehicleSelect(it)
-                        false
-                    }
-
-                    setOnClusterClickListener {
-//                        scope.launch {
-//                            cameraPositionState.animate(CameraUpdateFactory.zoomIn())
-//                        }
-                        false
-                    }
+        Clustering(
+            items = mapState.vehicleClusterItems,
+            onClusterItemClick = {
+                onVehicleSelect(it.id)
+                false
+            },
+            onClusterClick = {
+                scope.launch {
+                    cameraPositionState.animate(CameraUpdateFactory.zoomIn())
                 }
+                false
+            },
+            clusterContent = {
+                VehicleCluster()
+            },
+            clusterItemContent = {
+                VehicleMarker(
+                    selected = it.id == selectedVehicle?.id,
+                    charge = it.charge
+                )
             }
-            clusterManager?.run {
-                Timber.d("triggered")
-                clearItems()
-                addItems(vehicleClusterItems.filter {
-                    cameraPositionState.projection?.visibleRegion?.latLngBounds?.contains(
-                        it.position
-                    ) ?: false
-                })
-                cluster()
-            }
+        )
+
+        if (selectedVehicle != null && mapState.selectedVehicleRadius != null) {
+            Circle(
+                center = selectedVehicle.coordinates,
+                fillColor = Color.Red.copy(alpha = 0.2f),
+                radius = mapState.selectedVehicleRadius,
+                strokeColor = Color.Black,
+                strokeWidth = 2.toDp().toPx(),
+                visible = cameraPositionState.position.zoom >= MapsConfiguration.VEHICLE_CIRCLE_VISIBILITY_ZOOM_LEVEL
+            )
         }
 
         Polygon(
-            points = listOf(
-                LatLng(90.0, 0.0),
-                LatLng(90.0, 90.0),
-                LatLng(-90.0, 90.0),
-                LatLng(-90.0, 0.0)
-            ),
+            points = MapsConfiguration.mapBorders,
             fillColor = Color(15, 49, 119, 80),
-            holes = ridingZones,
+            holes = mapState.ridingZones,
             strokeWidth = 0f
         )
 
-        noParkingZones.forEach { zone ->
+        mapState.noParkingZones.forEach { zone ->
             Polygon(
                 points = zone.coordinates,
                 fillColor = Color(196, 45, 45, 85),
-                strokeWidth = 1f
+                strokeWidth = 0f
             )
-            val icon = remember {
-                bitmapDescriptor(context, R.drawable.ic_no_parking)
-            }
-            Marker(
-                state = MarkerState(position = zone.center),
-                icon = icon,
-                visible = cameraPositionState.position.zoom >= 14f
+            MarkerComposable(
+                state = rememberMarkerState(key = zone.id, position = zone.center),
+                visible = cameraPositionState.position.zoom >= MapsConfiguration.NO_PARKING_ZONE_VISIBILITY_ZOOM_LEVEL,
+                alpha = 0.7f,
+                content = { NoParkingMarker() }
             )
         }
 
-        if (!rideRoute.isNullOrEmpty()) {
+        if (!mapState.rideRoute.isNullOrEmpty()) {
             Polyline(
-                points = rideRoute,
+                points = mapState.rideRoute,
                 jointType = JointType.ROUND,
                 startCap = RoundCap() //CustomCap(a)
             )
         }
     }
-}
-
-fun bitmapDescriptor(
-    context: Context,
-    @DrawableRes drawableResId: Int
-): BitmapDescriptor? {
-
-    // retrieve the actual drawable
-    val drawable = ContextCompat.getDrawable(context, drawableResId) ?: return null
-    drawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
-    val bm = Bitmap.createBitmap(
-        drawable.intrinsicWidth,
-        drawable.intrinsicHeight,
-        Bitmap.Config.ARGB_8888
-    )
-
-    // draw it onto the bitmap
-    val canvas = android.graphics.Canvas(bm)
-    drawable.draw(canvas)
-    return BitmapDescriptorFactory.fromBitmap(bm)
 }
