@@ -1,10 +1,8 @@
 package com.apsl.glideapp.feature.home.components
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,144 +11,114 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Battery1Bar
-import androidx.compose.material.icons.rounded.Battery2Bar
-import androidx.compose.material.icons.rounded.Battery3Bar
-import androidx.compose.material.icons.rounded.Battery4Bar
-import androidx.compose.material.icons.rounded.Battery5Bar
-import androidx.compose.material.icons.rounded.Battery6Bar
-import androidx.compose.material.icons.rounded.BatteryFull
-import androidx.compose.material.icons.rounded.QrCodeScanner
 import androidx.compose.material3.Button
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.apsl.glideapp.core.ui.icons.Battery
+import com.apsl.glideapp.core.ui.icons.BatteryFull
+import com.apsl.glideapp.core.ui.icons.BatteryLow
+import com.apsl.glideapp.core.ui.icons.BatteryMedium
+import com.apsl.glideapp.core.ui.icons.Bell
+import com.apsl.glideapp.core.ui.icons.Card
+import com.apsl.glideapp.core.ui.icons.GlideIcons
+import com.apsl.glideapp.core.ui.icons.Warning
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.feature.home.R
-import com.apsl.glideapp.feature.home.viewmodels.RideState
+import com.apsl.glideapp.feature.home.screens.BatteryState
+import com.apsl.glideapp.feature.home.screens.SelectedVehicleUiModel
+import com.google.android.gms.maps.model.LatLng
 
 @Composable
 fun HomeBottomSheet(
-    vehicleCode: String,
-    vehicleRange: Int,
-    vehicleCharge: Int,
+    selectedVehicle: SelectedVehicleUiModel,
     modifier: Modifier = Modifier,
-    rideState: RideState? = null,
-    onStartRideClick: () -> Unit,
-    onFinishRideClick: () -> Unit
+    onStartRideClick: () -> Unit
 ) {
-    AnimatedContent(targetState = rideState, label = "") {
-        when (it) {
-            RideState.Active -> {
-                Row(
-                    modifier = modifier
-                        .fillMaxWidth()
-                        .navigationBarsPadding()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    OutlinedButton(
-                        modifier = Modifier.weight(1f),
-                        shape = CircleShape,
-                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
-                        onClick = {}
-                    )
-                    {
-                        Text(
-                            text = "Pause",
-                            textAlign = TextAlign.Center,
-                            fontSize = 16.sp
-                        )
-                    }
-                    Button(
-                        modifier = Modifier.weight(1f),
-                        shape = CircleShape,
-                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
-                        onClick = onFinishRideClick
-                    ) {
-                        Text(
-                            text = "Finish",
-                            textAlign = TextAlign.Center,
-                            fontSize = 16.sp
-                        )
-                    }
-                }
+    Column(
+        modifier = modifier
+            .navigationBarsPadding()
+            .padding(start = 16.dp, top = 0.dp, end = 16.dp, bottom = 24.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = "Scooter ${selectedVehicle.code}",
+                    style = MaterialTheme.typography.titleLarge
+                )
+                Spacer(Modifier.height(20.dp))
+                ScooterInfoComponent(
+                    imageVector = when (selectedVehicle.batteryState) {
+                        BatteryState.Low -> GlideIcons.BatteryLow
+                        BatteryState.Medium -> GlideIcons.BatteryMedium
+                        BatteryState.Full -> GlideIcons.BatteryFull
+                        BatteryState.Undefined -> GlideIcons.Battery
+                    },
+                    text = "${selectedVehicle.range} km range"
+                )
+                Spacer(Modifier.height(4.dp))
+                ScooterInfoComponent(
+                    imageVector = GlideIcons.Card,
+                    text = "${selectedVehicle.unlockingFee} zł to start, then ${selectedVehicle.farePerMinute} zł/min"
+                )
             }
-
-            else -> {
-                Column(
-                    modifier = modifier
-                        .fillMaxWidth()
-                        .navigationBarsPadding()
-                        .padding(16.dp)
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Column {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(
-                                    imageVector = Icons.Rounded.QrCodeScanner,
-                                    contentDescription = null
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(text = vehicleCode, fontSize = 22.sp)
-                            }
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(
-                                    modifier = Modifier.rotate(90f),
-                                    imageVector = when (vehicleCharge) {
-                                        in 90..100 -> Icons.Rounded.BatteryFull
-                                        in 75..90 -> Icons.Rounded.Battery6Bar
-                                        in 60..75 -> Icons.Rounded.Battery5Bar
-                                        in 45..60 -> Icons.Rounded.Battery4Bar
-                                        in 30..45 -> Icons.Rounded.Battery3Bar
-                                        in 15..30 -> Icons.Rounded.Battery2Bar
-                                        else -> Icons.Rounded.Battery1Bar
-                                    },
-                                    contentDescription = null
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(text = "$vehicleRange km range", fontSize = 14.sp)
-                            }
-                        }
-                        Spacer(modifier = Modifier.weight(1f))
-                        Image(
-                            modifier = Modifier.size(64.dp),
-                            contentScale = ContentScale.Crop,
-                            painter = painterResource(R.drawable.img_scooter),
-                            contentDescription = null
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(48.dp))
-                    Button(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = CircleShape,
-                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
-                        onClick = onStartRideClick
-                    ) {
-                        Text(
-                            text = "Start Ride",
-                            textAlign = TextAlign.Center,
-                            fontSize = 16.sp
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
+            Image(
+                painter = painterResource(R.drawable.img_scooter),
+                contentDescription = null,
+                modifier = Modifier.size(88.dp)
+            )
+        }
+        Spacer(Modifier.height(16.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            FilledTonalButton(onClick = {}) {
+                Icon(imageVector = GlideIcons.Bell, contentDescription = null)
+                Spacer(Modifier.width(8.dp))
+                Text(text = "Ring")
+            }
+            FilledTonalButton(onClick = {}) {
+                Icon(imageVector = GlideIcons.Warning, contentDescription = null)
+                Spacer(Modifier.width(8.dp))
+                Text(text = "Report issue")
             }
         }
+        Spacer(Modifier.height(48.dp))
+        Button(
+            onClick = onStartRideClick,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = "Start Ride")
+        }
+    }
+}
+
+@Composable
+fun ScooterInfoComponent(modifier: Modifier = Modifier, imageVector: ImageVector, text: String) {
+    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+        Icon(
+            imageVector = imageVector,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Spacer(Modifier.width(8.dp))
+        Text(
+            text = text,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1
+        )
     }
 }
 
@@ -159,12 +127,16 @@ fun HomeBottomSheet(
 fun HomeBottomSheetPreview() {
     GlideAppTheme {
         HomeBottomSheet(
-            vehicleCode = "0023",
-            vehicleRange = 25,
-            vehicleCharge = 90,
-            rideState = RideState.Active,
-            onStartRideClick = {},
-            onFinishRideClick = {}
+            selectedVehicle = SelectedVehicleUiModel(
+                id = "123",
+                code = "0023",
+                range = 7,
+                unlockingFee = 3.3,
+                farePerMinute = 0.85,
+                coordinates = LatLng(0.0, 0.0),
+                batteryState = BatteryState.Medium
+            ),
+            onStartRideClick = {}
         )
     }
 }

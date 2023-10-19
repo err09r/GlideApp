@@ -14,11 +14,11 @@ data class SelectedVehicleUiModel(
     val unlockingFee: Double,
     val farePerMinute: Double,
     val coordinates: LatLng,
-    val batteryState: BatteryState = BatteryState.Undefined
+    val batteryState: BatteryState
 )
 
 enum class BatteryState {
-    Undefined, Low, Half, Max
+    Undefined, Low, Medium, Full
 }
 
 fun Vehicle.toSelectedVehicleUiModel(): SelectedVehicleUiModel {
@@ -31,8 +31,8 @@ fun Vehicle.toSelectedVehicleUiModel(): SelectedVehicleUiModel {
         coordinates = this.coordinates.toLatLng(),
         batteryState = when (this.batteryCharge) {
             in 0..34 -> BatteryState.Low
-            in 35..84 -> BatteryState.Half
-            in 85..100 -> BatteryState.Max
+            in 35..84 -> BatteryState.Medium
+            in 85..100 -> BatteryState.Full
             else -> BatteryState.Undefined
         }
     )

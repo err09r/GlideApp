@@ -11,9 +11,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
 
-val GlideIcons.BatteryHalf: ImageVector by lazy {
+val GlideIcons.BatteryMedium: ImageVector by lazy {
     ImageVector.Builder(
-        name = "BatteryHalf",
+        name = "BatteryMedium",
         defaultWidth = 24.dp,
         defaultHeight = 24.dp,
         viewportWidth = 24f,
