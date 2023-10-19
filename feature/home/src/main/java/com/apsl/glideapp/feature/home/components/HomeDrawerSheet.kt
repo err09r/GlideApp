@@ -8,9 +8,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,9 +21,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.apsl.glideapp.core.ui.icons.ElectricScooter
 import com.apsl.glideapp.core.ui.icons.GlideIcons
 import com.apsl.glideapp.core.ui.icons.Help
@@ -30,6 +32,7 @@ import com.apsl.glideapp.core.ui.icons.Route
 import com.apsl.glideapp.core.ui.icons.Settings
 import com.apsl.glideapp.core.ui.icons.Wallet
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
+import com.apsl.glideapp.feature.home.screens.UserInfo
 
 @Immutable
 data class DrawerMenuItem(
@@ -40,14 +43,12 @@ data class DrawerMenuItem(
 
 @Composable
 fun HomeDrawerSheet(
-    username: String?,
-    userTotalDistance: Int,
-    userTotalRides: Int,
+    userInfo: UserInfo,
     modifier: Modifier = Modifier,
     onMyRidesClick: () -> Unit,
     onWalletClick: () -> Unit
 ) {
-    val items = remember {
+    val menuItems = remember {
         listOf(
             DrawerMenuItem(
                 icon = GlideIcons.Wallet,
@@ -71,48 +72,69 @@ fun HomeDrawerSheet(
             )
         )
     }
+
     ModalDrawerSheet(modifier = modifier, drawerShape = RectangleShape) {
-        Column(modifier = Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                if (username != null) {
-                    Text(text = "Hi, $username", fontSize = 28.sp)
-                }
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+        ) {
+            Spacer(Modifier.height(16.dp))
 
-                Spacer(modifier = Modifier.height(20.dp))
-
-                Row(horizontalArrangement = Arrangement.spacedBy(32.dp)) {
-                    DrawerStatsComponent(
-                        icon = GlideIcons.Route,
-                        value = userTotalDistance,
-                        units = "meters"
-                    )
-                    DrawerStatsComponent(
-                        icon = GlideIcons.ElectricScooter,
-                        value = userTotalRides,
-                        units = "rides"
-                    )
-                }
+            if (userInfo.username != null) {
+                Text(
+                    text = "Hi, ${userInfo.username}",
+                    style = MaterialTheme.typography.headlineLarge,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1
+                )
+                Spacer(Modifier.height(20.dp))
             }
-            Spacer(modifier = Modifier.height(20.dp))
 
-            Column {
-                items.forEachIndexed { index, item ->
-                    if (index == 0) {
-                        Divider(thickness = 1.dp)
-                    }
-                    Row(
-                        modifier = Modifier
-                            .clickable { item.onClick() }
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 16.dp)
-                    ) {
-                        Icon(imageVector = item.icon, contentDescription = "")
-                        Spacer(Modifier.width(16.dp))
-                        Text(text = item.title)
-                    }
-                }
+            Row(horizontalArrangement = Arrangement.spacedBy(32.dp)) {
+                StatsComponent(
+                    icon = GlideIcons.Route,
+                    value = userInfo.totalDistance,
+                    units = "meters"
+                )
+                StatsComponent(
+                    icon = GlideIcons.ElectricScooter,
+                    value = userInfo.totalRides,
+                    units = "rides"
+                )
             }
         }
+
+        Spacer(Modifier.height(20.dp))
+
+        menuItems.forEachIndexed { index, item ->
+            if (index == 0) {
+                Divider(thickness = 1.dp)
+            }
+            ListItem(
+                modifier = Modifier.clickable(onClick = item.onClick),
+                headlineContent = {
+                    Text(text = item.title)
+                },
+                leadingContent = {
+                    Icon(imageVector = item.icon, contentDescription = null)
+                }
+            )
+        }
+    }
+}
+
+@Composable
+private fun StatsComponent(icon: ImageVector, value: Int, units: String) {
+    Column {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            modifier = Modifier.size(32.dp)
+        )
+        Spacer(Modifier.height(4.dp))
+        Text(text = value.toString(), style = MaterialTheme.typography.headlineSmall)
+        Text(text = units)
     }
 }
 
@@ -121,9 +143,11 @@ fun HomeDrawerSheet(
 fun HomeDrawerSheetPreview() {
     GlideAppTheme {
         HomeDrawerSheet(
-            username = "err09r",
-            userTotalDistance = 1405,
-            userTotalRides = 23,
+            userInfo = UserInfo(
+                username = "err09r",
+                totalDistance = 1405,
+                totalRides = 23
+            ),
             onMyRidesClick = {},
             onWalletClick = {}
         )
