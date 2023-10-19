@@ -44,8 +44,8 @@ private fun Project.configureKotlinCompileOptions() {
             "-opt-in=com.google.accompanist.permissions.ExperimentalPermissionsApi"
         ).run {
             when {
-                // Use `-Pcom.apsl.glideapp.enableComposeCompilerReports=true` to enable
-                findProperty("${Config.namespace}.enableComposeCompilerReports") == "true" -> {
+                // Use `-PenableComposeCompilerReports=true` to enable
+                findProperty("enableComposeCompilerReports") == "true" -> {
                     this + listOf(
                         "-P=plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=${
                             layout.buildDirectory.dir("composeMetrics").get()
