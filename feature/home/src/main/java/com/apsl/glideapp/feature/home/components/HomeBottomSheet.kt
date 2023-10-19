@@ -105,7 +105,11 @@ fun HomeBottomSheet(
 }
 
 @Composable
-fun ScooterInfoComponent(modifier: Modifier = Modifier, imageVector: ImageVector, text: String) {
+private fun ScooterInfoComponent(
+    modifier: Modifier = Modifier,
+    imageVector: ImageVector,
+    text: String
+) {
     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
         Icon(
             imageVector = imageVector,
