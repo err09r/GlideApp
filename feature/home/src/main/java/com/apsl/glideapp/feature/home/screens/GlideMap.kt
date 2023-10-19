@@ -129,7 +129,7 @@ fun GlideMap(
             MarkerComposable(
                 state = rememberMarkerState(key = zone.id, position = zone.center),
                 visible = cameraPositionState.position.zoom >= MapsConfiguration.NO_PARKING_ZONE_VISIBILITY_ZOOM_LEVEL,
-                alpha = 0.7f,
+                alpha = 0.85f,
                 content = { NoParkingMarker() }
             )
         }
