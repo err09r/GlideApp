@@ -9,12 +9,14 @@ import com.google.android.gms.maps.model.LatLng
 
 @Immutable
 data class ZoneUiModel(
+    val id: String,
     val coordinates: List<LatLng>,
     val center: LatLng
 )
 
 fun Zone.toUiModel(): ZoneUiModel {
     return ZoneUiModel(
+        id = this.id,
         coordinates = this.coordinates.mapToLatLng(),
         center = this.coordinates.toCoordinatesBounds().center.toLatLng()
     )
