@@ -33,6 +33,7 @@ import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 fun BoxScope.MapOverlayLayout(
     modifier: Modifier = Modifier,
     height: Dp = 0.dp,
+    rideActive: Boolean = false,
     showLoading: Boolean = false,
     onMenuClick: () -> Unit,
     onMyLocationClick: () -> Unit
@@ -44,22 +45,24 @@ fun BoxScope.MapOverlayLayout(
                 .height(height)
                 .padding(16.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                FloatingActionButton(
-                    onClick = onMenuClick,
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    elevation = FloatingActionButtonDefaults.loweredElevation()
+            if (!rideActive) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(imageVector = GlideIcons.Menu, contentDescription = null)
-                }
+                    FloatingActionButton(
+                        onClick = onMenuClick,
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        elevation = FloatingActionButtonDefaults.loweredElevation()
+                    ) {
+                        Icon(imageVector = GlideIcons.Menu, contentDescription = null)
+                    }
 
-                if (showLoading) {
-                    Spacer(Modifier.width(16.dp))
-                    LoadingBar(modifier = Modifier.weight(1f))
-                    Spacer(Modifier.width(72.dp))
+                    if (showLoading) {
+                        Spacer(Modifier.width(16.dp))
+                        LoadingBar(modifier = Modifier.weight(1f))
+                        Spacer(Modifier.width(72.dp))
+                    }
                 }
             }
 
