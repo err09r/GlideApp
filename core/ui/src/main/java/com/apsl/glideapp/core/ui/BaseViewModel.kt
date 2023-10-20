@@ -5,10 +5,10 @@ import timber.log.Timber
 
 abstract class BaseViewModel : ViewModel() {
 
-    private val tag = this.javaClass.simpleName
+    private val tag = this::class.java.simpleName
 
     init {
-        Timber.tag(tag).d("init")
+        Timber.tag(tag).d("initialized")
     }
 
     override fun onCleared() {
