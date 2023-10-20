@@ -4,6 +4,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingData
 import androidx.paging.map
 import com.apsl.glideapp.common.dto.RideEventDto
+import com.apsl.glideapp.common.dto.VehicleDto
 import com.apsl.glideapp.common.models.Coordinates
 import com.apsl.glideapp.common.models.RideAction
 import com.apsl.glideapp.common.models.Route
@@ -14,6 +15,7 @@ import com.apsl.glideapp.core.domain.ride.RideCoordinates
 import com.apsl.glideapp.core.domain.ride.RideRepository
 import com.apsl.glideapp.core.model.Ride
 import com.apsl.glideapp.core.model.RideEvent
+import com.apsl.glideapp.core.model.Vehicle
 import com.apsl.glideapp.core.network.http.GlideApi
 import com.apsl.glideapp.core.network.websocket.WebSocketClient
 import javax.inject.Inject
@@ -31,28 +33,36 @@ class RideRepositoryImpl @Inject constructor(
 
     override val isRideModeActive: Flow<Boolean> = appDataStore.isRideModeActive.map { it ?: false }
 
-    override val rideEvents: Flow<RideEvent> = webSocketClient.rideEvents.mapNotNull {
-        when (it) {
+    override val rideEvents: Flow<RideEvent> = webSocketClient.rideEvents.mapNotNull { dto ->
+        when (dto) {
             is RideEventDto.Started -> {
                 appDataStore.saveRideModeActive(value = true)
-                RideEvent.Started(it.rideId, it.dateTime)
+                RideEvent.Started(
+                    rideId = dto.rideId,
+                    vehicle = dto.vehicle.toDomain(),
+                    dateTime = dto.dateTime
+                )
             }
 
             is RideEventDto.Restored -> {
                 appDataStore.saveRideModeActive(value = true)
-                RideEvent.Started(it.rideId, it.dateTime)
+                RideEvent.Started(
+                    rideId = dto.rideId,
+                    vehicle = dto.vehicle.toDomain(),
+                    dateTime = dto.startDateTime
+                )
             }
 
-            is RideEventDto.RouteUpdated -> RideEvent.RouteUpdated(it.currentRoute)
+            is RideEventDto.RouteUpdated -> RideEvent.RouteUpdated(dto.currentRoute)
             is RideEventDto.Finished -> {
                 appDataStore.saveRideModeActive(value = false)
                 RideEvent.Finished
             }
 
             is RideEventDto.Error -> {
-                when (it) {
+                when (dto) {
                     is RideEventDto.Error.UserInsideNoParkingZone -> {
-                        RideEvent.Error.UserInsideNoParkingZone(it.message)
+                        RideEvent.Error.UserInsideNoParkingZone(dto.message)
                     }
                 }
             }
@@ -106,5 +116,18 @@ class RideRepositoryImpl @Inject constructor(
         return rideCoordinatesDao
             .getAllRideCoordinates()
             .map { flow -> flow.map { RideCoordinates(it.rideId, it.latitude, it.longitude) } }
+    }
+
+    private fun VehicleDto.toDomain(): Vehicle {
+        return Vehicle(
+            id = this.id,
+            code = this.code,
+            batteryCharge = this.batteryCharge,
+            type = this.type,
+            status = this.status,
+            coordinates = this.coordinates,
+            unlockingFee = this.unlockingFee,
+            farePerMinute = this.farePerMinute
+        )
     }
 }
