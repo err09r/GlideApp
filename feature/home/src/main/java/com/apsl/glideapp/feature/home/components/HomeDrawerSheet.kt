@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.apsl.glideapp.core.ui.icons.ElectricScooter
 import com.apsl.glideapp.core.ui.icons.GlideIcons
 import com.apsl.glideapp.core.ui.icons.Help
+import com.apsl.glideapp.core.ui.icons.Logout
 import com.apsl.glideapp.core.ui.icons.MyRides
 import com.apsl.glideapp.core.ui.icons.Route
 import com.apsl.glideapp.core.ui.icons.Settings
@@ -46,7 +47,8 @@ fun HomeDrawerSheet(
     userInfo: UserInfo,
     modifier: Modifier = Modifier,
     onMyRidesClick: () -> Unit,
-    onWalletClick: () -> Unit
+    onWalletClick: () -> Unit,
+    onLogoutClick: () -> Unit
 ) {
     val menuItems = remember {
         listOf(
@@ -69,6 +71,11 @@ fun HomeDrawerSheet(
                 icon = GlideIcons.Settings,
                 title = "Settings",
                 onClick = {}
+            ),
+            DrawerMenuItem(
+                icon = GlideIcons.Logout,
+                title = "Log Out",
+                onClick = onLogoutClick
             )
         )
     }
@@ -149,7 +156,8 @@ fun HomeDrawerSheetPreview() {
                 totalRides = 23
             ),
             onMyRidesClick = {},
-            onWalletClick = {}
+            onWalletClick = {},
+            onLogoutClick = {}
         )
     }
 }

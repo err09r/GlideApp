@@ -6,7 +6,7 @@ import javax.inject.Inject
 class LoginUseCase @Inject constructor(private val authRepository: AuthRepository) {
 
     suspend operator fun invoke(username: String, password: String) = runCatching {
-        val token = authRepository.login(username = username, password = password)
+        val token = authRepository.logIn(username = username, password = password)
         if (token.isBlank()) {
             throw InvalidAuthTokenException()
         }

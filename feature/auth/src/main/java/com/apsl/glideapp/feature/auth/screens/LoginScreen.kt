@@ -55,7 +55,7 @@ fun LoginScreen(
 
     LoginScreenContent(
         uiState = uiState,
-        onLoginClick = viewModel::login,
+        onLoginClick = viewModel::logIn,
         onSignUpClick = onNavigateToRegister,
         onUsernameTextFieldValueChange = viewModel::updateUsernameTextFieldValue,
         onPasswordTextFieldValueChange = viewModel::updatePasswordTextFieldValue

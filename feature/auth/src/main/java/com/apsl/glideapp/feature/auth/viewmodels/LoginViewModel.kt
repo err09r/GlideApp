@@ -18,7 +18,7 @@ class LoginViewModel @Inject constructor(private val loginUseCase: LoginUseCase)
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState = _uiState.asStateFlow()
 
-    fun login() {
+    fun logIn() {
         showLoading()
 
         val username = uiState.value.usernameTextFieldValue

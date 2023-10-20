@@ -16,7 +16,7 @@ class AuthRepositoryImpl @Inject constructor(
 
     override val isUserAuthenticated: Flow<Boolean> = appDataStore.authToken.map { it != null }
 
-    override suspend fun login(username: String, password: String): String {
+    override suspend fun logIn(username: String, password: String): String {
         val authResponse = api.login(
             body = LoginRequest(username = username, password = password)
         )
@@ -34,7 +34,7 @@ class AuthRepositoryImpl @Inject constructor(
         appDataStore.saveAuthToken(token)
     }
 
-    override suspend fun logout() {
+    override suspend fun logOut() {
         appDataStore.deleteAuthToken()
     }
 }
