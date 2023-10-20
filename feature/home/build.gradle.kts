@@ -16,4 +16,5 @@ dependencies {
     implementation(libs.google.maps.compose.utils)
     implementation(libs.google.maps.compose.widgets)
     implementation(libs.google.maps.utils.ktx)
+    implementation(libs.kotlinx.datetime)
 }
