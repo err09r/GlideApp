@@ -3,6 +3,7 @@ package com.apsl.glideapp.feature.home.viewmodels
 import androidx.compose.runtime.Immutable
 import com.apsl.glideapp.core.model.UserAuthState
 import com.apsl.glideapp.feature.home.map.MapState
+import com.apsl.glideapp.feature.home.screens.RideState
 import com.apsl.glideapp.feature.home.screens.SelectedVehicleUiModel
 import com.apsl.glideapp.feature.home.screens.UserInfo
 import com.google.android.gms.maps.model.LatLng
@@ -18,9 +19,5 @@ data class HomeUiState(
     val rideState: RideState? = null,
     val error: HomeUiError? = null
 ) {
-    val isInRideMode: Boolean get() = rideState == RideState.Active
-}
-
-enum class RideState {
-    Active, Paused
+    val isRideActive: Boolean get() = rideState != null && !rideState.isPaused
 }
