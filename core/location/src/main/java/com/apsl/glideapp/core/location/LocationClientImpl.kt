@@ -13,7 +13,7 @@ import com.apsl.glideapp.core.domain.location.GpsDisabledException
 import com.apsl.glideapp.core.domain.location.LocationClient
 import com.apsl.glideapp.core.domain.location.MissingLocationPermissionsException
 import com.apsl.glideapp.core.model.UserLocation
-import com.apsl.glideapp.core.util.android.locationPermissionsGranted
+import com.apsl.glideapp.core.util.android.areLocationPermissionsGranted
 import com.apsl.glideapp.core.util.maps.toUserLocation
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -130,7 +130,7 @@ class LocationClientImpl @Inject constructor(
     }.asResult()
 
     private fun ensureLocationPermissionsGranted() {
-        if (!context.locationPermissionsGranted) {
+        if (!context.areLocationPermissionsGranted) {
             throw MissingLocationPermissionsException()
         }
     }
