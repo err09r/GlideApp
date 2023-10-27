@@ -13,8 +13,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -31,15 +33,78 @@ import com.apsl.glideapp.core.ui.icons.BatteryMedium
 import com.apsl.glideapp.core.ui.icons.Bell
 import com.apsl.glideapp.core.ui.icons.Card
 import com.apsl.glideapp.core.ui.icons.GlideIcons
+import com.apsl.glideapp.core.ui.icons.Route2
 import com.apsl.glideapp.core.ui.icons.Warning
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.feature.home.R
 import com.apsl.glideapp.feature.home.screens.BatteryState
 import com.apsl.glideapp.feature.home.screens.SelectedVehicleUiModel
+import com.apsl.glideapp.feature.home.screens.VehicleUiModel
 import com.google.android.gms.maps.model.LatLng
 
 @Composable
-fun HomeBottomSheet(
+fun ActiveRideSheetLayout(
+    vehicle: VehicleUiModel,
+    modifier: Modifier = Modifier,
+    onFinishRideClick: () -> Unit
+) {
+    Column(
+        modifier = modifier
+            .navigationBarsPadding()
+            // Top padding is 32.dp because of RectangleShape
+            .padding(start = 16.dp, top = 32.dp, end = 16.dp, bottom = 24.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column {
+                Text(
+                    text = "Scooter ${vehicle.code}",
+                    style = MaterialTheme.typography.titleLarge
+                )
+                Spacer(Modifier.height(16.dp))
+                ScooterInfoComponent(
+                    imageVector = GlideIcons.Battery,
+                    text = "${vehicle.batteryCharge}% battery"
+                )
+                Spacer(Modifier.height(4.dp))
+                ScooterInfoComponent(
+                    imageVector = GlideIcons.Route2,
+                    text = "${vehicle.range} km range"
+                )
+            }
+            Column {
+                FilledTonalIconButton(onClick = {}) {
+                    Icon(imageVector = GlideIcons.Bell, contentDescription = null)
+                }
+                Spacer(Modifier.height(8.dp))
+                FilledTonalIconButton(onClick = {}) {
+                    Icon(imageVector = GlideIcons.Warning, contentDescription = null)
+                }
+            }
+        }
+        Spacer(Modifier.height(32.dp))
+        Row {
+            OutlinedButton(
+                onClick = {},
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(text = "Pause")
+            }
+            Spacer(Modifier.width(16.dp))
+            Button(
+                onClick = onFinishRideClick,
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(text = "Finish")
+            }
+        }
+    }
+}
+
+@Composable
+fun DefaultSheetLayout(
     selectedVehicle: SelectedVehicleUiModel,
     modifier: Modifier = Modifier,
     onStartRideClick: () -> Unit
@@ -128,9 +193,9 @@ private fun ScooterInfoComponent(
 
 @Preview(showBackground = true)
 @Composable
-fun HomeBottomSheetPreview() {
+fun DefaultSheetLayoutPreview() {
     GlideAppTheme {
-        HomeBottomSheet(
+        DefaultSheetLayout(
             selectedVehicle = SelectedVehicleUiModel(
                 id = "123",
                 code = "0023",
@@ -138,9 +203,29 @@ fun HomeBottomSheetPreview() {
                 unlockingFee = 3.3,
                 farePerMinute = 0.85,
                 coordinates = LatLng(0.0, 0.0),
+                batteryCharge = 30,
                 batteryState = BatteryState.Medium
             ),
             onStartRideClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ActiveRideSheetLayoutPreview() {
+    GlideAppTheme {
+        ActiveRideSheetLayout(
+            vehicle = VehicleUiModel(
+                id = "123",
+                code = "0023",
+                range = 7,
+                unlockingFee = 3.3,
+                farePerMinute = 0.85,
+                batteryCharge = 30,
+                batteryState = BatteryState.Medium
+            ),
+            onFinishRideClick = {}
         )
     }
 }
