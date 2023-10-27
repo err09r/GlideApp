@@ -2,39 +2,27 @@ package com.apsl.glideapp.feature.home.screens
 
 import android.Manifest
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.foundation.layout.width
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.SheetState
-import androidx.compose.material3.SheetValue
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberDrawerState
+import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -42,12 +30,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.apsl.glideapp.core.model.UserAuthState
 import com.apsl.glideapp.core.ui.ComposableLifecycle
-import com.apsl.glideapp.core.ui.LoadingBar
+import com.apsl.glideapp.core.ui.LoadingScreen
 import com.apsl.glideapp.core.ui.RequestMultiplePermissions
 import com.apsl.glideapp.core.ui.RequestMultiplePermissionsState
-import com.apsl.glideapp.core.ui.icons.GlideIcons
-import com.apsl.glideapp.core.ui.icons.Gps
-import com.apsl.glideapp.core.ui.icons.Menu
 import com.apsl.glideapp.core.ui.navigationBarHeight
 import com.apsl.glideapp.core.ui.offset
 import com.apsl.glideapp.core.ui.rememberRequestMultiplePermissionState
@@ -55,10 +40,11 @@ import com.apsl.glideapp.core.ui.screenHeight
 import com.apsl.glideapp.core.ui.statusBarHeight
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.core.ui.toDp
+import com.apsl.glideapp.core.util.android.areNotificationsEnabled
 import com.apsl.glideapp.core.util.maps.toLatLng
-import com.apsl.glideapp.feature.home.components.HomeBottomSheet
+import com.apsl.glideapp.feature.home.components.ActiveRideSheetLayout
+import com.apsl.glideapp.feature.home.components.DefaultSheetLayout
 import com.apsl.glideapp.feature.home.components.HomeDrawerSheet
-import com.apsl.glideapp.feature.home.map.VehicleClusterItem
 import com.apsl.glideapp.feature.home.viewmodels.HomeUiState
 import com.apsl.glideapp.feature.home.viewmodels.HomeViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -75,8 +61,10 @@ fun HomeScreen(
     onNavigateToAllRides: () -> Unit,
     onNavigateToWallet: () -> Unit,
     onNavigateToLocationPermission: () -> Unit,
-    onNavigateToLocationRationale: () -> Unit
+    onNavigateToLocationRationale: () -> Unit,
+    onNavigateToNotificationPermission: () -> Unit
 ) {
+    val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     when (uiState.userAuthState) {
@@ -94,22 +82,27 @@ fun HomeScreen(
                 onRequestLocationPermissions = { requestPermissionsState.requestPermissions = true }
             )
             ComposableLifecycle { event ->
-                with(viewModel) {
-                    when (event) {
-                        Lifecycle.Event.ON_START -> {
+                when (event) {
+                    Lifecycle.Event.ON_START -> {
+                        viewModel.run {
                             getUser()
                             startReceivingRideEvents()
                             startObservingMapContent()
                             startObservingUserLocation()
+                            if (!context.areNotificationsEnabled) {
+                                onNavigateToNotificationPermission()
+                            }
                         }
+                    }
 
-                        Lifecycle.Event.ON_STOP -> {
+                    Lifecycle.Event.ON_STOP -> {
+                        viewModel.run {
                             stopObservingMapContent()
                             stopObservingUserLocation()
                         }
-
-                        else -> Unit
                     }
+
+                    else -> Unit
                 }
             }
             HomeScreenContent(
@@ -124,11 +117,12 @@ fun HomeScreen(
                 onStartRideClick = viewModel::startRide,
                 onFinishRideClick = viewModel::finishRide,
                 onMyRidesClick = onNavigateToAllRides,
-                onWalletClick = onNavigateToWallet
+                onWalletClick = onNavigateToWallet,
+                onLogoutClick = viewModel::logOut
             )
         }
 
-        else -> Unit
+        else -> LoadingScreen()
     }
 }
 
@@ -140,34 +134,21 @@ fun HomeScreenContent(
     onLocationButtonClick: () -> Unit,
     onOpenLocationPermissionDialog: () -> Unit,
     onOpenLocationRationaleDialog: () -> Unit,
-    onVehicleSelect: (VehicleClusterItem?) -> Unit,
+    onVehicleSelect: (String?) -> Unit,
     onLoadMapDataWithinBounds: (LatLngBounds) -> Unit,
     onStartRideClick: () -> Unit,
     onFinishRideClick: () -> Unit,
     onMyRidesClick: () -> Unit,
-    onWalletClick: () -> Unit
+    onWalletClick: () -> Unit,
+    onLogoutClick: () -> Unit
 ) {
+    val mapState = uiState.mapState
     val context = LocalContext.current
-    val density = LocalDensity.current
     val scope = rememberCoroutineScope()
 
     BackHandler(enabled = uiState.selectedVehicle != null) {
         onVehicleSelect(null)
     }
-
-//    LaunchedEffect(uiState.selectedVehicle) {
-//        if (uiState.selectedVehicle == null) {
-//            scaffoldState.bottomSheetState.hide()
-//        } else {
-//            scaffoldState.bottomSheetState.show()
-//        }
-//    }
-
-//    LaunchedEffect(uiState.rideState) {
-//        if (uiState.rideState == RideState.Active) {
-//            scaffoldState.bottomSheetState.expand()
-//        }
-//    }
 
     val cameraPositionState = remember(uiState.initialCameraPosition) {
         CameraPositionState().apply {
@@ -179,9 +160,9 @@ fun HomeScreenContent(
         }
     }
 
-    LaunchedEffect(uiState.userLocation) {
-        if (uiState.isInRideMode) {
-            uiState.userLocation?.let {
+    LaunchedEffect(mapState.userLocation) {
+        if (uiState.isRideActive) {
+            mapState.userLocation?.let {
                 val cameraPosition = CameraPosition.builder()
                     .zoom(17f)
                     .target(it.toLatLng())
@@ -200,8 +181,7 @@ fun HomeScreenContent(
         context = context,
         requestState = requestPermissionsState,
         onGranted = {
-            Timber.d("granted")
-            uiState.userLocation?.let {
+            mapState.userLocation?.let {
                 scope.launch {
                     cameraPositionState.animate(
                         CameraUpdateFactory.newCameraPosition(
@@ -245,35 +225,63 @@ fun HomeScreenContent(
         gesturesEnabled = drawerState.isOpen,
         drawerContent = {
             HomeDrawerSheet(
-                username = uiState.username,
-                userTotalDistance = uiState.userTotalDistance,
-                userTotalRides = uiState.userTotalRides,
+                userInfo = uiState.userInfo,
                 onMyRidesClick = onMyRidesClick,
-                onWalletClick = onWalletClick
+                onWalletClick = onWalletClick,
+                onLogoutClick = onLogoutClick
             )
         }
     ) {
         val scaffoldState = rememberBottomSheetScaffoldState(
-            bottomSheetState = SheetState(
-                skipPartiallyExpanded = true,
-                initialValue = SheetValue.Expanded
-            )
+            bottomSheetState = rememberStandardBottomSheetState(skipHiddenState = false)
         )
-        BottomSheetScaffold(
-            scaffoldState = scaffoldState,
-            sheetSwipeEnabled = !uiState.isInRideMode,
-            sheetPeekHeight = 0.dp,
-            sheetShape = RectangleShape,
-            sheetContent = {
-                HomeBottomSheet(
-                    vehicleCode = uiState.selectedVehicle?.code ?: "",
-                    vehicleRange = uiState.selectedVehicle?.range ?: 0,
-                    vehicleCharge = uiState.selectedVehicle?.charge ?: 0,
-                    rideState = uiState.rideState,
-                    onStartRideClick = onStartRideClick,
-                    onFinishRideClick = onFinishRideClick
-                )
+
+        LaunchedEffect(uiState.rideState?.vehicle) {
+            Timber.d("uiState.rideState?.vehicle: ${uiState.rideState?.vehicle}")
+            if (uiState.rideState?.vehicle == null) {
+                scaffoldState.bottomSheetState.hide()
+            } else {
+                scaffoldState.bottomSheetState.expand()
             }
+        }
+
+        LaunchedEffect(uiState.selectedVehicle) {
+            Timber.d("uiState.selectedVehicle: ${uiState.selectedVehicle}")
+            if (uiState.selectedVehicle == null && !uiState.isRideActive) {
+                scaffoldState.bottomSheetState.hide()
+            } else {
+                scaffoldState.bottomSheetState.expand()
+            }
+        }
+
+        BottomSheetScaffold(
+            sheetContent = {
+                when {
+                    uiState.selectedVehicle != null && !uiState.isRideActive -> {
+                        DefaultSheetLayout(
+                            selectedVehicle = uiState.selectedVehicle,
+                            onStartRideClick = onStartRideClick
+                        )
+                    }
+
+                    uiState.rideState != null -> {
+                        ActiveRideSheetLayout(
+                            vehicle = uiState.rideState.vehicle,
+                            onFinishRideClick = onFinishRideClick
+                        )
+                    }
+                }
+            },
+            scaffoldState = scaffoldState,
+            sheetShape = if (uiState.isRideActive) RectangleShape else BottomSheetDefaults.ExpandedShape,
+            sheetPeekHeight = 0.dp,
+            sheetShadowElevation = 8.dp,
+            sheetDragHandle = if (!uiState.isRideActive) {
+                { BottomSheetDefaults.DragHandle() }
+            } else {
+                null
+            },
+            sheetSwipeEnabled = !uiState.isRideActive
         ) { padding ->
             Box(
                 modifier = Modifier
@@ -289,73 +297,36 @@ fun HomeScreenContent(
                 } else {
                     navigationBarHeight
                 }
+
                 GlideMap(
                     cameraPositionState = cameraPositionState,
-                    vehicleClusterItems = uiState.vehicleClusterItems,
-                    ridingZones = uiState.ridingZones,
-                    noParkingZones = uiState.noParkingZones,
-                    userLocation = uiState.userLocation,
+                    mapState = uiState.mapState,
+                    selectedVehicle = uiState.selectedVehicle,
                     contentPadding = PaddingValues(bottom = mapPaddingBottom),
-                    rideRoute = uiState.rideRoute,
-                    onVehicleSelect = {
-                        scope.launch {
-                            scaffoldState.bottomSheetState.expand()
-                            onVehicleSelect(it)
+                    onVehicleSelect = { onVehicleSelect(it) }
+                )
+                MapOverlayLayout(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .safeContentPadding(),
+                    height = bottomSheetOffset - statusBarHeight,
+                    showLoading = uiState.isLoadingMapContent,
+                    onMenuClick = remember {
+                        {
+                            scope.launch {
+                                drawerState.open()
+                            }
+                        }
+                    },
+                    onMyLocationClick = remember {
+                        {
+                            onLocationButtonClick()
+                            requestPermissionsState.requestPermissions = true
                         }
                     }
                 )
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .safeContentPadding()
-                        .background(Color.Red.copy(0.1f))
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
-                            .padding(16.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .align(Alignment.TopCenter),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            FloatingActionButton(
-                                onClick = {
-                                    scope.launch {
-                                        drawerState.open()
-                                    }
-                                }
-                            ) {
-                                Icon(imageVector = GlideIcons.Menu, contentDescription = null)
-                            }
-                            if (uiState.isLoadingMapContent) {
-                                Spacer(Modifier.width(16.dp))
-                                LoadingBar(modifier = Modifier.weight(1f))
-                                Spacer(Modifier.width(88.dp))
-                            } else {
-                                Spacer(Modifier.weight(1f))
-                            }
-                        }
-
-                        FloatingActionButton(
-                            modifier = Modifier.align(Alignment.BottomEnd),
-                            onClick = {
-                                onLocationButtonClick()
-                                requestPermissionsState.requestPermissions = true
-                            }
-                        ) {
-                            Icon(imageVector = GlideIcons.Gps, contentDescription = null)
-                        }
-                    }
-                    Spacer(
-                        Modifier
-                            .height(bottomSheetHeight)
-                            .fillMaxWidth()
-                            .background(Color.Green)
-                    )
+                if (uiState.isRideActive) {
+                    RideLayout(rideState = uiState.rideState)
                 }
             }
         }
@@ -378,7 +349,8 @@ fun HomeScreenPreview() {
             onStartRideClick = {},
             onFinishRideClick = {},
             onMyRidesClick = {},
-            onWalletClick = {}
+            onWalletClick = {},
+            onLogoutClick = {}
         )
     }
 }
