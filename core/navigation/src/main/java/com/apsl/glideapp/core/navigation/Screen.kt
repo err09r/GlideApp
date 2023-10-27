@@ -8,6 +8,7 @@ sealed class Screen(val route: String) {
         data object Root : Screen("home")
         data object LocationPermission : Screen("locationPermission")
         data object LocationRationale : Screen("locationRationale")
+        data object NotificationPermission : Screen("notificationPermission")
     }
 
     object Rides {
