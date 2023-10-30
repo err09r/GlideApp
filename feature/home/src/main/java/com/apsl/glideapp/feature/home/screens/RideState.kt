@@ -2,8 +2,8 @@ package com.apsl.glideapp.feature.home.screens
 
 import androidx.compose.runtime.Immutable
 import com.apsl.glideapp.core.model.Vehicle
-import kotlin.math.roundToInt
 import kotlinx.datetime.LocalDateTime
+import kotlin.math.roundToInt
 
 @Immutable
 data class RideState(
