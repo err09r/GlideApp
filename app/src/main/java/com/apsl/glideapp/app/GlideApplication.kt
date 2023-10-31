@@ -20,7 +20,7 @@ class GlideApplication : Application() {
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         val rideSessionChannel = NotificationChannel(
-            getString(R.string.ride_session),
+            getString(CoreR.string.ride_session),
             getString(CoreR.string.ride),
             NotificationManager.IMPORTANCE_HIGH
         )
