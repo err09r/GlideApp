@@ -26,7 +26,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,23 +41,21 @@ import com.apsl.glideapp.core.ui.icons.Clock
 import com.apsl.glideapp.core.ui.icons.GlideIcons
 import com.apsl.glideapp.core.ui.icons.Route
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
-import com.apsl.glideapp.core.util.android.GlideComposeStopwatch
+import com.apsl.glideapp.core.util.android.GlideStopwatch
 import com.apsl.glideapp.core.util.android.StopwatchUtils
 import timber.log.Timber
 
 @Composable
 fun BoxScope.RideLayout(rideState: RideState? = null) {
-    var stopwatch = remember<GlideComposeStopwatch?> { null }
+    var stopwatch by remember { mutableStateOf<GlideStopwatch?>(null) }
+    val stopwatchValue = stopwatch?.currentValueMillis?.collectAsState()
 
     LaunchedEffect(rideState) {
         Timber.d(rideState.toString())
         stopwatch = if (rideState?.isActive == true && stopwatch == null) {
-            GlideComposeStopwatch(
+            GlideStopwatch(
                 initialMillis = rideState.startDateTime.toEpochMilliseconds(),
-                startImmediately = true,
-                onTick = { valueMillis ->
-                    Timber.d("Stopwatch millis: $valueMillis")
-                }
+                startImmediately = true
             )
         } else {
             stopwatch?.stop()
@@ -84,7 +86,7 @@ fun BoxScope.RideLayout(rideState: RideState? = null) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(imageVector = GlideIcons.Clock, contentDescription = null)
                     Spacer(Modifier.width(8.dp))
-                    RideStopwatchText(valueProvider = { stopwatch?.valueMillis ?: 0L })
+                    RideStopwatchText(valueProvider = { stopwatchValue?.value ?: 0L })
                 }
                 Divider(
                     modifier = Modifier

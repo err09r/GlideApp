@@ -2,26 +2,28 @@
 
 package com.apsl.glideapp.core.util.android
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import kotlin.time.Duration
 
-open class GlideStopwatch(
-    private val initialMillis: Long = DEFAULT_INITIAL_VALUE_MILLIS,
+class GlideStopwatch(
+    private val initialMillis: Long = System.currentTimeMillis(),
     startImmediately: Boolean = false,
-    private val onTick: (Long) -> Unit
+    private val onTick: (Long) -> Unit = {}
 ) {
     private val scope = CoroutineScope(Job())
 
-    protected var currentValueMillis: Long = DEFAULT_INITIAL_VALUE_MILLIS
+    private val _currentValueMillis = MutableStateFlow(DEFAULT_INITIAL_VALUE_MILLIS)
+    val currentValueMillis = _currentValueMillis.asStateFlow()
+
     private var isStared: Boolean = false
 
     init {
@@ -35,15 +37,17 @@ open class GlideStopwatch(
             Timber.d("Stopwatch has already started")
             return
         }
-        currentValueMillis = System.currentTimeMillis() - initialMillis
         isStared = true
         Timber.d("Stopwatch started")
-        onTick(currentValueMillis)
+
+        _currentValueMillis.update { System.currentTimeMillis() - initialMillis }
+        onTick(_currentValueMillis.value)
+
         scope.launch {
             while (isActive && isStared) {
                 delay(INTERVAL_MILLIS)
-                currentValueMillis += INTERVAL_MILLIS
-                onTick(currentValueMillis)
+                _currentValueMillis.update { it + INTERVAL_MILLIS }
+                onTick(_currentValueMillis.value)
             }
         }
     }
@@ -54,20 +58,10 @@ open class GlideStopwatch(
         Timber.d("Stopwatch stopped")
     }
 
-    companion object {
-        const val DEFAULT_INITIAL_VALUE_MILLIS: Long = 0L
+    private companion object {
+        private const val DEFAULT_INITIAL_VALUE_MILLIS = 0L
         private const val INTERVAL_MILLIS: Long = 1000L
     }
-}
-
-class GlideComposeStopwatch(
-    initialMillis: Long = DEFAULT_INITIAL_VALUE_MILLIS,
-    startImmediately: Boolean = false,
-    onTick: (Long) -> Unit
-) : GlideStopwatch(initialMillis, startImmediately, onTick) {
-
-    var valueMillis by mutableStateOf(currentValueMillis)
-        private set
 }
 
 object StopwatchUtils {
