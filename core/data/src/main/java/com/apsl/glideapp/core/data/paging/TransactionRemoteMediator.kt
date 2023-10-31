@@ -10,9 +10,8 @@ import com.apsl.glideapp.common.util.now
 import com.apsl.glideapp.core.database.AppDatabase
 import com.apsl.glideapp.core.database.entities.TransactionEntity
 import com.apsl.glideapp.core.domain.connectivity.ConnectivityObserver
-import com.apsl.glideapp.core.model.ConnectivityState
+import com.apsl.glideapp.core.domain.connectivity.isConnected
 import com.apsl.glideapp.core.network.http.GlideApi
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.datetime.LocalDateTime
 import timber.log.Timber
 import javax.inject.Inject
@@ -45,7 +44,7 @@ class TransactionRemoteMediator @Inject constructor(
             }
 
             //TODO: to change (empty table error)
-            if (connectivityObserver.connectivityState.firstOrNull() == ConnectivityState.Available) {
+            if (connectivityObserver.connectivityState.isConnected()) {
                 return if (transactionDao.isTableEmpty()) {
                     MediatorResult.Error(Exception("Transaction table is empty"))
                 } else {
