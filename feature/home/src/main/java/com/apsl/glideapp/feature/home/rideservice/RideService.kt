@@ -10,7 +10,6 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.apsl.glideapp.feature.home.R
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -19,6 +18,8 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import timber.log.Timber
+import javax.inject.Inject
+import com.apsl.glideapp.core.ui.R as CoreR
 
 @AndroidEntryPoint
 class RideService : Service() {
@@ -46,7 +47,7 @@ class RideService : Service() {
     }
 
     private val notificationBuilder by lazy {
-        NotificationCompat.Builder(this, "location")
+        NotificationCompat.Builder(this, getString(CoreR.string.ride_session))
             .setContentTitle("Tracking location...")
             .setContentText("Location")
             .setSmallIcon(R.drawable.img_scooter)
@@ -121,7 +122,7 @@ class RideService : Service() {
         const val ACTION_STOP = "ACTION_STOP"
         const val RIDE_ID = "RIDE_ID"
         const val RIDE_START_DATETIME = "RIDE_START_DATETIME"
-        private const val NOTIFICATION_ID = 1
+        private const val NOTIFICATION_ID = 123
         private const val MAIN_ACTIVITY_CLASSNAME = "com.apsl.glideapp.app.MainActivity"
     }
 }
