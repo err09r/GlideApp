@@ -1,4 +1,4 @@
-import gradle.kotlin.dsl.accessors._272b7390582f4cf8bb9f6f57d5913699.implementation
+import gradle.kotlin.dsl.accessors._7358b228c777673f552d03f9fcb098db.implementation
 
 plugins {
     id("com.google.dagger.hilt.android")
