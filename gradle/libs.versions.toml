@@ -2,7 +2,7 @@
 android-gradlePlugin = "8.1.2"
 google-gms-googleServices = "4.4.0"
 gradleVersions = "0.49.0"
-kotlin = "1.9.10"
+kotlin = "1.9.20"
 secretsGradle = "2.0.1"
 
 androidx-activity = "1.8.0"
@@ -13,13 +13,11 @@ androidx-compose-material3 = "1.1.2"
 androidx-core-ktx = "1.12.0"
 androidx-core-splashscreen = "1.0.1"
 androidx-datastore = "1.0.0"
-androidx-hilt-compiler = "1.0.0"
-androidx-hilt-navigationCompose = "1.0.0"
-androidx-hilt-work = "1.0.0"
+androidx-hilt = "1.1.0"
 androidx-lifecycle = "2.6.2"
-androidx-navigation = "2.7.4"
+androidx-navigation = "2.7.5"
 androidx-paging = "3.2.1"
-androidx-room = "2.5.2"
+androidx-room = "2.6.0"
 androidx-security-crypto = "1.1.0-alpha06"
 androidx-startup-runtime = "1.1.1"
 androidx-workmanager = "2.8.1"
@@ -31,9 +29,9 @@ kotlinx-serialization = "1.6.0"
 
 google-gms-playServices-location = "21.0.1"
 google-gms-playServices-maps = "18.2.0"
-google-ksp = "1.9.10-1.0.13"
-google-maps-compose = "4.0.0"
-google-maps-utils-ktx = "4.0.0"
+google-ksp = "1.9.20-1.0.13"
+google-maps-compose = "4.1.1"
+google-maps-utils-ktx = "5.0.0"
 
 accompanist = "0.32.0"
 dagger-hilt-android = "2.48.1"
@@ -88,9 +86,9 @@ androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "androidx
 androidx-room-paging = { module = "androidx.room:room-paging", version.ref = "androidx-room" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "androidx-room" }
 
-androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "androidx-hilt-compiler" }
-androidx-hilt-navigationCompose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "androidx-hilt-navigationCompose" }
-androidx-hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "androidx-hilt-work" }
+androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "androidx-hilt" }
+androidx-hilt-navigationCompose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "androidx-hilt" }
+androidx-hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "androidx-hilt" }
 
 dagger-hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "dagger-hilt-android" }
 dagger-hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "dagger-hilt-android" }
