@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.DrawerValue
@@ -116,8 +116,14 @@ fun HomeScreen(
                 onLoadMapDataWithinBounds = viewModel::loadMapContentWithinBounds,
                 onStartRideClick = viewModel::startRide,
                 onFinishRideClick = viewModel::finishRide,
-                onMyRidesClick = onNavigateToAllRides,
-                onWalletClick = onNavigateToWallet,
+                onMyRidesClick = {
+                    viewModel.updateSelectedVehicle(null)
+                    onNavigateToAllRides()
+                },
+                onWalletClick = {
+                    viewModel.updateSelectedVehicle(null)
+                    onNavigateToWallet()
+                },
                 onLogoutClick = viewModel::logOut
             )
         }
@@ -308,7 +314,7 @@ fun HomeScreenContent(
                 MapOverlayLayout(
                     modifier = Modifier
                         .fillMaxSize()
-                        .safeContentPadding(),
+                        .systemBarsPadding(),
                     height = bottomSheetOffset - statusBarHeight,
                     showLoading = uiState.isLoadingMapContent,
                     onMenuClick = remember {

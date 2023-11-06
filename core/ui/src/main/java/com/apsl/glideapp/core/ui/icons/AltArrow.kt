@@ -11,9 +11,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
 
-val GlideIcons.ArrowBack: ImageVector by lazy {
+val GlideIcons.AltArrow: ImageVector by lazy {
     ImageVector.Builder(
-        name = "ArrowBack",
+        name = "AltArrow",
         defaultWidth = 24.dp,
         defaultHeight = 24.dp,
         viewportWidth = 24f,
@@ -30,20 +30,16 @@ val GlideIcons.ArrowBack: ImageVector by lazy {
             strokeLineMiter = 1.0f,
             pathFillType = PathFillType.EvenOdd
         ) {
-            moveTo(10.5303f, 5.46967f)
-            curveTo(10.8232f, 5.7626f, 10.8232f, 6.2374f, 10.5303f, 6.5303f)
-            lineTo(5.81066f, 11.25f)
-            horizontalLineTo(20f)
-            curveTo(20.4142f, 11.25f, 20.75f, 11.5858f, 20.75f, 12f)
-            curveTo(20.75f, 12.4142f, 20.4142f, 12.75f, 20f, 12.75f)
-            horizontalLineTo(5.81066f)
-            lineTo(10.5303f, 17.4697f)
-            curveTo(10.8232f, 17.7626f, 10.8232f, 18.2374f, 10.5303f, 18.5303f)
-            curveTo(10.2374f, 18.8232f, 9.7626f, 18.8232f, 9.4697f, 18.5303f)
-            lineTo(3.46967f, 12.5303f)
-            curveTo(3.1768f, 12.2374f, 3.1768f, 11.7626f, 3.4697f, 11.4697f)
-            lineTo(9.46967f, 5.46967f)
-            curveTo(9.7626f, 5.1768f, 10.2374f, 5.1768f, 10.5303f, 5.4697f)
+            moveTo(8.51192f, 4.43057f)
+            curveTo(8.8264f, 4.161f, 9.2999f, 4.1974f, 9.5695f, 4.5119f)
+            lineTo(15.5695f, 11.5119f)
+            curveTo(15.8102f, 11.7928f, 15.8102f, 12.2072f, 15.5695f, 12.4881f)
+            lineTo(9.56946f, 19.4881f)
+            curveTo(9.2999f, 19.8026f, 8.8264f, 19.839f, 8.5119f, 19.5695f)
+            curveTo(8.1974f, 19.2999f, 8.161f, 18.8264f, 8.4306f, 18.5119f)
+            lineTo(14.0122f, 12f)
+            lineTo(8.43057f, 5.48811f)
+            curveTo(8.161f, 5.1736f, 8.1974f, 4.7001f, 8.5119f, 4.4306f)
             close()
         }
     }.build()

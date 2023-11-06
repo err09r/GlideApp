@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
@@ -85,7 +85,7 @@ fun MapOverlayLayoutPreview() {
             MapOverlayLayout(
                 modifier = Modifier
                     .fillMaxSize()
-                    .safeContentPadding(),
+                    .systemBarsPadding(),
                 height = 720.dp,
                 showLoading = true,
                 onMenuClick = {},

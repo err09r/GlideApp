@@ -15,3 +15,11 @@ fun <T : Any> Flow<PagingData<T>>.receiveAsLazyPagingItems(action: (LazyPagingIt
         action(lazyPagingItems)
     }
 }
+
+fun <T : Any> LazyPagingItems<T>.peekOrNull(index: Int): T? {
+    return try {
+        this.peek(index)
+    } catch (e: Exception) {
+        null
+    }
+}

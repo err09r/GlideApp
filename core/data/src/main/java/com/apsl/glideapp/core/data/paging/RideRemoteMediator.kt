@@ -13,12 +13,11 @@ import com.apsl.glideapp.core.database.AppDatabase
 import com.apsl.glideapp.core.database.entities.RideCoordinatesEntity
 import com.apsl.glideapp.core.database.entities.RideEntity
 import com.apsl.glideapp.core.domain.connectivity.ConnectivityObserver
-import com.apsl.glideapp.core.domain.connectivity.isConnected
 import com.apsl.glideapp.core.network.http.GlideApi
-import kotlinx.datetime.LocalDateTime
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.datetime.LocalDateTime
+import timber.log.Timber
 
 @Singleton
 class RideRemoteMediator @Inject constructor(
@@ -48,13 +47,13 @@ class RideRemoteMediator @Inject constructor(
             }
 
             //TODO: to change (empty table error)
-            if (connectivityObserver.connectivityState.isConnected()) {
-                return if (rideDao.isTableEmpty()) {
-                    MediatorResult.Error(Exception("Ride table is empty"))
-                } else {
-                    MediatorResult.Success(true)
-                }
-            }
+//            if (connectivityObserver.connectivityState.isConnected()) {
+//                return if (rideDao.isTableEmpty()) {
+//                    MediatorResult.Error(Exception("Ride table is empty"))
+//                } else {
+//                    MediatorResult.Success(true)
+//                }
+//            }
 
             Timber.d("Loadkey: $loadKey")
 

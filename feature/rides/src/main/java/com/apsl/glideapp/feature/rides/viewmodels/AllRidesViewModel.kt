@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.update
+import timber.log.Timber
 
 @HiltViewModel
 class AllRidesViewModel @Inject constructor(
@@ -55,6 +56,7 @@ class AllRidesViewModel @Inject constructor(
 
     fun onNewPagerLoadState(pagingItems: LazyPagingItems<RideUiModel>) {
         val loadState = pagingItems.loadState.refresh
+        Timber.d("Load state: $loadState")
         when {
             loadState is LoadState.Loading -> {
                 _uiState.update { it.copy(isLoading = true, isRefreshing = true) }

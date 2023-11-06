@@ -2,14 +2,16 @@ package com.apsl.glideapp.core.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.apsl.glideapp.core.ui.components.ScreenTopBar
+import com.apsl.glideapp.core.ui.components.FeatureTopBar
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 
 @Composable
@@ -19,17 +21,20 @@ fun FeatureScreen(
     content: @Composable BoxScope.() -> Unit
 ) {
     Scaffold(
-        modifier = Modifier
-            .fillMaxSize()
-            .navigationBarsPadding(),
+        modifier = Modifier.fillMaxSize(),
         topBar = {
-            ScreenTopBar(text = topBarText, onBackClick = onBackClick)
-        }
+            FeatureTopBar(
+                modifier = Modifier.statusBarsPadding(),
+                text = topBarText,
+                onBackClick = onBackClick
+            )
+        },
+        contentWindowInsets = WindowInsets.navigationBars
     ) { padding ->
         Box(
             modifier = Modifier
-                .padding(padding)
                 .fillMaxSize()
+                .padding(padding)
         ) {
             content()
         }
