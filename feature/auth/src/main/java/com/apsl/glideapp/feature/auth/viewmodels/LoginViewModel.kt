@@ -32,7 +32,17 @@ class LoginViewModel @Inject constructor(private val loginUseCase: LoginUseCase)
                             it.copy(isLoggedIn = true, isLoading = false)
                         }
                     }
-                    .onFailure(Timber::d)
+                    .onFailure { throwable ->
+                        Timber.d(throwable.message)
+                        _uiState.update {
+                            it.copy(
+                                error = throwable.message,
+                                isLoading = false,
+                                passwordTextFieldValue = null,
+                                isPasswordVisible = false
+                            )
+                        }
+                    }
             }
         } else {
             hideLoading()
@@ -51,6 +61,10 @@ class LoginViewModel @Inject constructor(private val loginUseCase: LoginUseCase)
         }
     }
 
+    fun togglePasswordVisibility() {
+        _uiState.update { it.copy(isPasswordVisible = !it.isPasswordVisible) }
+    }
+
     private fun showLoading() {
         _uiState.update { it.copy(isLoading = true) }
     }
@@ -64,8 +78,12 @@ class LoginViewModel @Inject constructor(private val loginUseCase: LoginUseCase)
 data class LoginUiState(
     val isLoading: Boolean = false,
     val isLoggedIn: Boolean = false,
+    val isPasswordVisible: Boolean = false,
     val usernameTextFieldValue: String? = null,
     val passwordTextFieldValue: String? = null,
-    val exception: Exception? = null
-)
+    val error: String? = null
+) {
+    val isActionButtonActive: Boolean
+        get() = !usernameTextFieldValue.isNullOrBlank() && !passwordTextFieldValue.isNullOrBlank()
+}
 

@@ -25,6 +25,8 @@ fun PasswordTextField(
     label: String,
     modifier: Modifier = Modifier,
     passwordVisible: Boolean = false,
+    isError: Boolean = false,
+    errorText: String? = null,
     onTogglePasswordVisibilityClick: () -> Unit,
     onValueChange: (String) -> Unit
 ) {
@@ -41,6 +43,12 @@ fun PasswordTextField(
                 Icon(imageVector = image.value, contentDescription = null)
             }
         },
+        supportingText = if (errorText != null) {
+            { Text(text = errorText) }
+        } else {
+            null
+        },
+        isError = isError,
         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(
             capitalization = KeyboardCapitalization.None,
