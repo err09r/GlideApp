@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathFillType
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
@@ -133,13 +134,13 @@ private fun CircularArrowIndicator(
                 color = color,
                 alpha = alpha,
                 startAngle = values.startAngle,
-                sweepAngle = values.endAngle - values.startAngle,
+                sweepAngle = values.endAngle - values.startAngle + 24f,
                 useCenter = false,
                 topLeft = arcBounds.topLeft,
                 size = arcBounds.size,
                 style = Stroke(
                     width = StrokeWidth.toPx(),
-                    cap = StrokeCap.Square
+                    cap = StrokeCap.Round
                 )
             )
             drawArrow(path, arcBounds, color, alpha, values)
@@ -183,8 +184,15 @@ private fun DrawScope.drawArrow(
     values: ArrowValues
 ) {
     arrow.reset()
+    arrow.moveTo(x = ArrowWidth.toPx() * values.scale, y = 0f) // Line to right corner
+
+    // Line to tip of arrow
+    arrow.lineTo(
+        x = ArrowWidth.toPx() * values.scale / 2,
+        y = ArrowHeight.toPx() * values.scale
+    )
+
     arrow.moveTo(0f, 0f) // Move to left corner
-    arrow.lineTo(x = ArrowWidth.toPx() * values.scale, y = 0f) // Line to right corner
 
     // Line to tip of arrow
     arrow.lineTo(
@@ -196,13 +204,22 @@ private fun DrawScope.drawArrow(
     val inset = ArrowWidth.toPx() * values.scale / 2f
     arrow.translate(
         Offset(
-            x = radius + bounds.center.x - inset,
-            y = bounds.center.y + StrokeWidth.toPx() / 2f
+            x = radius + bounds.center.x - inset - 0.3.dp.toPx(),
+            y = bounds.center.y + StrokeWidth.toPx() / 2f - 1.dp.toPx()
         )
     )
     arrow.close()
     rotate(degrees = values.endAngle) {
-        drawPath(path = arrow, color = color, alpha = alpha)
+        drawPath(
+            path = arrow,
+            color = color,
+            alpha = alpha,
+            style = Stroke(
+                width = StrokeWidth.toPx(),
+                cap = StrokeCap.Round,
+                join = StrokeJoin.Round
+            )
+        )
     }
 }
 
@@ -212,10 +229,10 @@ private const val MaxProgressArc = 0.8f
 private val IndicatorSize = 40.dp
 private val SpinnerShape = CircleShape
 private val ArcRadius = 7.5.dp
-private val StrokeWidth = 2.5.dp
-private val ArrowWidth = 10.dp
-private val ArrowHeight = 5.dp
-private val Elevation = 6.dp
+private val StrokeWidth = 2.dp
+private val ArrowWidth = 7.dp
+private val ArrowHeight = 4.dp
+private val Elevation = 4.dp
 
 // Values taken from SwipeRefreshLayout
 private const val MinAlpha = 0.3f
