@@ -80,6 +80,6 @@ fun Lifecycle.addObservers(observers: Iterable<LifecycleObserver>) {
     observers.forEach(::addObserver)
 }
 
-fun Lifecycle.addObservers(vararg observer: LifecycleObserver) {
-    observer.forEach(::addObserver)
+fun Lifecycle.addObservers(vararg observers: LifecycleObserver) {
+    observers.forEach(::addObserver)
 }
