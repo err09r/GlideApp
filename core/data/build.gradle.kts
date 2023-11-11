@@ -12,10 +12,9 @@ dependencies {
 
     implementation(libs.androidx.paging.common)
     implementation(libs.androidx.room.ktx)
-
+    implementation(libs.glideapp.common.dto)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.datetime)
     implementation(libs.kotlinx.serialization.json)
-
-    implementation(libs.glideapp.common.dto)
+    implementation(libs.ktor.client.core.jvm)
 }
