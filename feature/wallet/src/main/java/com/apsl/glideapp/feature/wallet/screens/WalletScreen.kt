@@ -1,43 +1,49 @@
 package com.apsl.glideapp.feature.wallet.screens
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.apsl.glideapp.core.ui.ComposableLifecycle
 import com.apsl.glideapp.core.ui.FeatureScreen
-import com.apsl.glideapp.core.ui.LoadingScreen
+import com.apsl.glideapp.core.ui.PagingSeparator
+import com.apsl.glideapp.core.ui.components.Separator
+import com.apsl.glideapp.core.ui.icons.Bonus
+import com.apsl.glideapp.core.ui.icons.GlideIcons
+import com.apsl.glideapp.core.ui.icons.TopUp
+import com.apsl.glideapp.core.ui.icons.Voucher
 import com.apsl.glideapp.core.ui.pullrefresh.PullRefreshIndicator
 import com.apsl.glideapp.core.ui.pullrefresh.pullRefresh
 import com.apsl.glideapp.core.ui.pullrefresh.rememberPullRefreshState
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
-import com.apsl.glideapp.feature.wallet.components.BalanceItem
-import com.apsl.glideapp.feature.wallet.components.TopUpItem
+import com.apsl.glideapp.feature.wallet.components.BalanceCard
 import com.apsl.glideapp.feature.wallet.components.TransactionItem
-import com.apsl.glideapp.feature.wallet.components.VoucherItem
 import com.apsl.glideapp.feature.wallet.components.WalletPager
+import com.apsl.glideapp.feature.wallet.components.WalletPagerItem
 import com.apsl.glideapp.feature.wallet.models.AmountType
 import com.apsl.glideapp.feature.wallet.models.TransactionUiModel
 import com.apsl.glideapp.feature.wallet.viewmodels.WalletUiState
 import com.apsl.glideapp.feature.wallet.viewmodels.WalletViewModel
+import com.apsl.glideapp.core.ui.R as CoreR
 
 @Composable
 fun WalletScreen(
@@ -47,10 +53,16 @@ fun WalletScreen(
     onNavigateToTopUp: () -> Unit,
     onNavigateToRedeemVoucher: () -> Unit
 ) {
-    LaunchedEffect(Unit) {
-        viewModel.run {
-            getUserBalance()
-            getUserTransactions()
+    ComposableLifecycle { event ->
+        when (event) {
+            Lifecycle.Event.ON_RESUME -> {
+                viewModel.run {
+                    getUserBalance()
+                    getUserTransactions()
+                }
+            }
+
+            else -> Unit
         }
     }
 
@@ -78,92 +90,95 @@ fun WalletScreenContent(
         topBarText = "My Wallet",
         onBackClick = onBackClick
     ) {
-        when {
-            uiState.isLoading -> LoadingScreen()
-            uiState.error != null -> {
-                Text(text = uiState.error.text, modifier = Modifier.align(Alignment.Center))
-            }
+        val refreshing = uiState.isRefreshing
+        val pullRefreshState =
+            rememberPullRefreshState(
+                refreshing = uiState.isRefreshing,
+                onRefresh = onPullRefresh
+            )
 
-            else -> {
-                val refreshing = uiState.isRefreshing
-                val pullRefreshState =
-                    rememberPullRefreshState(
-                        refreshing = uiState.isRefreshing,
-                        onRefresh = onPullRefresh
-                    )
+        val pagerItems = remember {
+            listOf(
+                WalletPagerItem(
+                    id = 1,
+                    title = "Redeem voucher",
+                    text = "Have a code? Activate it and enjoy the ride!",
+                    imageResId = CoreR.drawable.img_gift_front,
+                    onClick = onRedeemVoucherClick
+                ),
+                WalletPagerItem(
+                    id = 2,
+                    title = "Add payment method",
+                    text = "More methods for more convenience",
+                    imageResId = CoreR.drawable.img_card_front,
+                    onClick = {}
+                )
+            )
+        }
 
-                Box(modifier = Modifier.pullRefresh(pullRefreshState)) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .verticalScroll(rememberScrollState()),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Spacer(Modifier.height(48.dp))
+        Box(modifier = Modifier.pullRefresh(pullRefreshState)) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(Modifier.height(16.dp))
 
-                        WalletPager(
-                            {
-                                BalanceItem(
-                                    balance = uiState.userBalance,
-                                    isRentalAvailable = uiState.isRentalAvailable,
-                                    onClick = {}
-                                )
-                            },
-                            { VoucherItem(onClick = onRedeemVoucherClick) },
-                            { TopUpItem(onClick = onTopUpClick) }
-                        )
+                BalanceCard(
+                    value = uiState.userBalance,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    onAddMoneyClick = onTopUpClick
+                )
 
-                        Spacer(Modifier.height(64.dp))
+                Spacer(Modifier.height(16.dp))
 
-                        Text(
-                            text = "Recent Transactions",
-                            modifier = Modifier
-                                .align(Alignment.Start)
-                                .padding(start = 16.dp),
-                            color = Color.Black.copy(alpha = 0.7f)
-                        )
+                WalletPager(
+                    items = pagerItems,
+                    modifier = Modifier.fillMaxWidth(),
+                    contentPadding = PaddingValues(horizontal = 16.dp)
+                )
 
-                        Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(32.dp))
 
-                        uiState.recentTransactions.forEachIndexed { index, transaction ->
-                            TransactionItem(
-                                transaction = transaction,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp)
-                            )
-                            if (index != uiState.recentTransactions.lastIndex) {
-                                Spacer(Modifier.height(8.dp))
-                            } else {
-                                Spacer(Modifier.height(32.dp))
-//                            Text(
-//                                text = "See all transactions",
-//                                modifier = Modifier.noRippleClickable(onClick = onSeeAllTransactionsClick),
-//                                fontWeight = FontWeight.Medium
-//                            )
-                            }
+                Separator(
+                    text = "Recent transactions",
+                    modifier = Modifier
+                        .align(Alignment.Start)
+                        .padding(start = 16.dp)
+                )
+
+                when {
+                    uiState.isLoading -> {
+                        Box(modifier = Modifier.weight(1f)) {
+                            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                         }
-
-                        Text(
-                            text = "See all transactions",
-                            modifier = Modifier.clickable(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = null,
-                                onClick = onSeeAllTransactionsClick
-                            ),
-                            fontWeight = FontWeight.Medium
-                        )
-
-                        Spacer(Modifier.height(32.dp))
                     }
 
-                    PullRefreshIndicator(
-                        refreshing = refreshing,
-                        state = pullRefreshState,
-                        modifier = Modifier.align(Alignment.TopCenter)
-                    )
+                    else -> {
+                        Spacer(Modifier.height(8.dp))
+                        for (transaction in uiState.recentTransactions) {
+                            TransactionItem(
+                                transaction = transaction,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                        Spacer(Modifier.height(24.dp))
+                        TextButton(onClick = onSeeAllTransactionsClick) {
+                            Text(text = "See all transactions")
+                        }
+                        Spacer(Modifier.height(32.dp))
+                    }
                 }
             }
+
+            PullRefreshIndicator(
+                refreshing = refreshing,
+                state = pullRefreshState,
+                modifier = Modifier.align(Alignment.TopCenter)
+            )
         }
     }
 }
@@ -177,30 +192,48 @@ fun WalletScreenPreview() {
                 recentTransactions = listOf(
                     TransactionUiModel(
                         id = "1",
-                        amount = "- 3.00 PLN",
+                        amount = "-3,00 zł",
                         amountType = AmountType.Negative,
                         title = "Account top up",
-                        separatorText = "Monday, February 25",
+                        image = GlideIcons.TopUp,
+                        separator = PagingSeparator("Monday, February 25"),
                         dateTime = "26 Feb, 03:13"
                     ),
                     TransactionUiModel(
                         id = "2",
-                        amount = "0.00 PLN",
+                        amount = "0,00 zł",
                         amountType = AmountType.Normal,
                         title = "Account top up",
-                        separatorText = "Monday, February 25",
+                        image = GlideIcons.Bonus,
+                        separator = PagingSeparator("Monday, February 25"),
                         dateTime = "26 Feb, 03:13"
                     ),
                     TransactionUiModel(
                         id = "3",
-                        amount = "+ 3.00 PLN",
+                        amount = "+3,00 zł",
                         amountType = AmountType.Positive,
                         title = "Account top up",
-                        separatorText = "Monday, February 25",
+                        image = GlideIcons.Voucher,
+                        separator = PagingSeparator("Monday, February 25"),
                         dateTime = "25 Feb, 03:13"
                     )
                 )
             ),
+            onBackClick = {},
+            onSeeAllTransactionsClick = {},
+            onRedeemVoucherClick = {},
+            onTopUpClick = {},
+            onPullRefresh = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun WalletScreenLoadingPreview() {
+    GlideAppTheme {
+        WalletScreenContent(
+            uiState = WalletUiState(isLoading = true),
             onBackClick = {},
             onSeeAllTransactionsClick = {},
             onRedeemVoucherClick = {},
