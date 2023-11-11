@@ -34,7 +34,7 @@ import com.apsl.glideapp.core.ui.icons.Bell
 import com.apsl.glideapp.core.ui.icons.Card
 import com.apsl.glideapp.core.ui.icons.GlideIcons
 import com.apsl.glideapp.core.ui.icons.Route2
-import com.apsl.glideapp.core.ui.icons.Warning
+import com.apsl.glideapp.core.ui.icons.WarningTriangle
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.feature.home.R
 import com.apsl.glideapp.feature.home.screens.BatteryState
@@ -80,7 +80,7 @@ fun ActiveRideSheetLayout(
                 }
                 Spacer(Modifier.height(8.dp))
                 FilledTonalIconButton(onClick = {}) {
-                    Icon(imageVector = GlideIcons.Warning, contentDescription = null)
+                    Icon(imageVector = GlideIcons.WarningTriangle, contentDescription = null)
                 }
             }
         }
@@ -154,7 +154,7 @@ fun DefaultSheetLayout(
                 Text(text = "Ring")
             }
             FilledTonalButton(onClick = {}) {
-                Icon(imageVector = GlideIcons.Warning, contentDescription = null)
+                Icon(imageVector = GlideIcons.WarningTriangle, contentDescription = null)
                 Spacer(Modifier.width(8.dp))
                 Text(text = "Report issue")
             }

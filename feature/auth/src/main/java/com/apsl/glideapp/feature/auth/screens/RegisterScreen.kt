@@ -1,9 +1,6 @@
 package com.apsl.glideapp.feature.auth.screens
 
 import android.graphics.Shader
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
@@ -47,7 +43,6 @@ import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -56,9 +51,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.apsl.glideapp.core.ui.LoadingScreen
 import com.apsl.glideapp.core.ui.R
+import com.apsl.glideapp.core.ui.components.GlideImage
 import com.apsl.glideapp.core.ui.components.PasswordTextField
 import com.apsl.glideapp.core.ui.icons.ArrowBack
 import com.apsl.glideapp.core.ui.icons.GlideIcons
+import com.apsl.glideapp.core.ui.onContentClickResettable
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.feature.auth.viewmodels.RegisterUiState
 import com.apsl.glideapp.feature.auth.viewmodels.RegisterViewModel
@@ -113,15 +110,7 @@ fun RegisterScreenContent(
                 ),
                 snackbarHostState = snackbarHostState
             )
-            val clearFocusModifier = remember(keyboardController, focusManager) {
-                Modifier.clickable(
-                    interactionSource = MutableInteractionSource(),
-                    indication = null
-                ) {
-                    keyboardController?.hide()
-                    focusManager.clearFocus(true)
-                }
-            }
+
             val backgroundColor =
                 Color.Black.copy(alpha = 0.1f).compositeOver(MaterialTheme.colorScheme.primary)
 
@@ -135,7 +124,7 @@ fun RegisterScreenContent(
                 sheetContent = {
                     Column(
                         modifier = Modifier
-                            .then(clearFocusModifier)
+                            .onContentClickResettable()
                             .navigationBarsPadding()
                             .imePadding()
                             .padding(16.dp),
@@ -168,11 +157,7 @@ fun RegisterScreenContent(
                                 .align(Alignment.CenterHorizontally)
                                 .padding(28.dp)
                         ) {
-                            Image(
-                                painter = painterResource(R.drawable.img_pencil),
-                                contentDescription = null,
-                                modifier = Modifier.size(120.dp)
-                            )
+                            GlideImage(R.drawable.img_pencil)
                         }
 
                         OutlinedTextField(
@@ -241,7 +226,7 @@ fun RegisterScreenContent(
                         Spacer(Modifier.height(96.dp))
                     }
                 },
-                modifier = clearFocusModifier,
+                modifier = Modifier.onContentClickResettable(),
                 scaffoldState = scaffoldState,
                 sheetShadowElevation = 8.dp,
                 sheetDragHandle = null,

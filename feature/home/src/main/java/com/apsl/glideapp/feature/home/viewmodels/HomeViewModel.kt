@@ -161,7 +161,7 @@ class HomeViewModel @Inject constructor(
                         )
                     }
                 }
-                .onFailure(Timber::d)
+                .onFailure { Timber.d(it.message) }
         }
     }
 
