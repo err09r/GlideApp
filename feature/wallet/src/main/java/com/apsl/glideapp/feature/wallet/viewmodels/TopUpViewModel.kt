@@ -1,12 +1,13 @@
 package com.apsl.glideapp.feature.wallet.viewmodels
 
+import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
 import com.apsl.glideapp.common.models.TransactionType
 import com.apsl.glideapp.core.domain.transaction.CreateTransactionUseCase
 import com.apsl.glideapp.core.domain.transaction.GetAllPaymentMethodsUseCase
-import com.apsl.glideapp.core.model.PaymentMethod
 import com.apsl.glideapp.core.ui.BaseViewModel
-import com.apsl.glideapp.feature.wallet.models.toPaymentUiModel
+import com.apsl.glideapp.feature.wallet.models.PaymentMethodUiModel
+import com.apsl.glideapp.feature.wallet.models.toPaymentMethods
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -40,21 +41,16 @@ class TopUpViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        paymentMethods = paymentMethods.map(PaymentMethod::toPaymentUiModel)
+                        paymentMethods = paymentMethods.toPaymentMethods()
                     )
                 }
             }
-            .onFailure(Timber::d)
+            .onFailure { Timber.d(it.message) }
     }
 
     fun setSelectedPaymentMethodIndex(index: Int) {
-        _uiState.update { state ->
-            state.copy(
-                selectedPaymentMethodIndex = index.coerceIn(
-                    minimumValue = 0,
-                    maximumValue = state.paymentMethods.size
-                )
-            )
+        _uiState.update {
+            it.copy(selectedPaymentMethodIndex = index.coerceIn(it.paymentMethods.value.indices))
         }
     }
 
@@ -62,30 +58,21 @@ class TopUpViewModel @Inject constructor(
         viewModelScope.launch {
             //TODO: Handle String to Double parsing
             _actions.emit(PaymentAction.PaymentProcessingStarted)
-            createTransactionUseCase(
-                type = TransactionType.TopUp,
-                amount = uiState.value.amountTextFieldValue?.toDouble() ?: 0.0
-            )
+            val amount = uiState.value.amountTextFieldValue?.replace(',', '.')?.toDouble() ?: 0.0
+            Timber.d("Parsed amount: $amount")
+            createTransactionUseCase(type = TransactionType.TopUp, amount = amount)
                 .onSuccess {
-                    _uiState.update { it.copy(amountTextFieldValue = "0.0") }
+                    _uiState.update { it.copy(amountTextFieldValue = "0,0") }
                     _actions.emit(PaymentAction.PaymentProcessingCompleted)
                 }
-                .onFailure(Timber::d)
-        }
-    }
-
-    fun handleFocusEvent(isFocused: Boolean) {
-        _uiState.update { state ->
-            state.copy(
-                amountTextFieldValue = when {
-                    !isFocused && state.amountTextFieldValue?.isBlank() == true -> ""
-                    else -> state.amountTextFieldValue
+                .onFailure {
+                    Timber.d(it.message)
+                    _actions.emit(PaymentAction.PaymentProcessingFailed)
                 }
-            )
         }
     }
 
-    fun setAmountTextFieldValue(value: String?) {
+    fun updateAmountTextFieldValue(value: String?) {
         _uiState.update { it.copy(amountTextFieldValue = value) }
     }
 
@@ -93,3 +80,16 @@ class TopUpViewModel @Inject constructor(
         _uiState.update { it.copy(isLoading = true) }
     }
 }
+
+@Immutable
+data class TopUpUiState(
+    val isLoading: Boolean = false,
+    val paymentMethods: PaymentMethods = PaymentMethods(emptyList()),
+    val selectedPaymentMethodIndex: Int = 0,
+    val amountTextFieldValue: String? = null,
+    val error: TopUpUiError? = null
+)
+
+@Immutable
+@JvmInline
+value class PaymentMethods(val value: List<PaymentMethodUiModel>)
