@@ -3,7 +3,6 @@ package com.apsl.glideapp.feature.home.screens
 import android.Manifest
 import android.os.Build
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -16,25 +15,26 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.Lifecycle
 import com.apsl.glideapp.core.ui.ComposableLifecycle
 import com.apsl.glideapp.core.ui.RequestPermission
 import com.apsl.glideapp.core.ui.RequestPermissionState
-import com.apsl.glideapp.core.ui.icons.Bell
-import com.apsl.glideapp.core.ui.icons.GlideIcons
+import com.apsl.glideapp.core.ui.components.GlideImage
 import com.apsl.glideapp.core.ui.rememberRequestPermissionState
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.core.util.android.areNotificationsEnabled
 import com.apsl.glideapp.core.util.android.openAppSettings
 import timber.log.Timber
+import com.apsl.glideapp.core.ui.R as CoreR
 
 @Composable
-fun NotificationPermissionDialog(modifier: Modifier = Modifier, onNavigateBack: () -> Unit) {
+fun NotificationPermissionDialog(onDismiss: () -> Unit, modifier: Modifier = Modifier) {
     val context = LocalContext.current
 
     SideEffect {
         if (context.areNotificationsEnabled) {
-            onNavigateBack()
+            onDismiss()
         }
     }
 
@@ -42,7 +42,7 @@ fun NotificationPermissionDialog(modifier: Modifier = Modifier, onNavigateBack: 
 
     LaunchedEffect(resumed) {
         if (resumed && context.areNotificationsEnabled) {
-            onNavigateBack()
+            onDismiss()
         }
     }
 
@@ -65,11 +65,11 @@ fun NotificationPermissionDialog(modifier: Modifier = Modifier, onNavigateBack: 
             requestState = requestPermissionsState,
             onGranted = {
                 Timber.d("onGranted")
-                onNavigateBack()
+                onDismiss()
             },
             onShowRationale = {
                 Timber.d("onShowRationale")
-                onNavigateBack()
+                onDismiss()
             },
             onPermanentlyDenied = {
                 Timber.d("onPermanentlyDenied")
@@ -78,20 +78,32 @@ fun NotificationPermissionDialog(modifier: Modifier = Modifier, onNavigateBack: 
         )
     }
 
+    NotificationPermissionDialogContent(
+        modifier = modifier,
+        onDismiss = onDismiss,
+        onConfirmButtonClick = { requestPermissionsState?.requestPermission = true })
+}
+
+@Composable
+fun NotificationPermissionDialogContent(
+    onDismiss: () -> Unit,
+    onConfirmButtonClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     AlertDialog(
-        onDismissRequest = onNavigateBack,
+        onDismissRequest = onDismiss,
         confirmButton = {
-            TextButton(onClick = { requestPermissionsState?.requestPermission = true }) {
+            TextButton(onClick = onConfirmButtonClick) {
                 Text(text = "Allow")
             }
         },
         modifier = modifier,
         dismissButton = {
-            TextButton(onClick = onNavigateBack) {
+            TextButton(onClick = onDismiss) {
                 Text(text = "Dismiss")
             }
         },
-        icon = { Icon(imageVector = GlideIcons.Bell, contentDescription = null) },
+        icon = { GlideImage(CoreR.drawable.img_bell) },
         title = { Text(text = "Allow notifications") },
         text = {
             Text(text = "Notifications are disabled for our app. To provide the best ride experience, enable notifications in app settings")
@@ -99,10 +111,12 @@ fun NotificationPermissionDialog(modifier: Modifier = Modifier, onNavigateBack: 
     )
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun NotificationPermissionDialogPreview() {
     GlideAppTheme {
-        NotificationPermissionDialog(onNavigateBack = {})
+        Dialog(onDismissRequest = {}) {
+            NotificationPermissionDialogContent(onDismiss = {}, onConfirmButtonClick = {})
+        }
     }
 }
