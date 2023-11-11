@@ -1,14 +1,8 @@
 package com.apsl.glideapp.core.navigation
 
-import androidx.compose.runtime.Immutable
-
-@Immutable
 sealed class Screen(val route: String) {
     object Home {
         data object Root : Screen("home")
-        data object LocationPermission : Screen("locationPermission")
-        data object LocationRationale : Screen("locationRationale")
-        data object NotificationPermission : Screen("notificationPermission")
     }
 
     object Rides {
