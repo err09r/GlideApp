@@ -8,7 +8,6 @@ dependencies {
     implementation(project(":core:util:maps"))
 
     implementation(libs.accompanist.permissions)
-    implementation(libs.androidx.compose.materialIconsExtended)
     implementation(libs.glideapp.common.util)
     implementation(libs.google.gms.playServices.location)
     implementation(libs.google.gms.playServices.maps)
