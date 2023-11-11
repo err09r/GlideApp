@@ -1,6 +1,7 @@
 package com.apsl.glideapp.feature.wallet.components
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
@@ -15,12 +16,12 @@ fun TransactionAmount(value: String, type: AmountType) {
     Text(
         text = value,
         color = when (type) {
-            AmountType.Negative -> Color.Red
-            AmountType.Positive -> Color(0xFF00B300)
-            else -> Color.DarkGray
+            AmountType.Negative -> Color(0xFFE34945)
+            AmountType.Positive -> Color(0xFF088237)
+            else -> MaterialTheme.colorScheme.onSurfaceVariant
         },
-        fontSize = 16.sp,
-        fontWeight = FontWeight.SemiBold
+        fontSize = 14.sp,
+        fontWeight = FontWeight.Bold
     )
 }
 
@@ -29,9 +30,9 @@ fun TransactionAmount(value: String, type: AmountType) {
 fun TransactionAmountPreview() {
     GlideAppTheme {
         Column {
-            TransactionAmount(value = "- 3.00 PLN", type = AmountType.Normal)
-            TransactionAmount(value = "0.00 PLN", type = AmountType.Normal)
-            TransactionAmount(value = "- 3.00 PLN", type = AmountType.Normal)
+            TransactionAmount(value = "-3,00 zł", type = AmountType.Negative)
+            TransactionAmount(value = "0,00 zł", type = AmountType.Normal)
+            TransactionAmount(value = "-3,00 zł", type = AmountType.Positive)
         }
     }
 }

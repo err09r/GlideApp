@@ -10,12 +10,11 @@ import com.apsl.glideapp.common.util.now
 import com.apsl.glideapp.core.database.AppDatabase
 import com.apsl.glideapp.core.database.entities.TransactionEntity
 import com.apsl.glideapp.core.domain.connectivity.ConnectivityObserver
-import com.apsl.glideapp.core.domain.connectivity.isConnected
 import com.apsl.glideapp.core.network.http.GlideApi
-import kotlinx.datetime.LocalDateTime
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.datetime.LocalDateTime
+import timber.log.Timber
 
 @Singleton
 class TransactionRemoteMediator @Inject constructor(
@@ -44,18 +43,20 @@ class TransactionRemoteMediator @Inject constructor(
             }
 
             //TODO: to change (empty table error)
-            if (connectivityObserver.connectivityState.isConnected()) {
-                return if (transactionDao.isTableEmpty()) {
-                    MediatorResult.Error(Exception("Transaction table is empty"))
-                } else {
-                    MediatorResult.Success(true)
-                }
-            }
+//            if (connectivityObserver.connectivityState.isConnected()) {
+//                return if (transactionDao.isTableEmpty()) {
+//                    MediatorResult.Error(Exception("Transaction table is empty"))
+//                } else {
+//                    MediatorResult.Success(true)
+//                }
+//            }
 
             Timber.d("Loadkey: $loadKey")
 
-            val transactionDtos =
-                api.getUserTransactions(page = loadKey, limit = state.config.pageSize)
+            val transactionDtos = api.getUserTransactions(
+                page = loadKey,
+                limit = state.config.pageSize
+            )
 
             appDatabase.withTransaction {
                 if (loadType == LoadType.REFRESH) {

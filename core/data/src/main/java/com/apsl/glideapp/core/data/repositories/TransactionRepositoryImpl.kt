@@ -6,9 +6,12 @@ import androidx.paging.map
 import com.apsl.glideapp.common.dto.TransactionRequest
 import com.apsl.glideapp.common.models.TransactionType
 import com.apsl.glideapp.core.database.entities.TransactionEntity
+import com.apsl.glideapp.core.domain.transaction.TransactionException
 import com.apsl.glideapp.core.domain.transaction.TransactionRepository
 import com.apsl.glideapp.core.model.Transaction
 import com.apsl.glideapp.core.network.http.GlideApi
+import io.ktor.client.plugins.ClientRequestException
+import io.ktor.http.HttpStatusCode
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -47,12 +50,20 @@ class TransactionRepositoryImpl @Inject constructor(
     }
 
     override suspend fun createVoucherTransaction(voucherCode: String) {
-        api.createTransaction(
-            body = TransactionRequest(
-                type = TransactionType.Voucher,
-                amount = null,
-                voucherCode = voucherCode
+        try {
+            api.createTransaction(
+                body = TransactionRequest(
+                    type = TransactionType.Voucher,
+                    amount = null,
+                    voucherCode = voucherCode
+                )
             )
-        )
+        } catch (e: Exception) {
+            var exception = e
+            if (e is ClientRequestException && e.response.status == HttpStatusCode.BadRequest) {
+                exception = TransactionException.InvalidVoucherCodeException
+            }
+            throw exception
+        }
     }
 }
