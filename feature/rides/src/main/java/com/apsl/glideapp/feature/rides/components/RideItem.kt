@@ -1,4 +1,4 @@
-package com.apsl.glideapp.feature.rides.screens
+package com.apsl.glideapp.feature.rides.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -30,10 +30,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.apsl.glideapp.core.ui.components.Graph
-import com.apsl.glideapp.core.ui.components.PreviewGraphRoute
+import com.apsl.glideapp.core.ui.components.GraphRoutePreviewParameterProvider
 import com.apsl.glideapp.core.ui.icons.GlideIcons
 import com.apsl.glideapp.core.ui.icons.MapPoint
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
@@ -113,15 +114,15 @@ fun RideItem(
 
 @Preview
 @Composable
-fun RideItemPreview() {
+fun RideItemPreview(@PreviewParameter(GraphRoutePreviewParameterProvider::class) route: List<Pair<Float, Float>>) {
     GlideAppTheme {
         RideItem(
             modifier = Modifier.fillMaxWidth(),
             overlineText = "Spacerowa 1A, Słupsk",
             headlineText = "13:48 - 14:15",
             supportingText = "1415 meters",
-            trailingText = "- 13,50 zł",
-            route = PreviewGraphRoute,
+            trailingText = "-13,50 zł",
+            route = route,
             onClick = {}
         )
     }
