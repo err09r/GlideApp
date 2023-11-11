@@ -1,5 +1,6 @@
 package com.apsl.glideapp.feature.wallet.viewmodels
 
+import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
 import androidx.paging.LoadState
 import androidx.paging.cachedIn
@@ -8,6 +9,8 @@ import androidx.paging.map
 import com.apsl.glideapp.core.domain.transaction.GetUserTransactionsPaginatedUseCase
 import com.apsl.glideapp.core.model.Transaction
 import com.apsl.glideapp.core.ui.BaseViewModel
+import com.apsl.glideapp.core.ui.ComposePagingItems
+import com.apsl.glideapp.core.ui.toComposePagingItems
 import com.apsl.glideapp.feature.wallet.models.TransactionUiModel
 import com.apsl.glideapp.feature.wallet.models.toTransactionUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -54,7 +57,11 @@ class AllTransactionsViewModel @Inject constructor(
 
             else -> {
                 _uiState.update {
-                    it.copy(isLoading = false, isRefreshing = false, transactions = pagingItems)
+                    it.copy(
+                        isLoading = false,
+                        isRefreshing = false,
+                        transactions = pagingItems.toComposePagingItems()
+                    )
                 }
             }
         }
@@ -64,3 +71,11 @@ class AllTransactionsViewModel @Inject constructor(
         uiState.value.transactions?.refresh()
     }
 }
+
+@Immutable
+data class AllTransactionsUiState(
+    val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
+    val transactions: ComposePagingItems<TransactionUiModel>? = null,
+    val error: AllTransactionsUiError? = null
+)

@@ -14,44 +14,42 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.apsl.glideapp.core.ui.FeatureScreen
 import com.apsl.glideapp.core.ui.LoadingScreen
-import com.apsl.glideapp.core.ui.components.PreviewGraphRoute
+import com.apsl.glideapp.core.ui.PagingSeparator
+import com.apsl.glideapp.core.ui.components.GraphRoutePreviewParameterProvider
 import com.apsl.glideapp.core.ui.icons.ElectricScooter
 import com.apsl.glideapp.core.ui.icons.GlideIcons
 import com.apsl.glideapp.core.ui.icons.NotificationRemove
 import com.apsl.glideapp.core.ui.icons.Route
-import com.apsl.glideapp.core.ui.peekOrNull
 import com.apsl.glideapp.core.ui.pullrefresh.PullRefreshIndicator
 import com.apsl.glideapp.core.ui.pullrefresh.pullRefresh
 import com.apsl.glideapp.core.ui.pullrefresh.rememberPullRefreshState
 import com.apsl.glideapp.core.ui.receiveAsLazyPagingItems
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
+import com.apsl.glideapp.feature.rides.components.RideList
 import com.apsl.glideapp.feature.rides.models.RideUiModel
-import com.apsl.glideapp.feature.rides.models.Separator
 import com.apsl.glideapp.feature.rides.viewmodels.AllRidesUiState
 import com.apsl.glideapp.feature.rides.viewmodels.AllRidesViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -62,8 +60,13 @@ fun AllRidesScreen(
     onNavigateBack: () -> Unit,
     onNavigateToRide: (String) -> Unit
 ) {
+    LaunchedEffect(Unit) {
+        viewModel.refreshRidesSummary()
+    }
+
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     viewModel.pagingData.receiveAsLazyPagingItems(action = viewModel::onNewPagerLoadState)
+
     AllRidesScreenContent(
         uiState = uiState,
         onBackClick = onNavigateBack,
@@ -107,63 +110,17 @@ fun AllRidesScreenContent(
                         AllRidesEmptyScreen()
                     } else {
                         Column {
-                            RideStats(rides = 1244, meters = 1214)
-                            LazyColumn(
+                            RideStats(rides = uiState.totalRides, distance = uiState.totalDistance)
+                            RideList(
+                                rides = uiState.rides,
                                 modifier = Modifier.fillMaxSize(),
                                 contentPadding = PaddingValues(
                                     start = 16.dp,
                                     end = 16.dp,
                                     bottom = 32.dp
                                 ),
-                            ) {
-                                var lastSeparatorText: String? = null
-
-                                for (index in 0 until itemCount) {
-                                    val ride = uiState.rides?.peekOrNull(index)
-
-                                    if (ride != null) {
-                                        val (separatorId, separatorText) = ride.separator
-
-                                        if (separatorText != lastSeparatorText) {
-                                            stickyHeader(key = separatorId) {
-                                                Column(
-                                                    modifier = Modifier
-                                                        .fillMaxWidth()
-                                                        .background(color = MaterialTheme.colorScheme.background)
-                                                ) {
-                                                    Text(
-                                                        text = separatorText,
-                                                        modifier = Modifier.padding(bottom = 8.dp),
-                                                        fontSize = 24.sp,
-                                                        fontWeight = FontWeight.SemiBold
-                                                    )
-                                                }
-                                            }
-                                        } else {
-                                            item {
-                                                Divider()
-                                            }
-                                        }
-
-                                        item(key = ride.id) {
-                                            // Gets item, triggering page loads if needed
-                                            uiState.rides[index]?.let { ride ->
-                                                RideItem(
-                                                    modifier = Modifier.fillMaxWidth(),
-                                                    overlineText = "Spacerowa 1A, Słupsk",
-                                                    headlineText = "${ride.startTime} - ${ride.finishTime}",
-                                                    supportingText = "${ride.distance} meters",
-                                                    trailingText = "- ${ride.fare} zł",
-                                                    route = ride.route.ifEmpty { PreviewGraphRoute },
-                                                    onClick = { onRideClick(ride.id) }
-                                                )
-                                            }
-                                        }
-
-                                        lastSeparatorText = separatorText
-                                    }
-                                }
-                            }
+                                onRideClick = onRideClick
+                            )
                         }
                     }
 
@@ -179,8 +136,9 @@ fun AllRidesScreenContent(
 }
 
 @Composable
-fun RideStats(modifier: Modifier = Modifier, rides: Int, meters: Int) {
+fun RideStats(modifier: Modifier = Modifier, rides: String, distance: String) {
     Card(
+        onClick = {},
         modifier = modifier
             .fillMaxWidth()
             .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
@@ -194,20 +152,13 @@ fun RideStats(modifier: Modifier = Modifier, rides: Int, meters: Int) {
         ) {
             RideStatsItem(
                 title = "Total travelled",
-                text = "$meters m",
+                text = "$distance km",
                 imageVector = GlideIcons.Route
             )
-//        Spacer(Modifier)
-//            Divider(
-//                modifier = Modifier
-//                    .fillMaxHeight()
-//                    .width(1.dp)
-//                    .padding(vertical = 8.dp)
-//            )
             Spacer(Modifier.weight(1f))
             RideStatsItem(
                 title = "Total rides",
-                text = rides.toString(),
+                text = rides,
                 imageVector = GlideIcons.ElectricScooter
             )
         }
@@ -254,10 +205,11 @@ fun RideStatsItem(
     }
 }
 
+@Preview
 @Composable
 fun RideStatsPreview() {
     GlideAppTheme {
-        RideStats(rides = 12, meters = 1214)
+        RideStats(rides = "12", distance = "12,5")
     }
 }
 
@@ -304,7 +256,7 @@ fun AllRidesEmptyScreen() {
 
 @Preview(showBackground = true)
 @Composable
-fun AllRidesScreenPreview() {
+fun AllRidesScreenPreview(@PreviewParameter(GraphRoutePreviewParameterProvider::class) route: List<Pair<Float, Float>>) {
     GlideAppTheme {
         val rides = MutableStateFlow(
             PagingData.from(
@@ -313,35 +265,35 @@ fun AllRidesScreenPreview() {
                         id = "1",
                         startTime = "16:01",
                         finishTime = "16:02",
-                        route = PreviewGraphRoute,
+                        route = route,
                         distance = 426,
-                        fare = "4.05",
-                        separator = Separator(text = "Monday, February 25")
+                        fare = "3,75",
+                        separator = PagingSeparator("Monday, February 25")
                     ),
                     RideUiModel(
                         id = "2",
                         startTime = "16:01",
                         finishTime = "16:02",
-                        route = PreviewGraphRoute,
+                        route = route,
                         distance = 426,
-                        fare = "4.05",
-                        separator = Separator(text = "Monday, February 25")
+                        fare = "4,05",
+                        separator = PagingSeparator("Monday, February 25")
                     ),
                     RideUiModel(
                         id = "3",
                         startTime = "16:01",
                         finishTime = "16:02",
-                        route = PreviewGraphRoute,
+                        route = route,
                         distance = 426,
-                        fare = "4.05",
-                        separator = Separator(text = "Monday, February 26")
+                        fare = "8,99",
+                        separator = PagingSeparator("Monday, February 26")
                     )
                 )
             )
         ).collectAsLazyPagingItems()
 
         AllRidesScreenContent(
-            uiState = AllRidesUiState(rides = rides),
+            uiState = AllRidesUiState(rides = rides, totalRides = "12", totalDistance = "19,5"),
             onBackClick = {},
             onRideClick = {},
             onPullRefresh = {}
