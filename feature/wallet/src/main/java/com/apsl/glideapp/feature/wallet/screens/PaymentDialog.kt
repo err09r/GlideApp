@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -16,15 +17,17 @@ import androidx.compose.ui.window.Dialog
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 
 @Composable
-fun PaymentDialog() {
-    Surface {
-        Column(
-            modifier = Modifier.padding(32.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+fun PaymentDialog(modifier: Modifier = Modifier) {
+    Surface(
+        modifier = modifier,
+        shape = AlertDialogDefaults.shape,
+        color = AlertDialogDefaults.containerColor,
+        tonalElevation = AlertDialogDefaults.TonalElevation
+    ) {
+        Column(modifier = Modifier.padding(24.dp)) {
             Text(text = "Processing payment...")
-            Spacer(Modifier.height(32.dp))
-            CircularProgressIndicator()
+            Spacer(Modifier.height(24.dp))
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
         }
     }
 }
