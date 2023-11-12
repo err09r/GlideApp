@@ -18,6 +18,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 fun Modifier.clickable(
@@ -54,10 +55,10 @@ fun Modifier.onContentClickResettable(
     }
 }
 
-fun Modifier.imeHeight(): Modifier = composed {
+fun Modifier.imeCollapsible(initialHeight: Dp): Modifier = composed {
     val imeHeight = WindowInsets.imeAnimationTarget.getBottom(LocalDensity.current).toDp()
     val spacerHeight = animateDpAsState(
-        targetValue = if (imeHeight == 0.dp) 16.dp else 0.dp,
+        targetValue = if (imeHeight == 0.dp) initialHeight else 0.dp,
         label = ""
     )
     this.height(spacerHeight.value)

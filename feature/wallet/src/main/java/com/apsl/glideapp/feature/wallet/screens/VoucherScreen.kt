@@ -36,6 +36,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.apsl.glideapp.core.ui.FeatureScreen
 import com.apsl.glideapp.core.ui.components.GlideImage
+import com.apsl.glideapp.core.ui.imeCollapsible
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.feature.wallet.viewmodels.VoucherAction
 import com.apsl.glideapp.feature.wallet.viewmodels.VoucherUiState
@@ -92,9 +93,10 @@ fun VoucherScreenContent(
             modifier = Modifier
                 .fillMaxSize()
                 .consumeWindowInsets(WindowInsets.systemBars)
-                .padding(top = 32.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
+                .padding(16.dp)
                 .imePadding()
         ) {
+            Spacer(Modifier.imeCollapsible(initialHeight = 16.dp))
             ElevatedCard(modifier = Modifier.fillMaxWidth()) {
                 Column(
                     modifier = Modifier

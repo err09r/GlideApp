@@ -50,6 +50,7 @@ import com.apsl.glideapp.core.ui.components.GlideImage
 import com.apsl.glideapp.core.ui.icons.CardMoney
 import com.apsl.glideapp.core.ui.icons.GlideIcons
 import com.apsl.glideapp.core.ui.icons.Wallet
+import com.apsl.glideapp.core.ui.imeCollapsible
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.feature.wallet.models.toPaymentMethods
 import com.apsl.glideapp.feature.wallet.viewmodels.PaymentAction
@@ -102,11 +103,10 @@ fun TopUpScreenContent(
             modifier = Modifier
                 .fillMaxSize()
                 .consumeWindowInsets(WindowInsets.systemBars)
-                .imePadding()
                 .padding(16.dp)
-
+                .imePadding()
         ) {
-//            Spacer(Modifier.imeHeight())
+            Spacer(Modifier.imeCollapsible(initialHeight = 16.dp))
             ElevatedCard(modifier = Modifier.fillMaxWidth()) {
                 Column(
                     modifier = Modifier
