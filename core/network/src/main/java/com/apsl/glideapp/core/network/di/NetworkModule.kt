@@ -109,7 +109,7 @@ object NetworkModule {
     @Provides
     fun provideKtorfit(httpClient: HttpClient): Ktorfit {
         return Ktorfit.Builder()
-            .baseUrl(BuildConfig.GLIDE_API_BASE_URL_HTTP)
+            .baseUrl("${BuildConfig.GLIDE_API_BASE_URL_HTTP}/")
             .httpClient(httpClient)
             .build()
     }
