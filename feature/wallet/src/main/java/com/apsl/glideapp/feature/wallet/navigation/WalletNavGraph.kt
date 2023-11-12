@@ -6,9 +6,9 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
 import androidx.navigation.navigation
-import com.apsl.glideapp.core.navigation.AppNavGraph
-import com.apsl.glideapp.core.navigation.Dialog
-import com.apsl.glideapp.core.navigation.Screen
+import com.apsl.glideapp.core.ui.navigation.AppNavGraph
+import com.apsl.glideapp.core.ui.navigation.Dialog
+import com.apsl.glideapp.core.ui.navigation.Screen
 import com.apsl.glideapp.feature.wallet.screens.AllTransactionsScreen
 import com.apsl.glideapp.feature.wallet.screens.PaymentDialog
 import com.apsl.glideapp.feature.wallet.screens.TopUpScreen

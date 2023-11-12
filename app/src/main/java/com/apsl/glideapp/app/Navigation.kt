@@ -9,8 +9,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import com.apsl.glideapp.core.navigation.AppNavGraph
-import com.apsl.glideapp.core.navigation.AppNavHost
+import com.apsl.glideapp.core.ui.navigation.AppNavGraph
+import com.apsl.glideapp.core.ui.navigation.AppNavHost
 import com.apsl.glideapp.feature.auth.navigation.authGraph
 import com.apsl.glideapp.feature.home.navigation.homeGraph
 import com.apsl.glideapp.feature.rides.navigation.ridesGraph
@@ -33,7 +33,7 @@ fun Navigation(navHostController: NavHostController, modifier: Modifier = Modifi
         navController = navHostController,
         startDestination = AppNavGraph.Home.route,
         modifier = modifier,
-        route = AppNavHost.Root.route,
+        route = AppNavHost.Root.route,//AppNavHost.Root.route,
         enterTransition = { fadeIn(animationSpec = tween(300)) },
         exitTransition = { fadeOut(animationSpec = tween(300)) }
     ) {

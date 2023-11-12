@@ -1,4 +1,6 @@
-package com.apsl.glideapp.core.navigation
+@file:Suppress("Unused")
+
+package com.apsl.glideapp.core.ui.navigation
 
 sealed class Dialog(val route: String) {
     object Home {

@@ -16,7 +16,6 @@ dependencies {
     implementation(project(":core:datastore"))
     implementation(project(":core:domain"))
     implementation(project(":core:location"))
-    implementation(project(":core:navigation"))
     implementation(project(":core:network"))
     implementation(project(":core:ui"))
     implementation(project(":core:util:android"))

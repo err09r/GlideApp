@@ -5,9 +5,9 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
 import androidx.navigation.compose.navigation
-import com.apsl.glideapp.core.navigation.AppNavGraph
-import com.apsl.glideapp.core.navigation.Dialog
-import com.apsl.glideapp.core.navigation.Screen
+import com.apsl.glideapp.core.ui.navigation.AppNavGraph
+import com.apsl.glideapp.core.ui.navigation.Dialog
+import com.apsl.glideapp.core.ui.navigation.Screen
 import com.apsl.glideapp.feature.home.screens.HomeScreen
 import com.apsl.glideapp.feature.home.screens.LocationPermissionDialog
 import com.apsl.glideapp.feature.home.screens.LocationRationaleDialog
