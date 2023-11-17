@@ -27,8 +27,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.GlideApp"
-        android:usesCleartextTraffic="true"
-        tools:targetApi="34">
+        tools:targetApi="33">
 
         <activity
             android:name="com.apsl.glideapp.app.MainActivity"
