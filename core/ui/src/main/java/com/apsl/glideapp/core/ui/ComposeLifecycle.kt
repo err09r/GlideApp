@@ -29,15 +29,15 @@ fun ComposableLifecycle(
 }
 
 @Composable
-fun <T> ScreenEvents(
-    events: Flow<T>,
+fun <T> ScreenActions(
+    actions: Flow<T>,
     lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current,
-    onEvent: (T) -> Unit
+    onAction: (T) -> Unit
 ) {
-    LaunchedEffect(events, lifecycleOwner.lifecycle) {
+    LaunchedEffect(actions, lifecycleOwner.lifecycle) {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
             withContext(Dispatchers.Main.immediate) {
-                events.collect(onEvent)
+                actions.collect(onAction)
             }
         }
     }
