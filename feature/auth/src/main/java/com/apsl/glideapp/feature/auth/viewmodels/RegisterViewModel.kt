@@ -9,8 +9,10 @@ import com.apsl.glideapp.core.domain.auth.isError
 import com.apsl.glideapp.core.ui.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -23,6 +25,9 @@ class RegisterViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(RegisterUiState())
     val uiState = _uiState.asStateFlow()
+
+    private val _actions = Channel<RegisterAction>()
+    val actions = _actions.receiveAsFlow()
 
     fun register() {
         showLoading()
@@ -81,20 +86,16 @@ class RegisterViewModel @Inject constructor(
                 registerUseCase(username = username, password = password)
                     .onSuccess {
                         _uiState.update {
-                            it.copy(
-                                isRegistered = true,
-                                isLoading = false,
-                                usernameError = null
-                            )
+                            it.copy(isLoading = false, usernameError = null)
                         }
                         resetPasswordFields()
+                        _actions.send(RegisterAction.NavigateToHome)
                     }
                     .onFailure { throwable ->
                         Timber.d(throwable.message)
-                        _uiState.update {
-                            it.copy(serverError = "Register error", isLoading = false)
-                        }
+                        _uiState.update { it.copy(isLoading = false) }
                         resetPasswordFields()
+                        _actions.send(RegisterAction.ShowError(throwable.message))
                     }
             }
         } else {
@@ -156,18 +157,23 @@ class RegisterViewModel @Inject constructor(
 @Immutable
 data class RegisterUiState(
     val isLoading: Boolean = false,
-    val isRegistered: Boolean = false,
     val isPasswordVisible: Boolean = false,
     val isRepeatPasswordVisible: Boolean = false,
     val usernameTextFieldValue: String? = null,
     val passwordTextFieldValue: String? = null,
     val repeatPasswordTextFieldValue: String? = null,
     val usernameError: String? = null,
-    val passwordError: String? = null,
-    val serverError: String? = null
+    val passwordError: String? = null
 ) {
     val isActionButtonActive: Boolean
         get() = !usernameTextFieldValue.isNullOrBlank()
                 && !passwordTextFieldValue.isNullOrBlank()
                 && !repeatPasswordTextFieldValue.isNullOrBlank()
 }
+
+@Immutable
+sealed interface RegisterAction {
+    data class ShowError(val error: String?) : RegisterAction
+    data object NavigateToHome : RegisterAction
+}
+
