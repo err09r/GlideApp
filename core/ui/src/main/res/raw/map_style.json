@@ -1,7 +1,33 @@
 [
   {
-    "featureType": "poi",
+    "featureType": "road",
     "elementType": "labels.icon",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.land_parcel",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "elementType": "geometry",
+    "featureType": "poi.place_of_worship",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "landscape.man_made.business_corridor",
+    "elementType": "geometry",
     "stylers": [
       {
         "visibility": "off"
@@ -11,6 +37,15 @@
   {
     "featureType": "all",
     "elementType": "labels.text",
+    "stylers": [
+      {
+        "color": "#878787"
+      }
+    ]
+  },
+  {
+    "featureType": "all",
+    "elementType": "labels.icon",
     "stylers": [
       {
         "color": "#878787"
