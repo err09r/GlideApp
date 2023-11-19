@@ -30,7 +30,7 @@ kotlinx-serialization = "1.6.1"
 google-gms-playServices-location = "21.0.1"
 google-gms-playServices-maps = "18.2.0"
 google-ksp = "1.9.20-1.0.14"
-google-maps-compose = "4.2.0"
+google-maps-compose = "4.3.0"
 google-maps-utils-ktx = "5.0.0"
 
 accompanist = "0.32.0"
