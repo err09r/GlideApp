@@ -17,7 +17,7 @@ import androidx.compose.ui.platform.inspectable
  */
 fun Modifier.pullRefreshIndicatorTransform(
     state: PullRefreshState,
-    scale: Boolean = false,
+    scale: Boolean = false
 ) = inspectable(inspectorInfo = debugInspectorInfo {
     name = "pullRefreshIndicatorTransform"
     properties["state"] = state

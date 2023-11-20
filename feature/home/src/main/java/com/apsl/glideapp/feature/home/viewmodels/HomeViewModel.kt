@@ -1,8 +1,9 @@
 package com.apsl.glideapp.feature.home.viewmodels
 
 import androidx.lifecycle.viewModelScope
-import com.apsl.glideapp.common.models.Coordinates
+import com.apsl.glideapp.common.models.Route
 import com.apsl.glideapp.common.util.Geometry
+import com.apsl.glideapp.common.util.format
 import com.apsl.glideapp.core.domain.auth.LogOutUseCase
 import com.apsl.glideapp.core.domain.auth.ObserveUserAuthenticationStateUseCase
 import com.apsl.glideapp.core.domain.config.GetAppConfigUseCase
@@ -319,9 +320,21 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun onRideRouteUpdated(currentRoute: List<Coordinates>) {
+    private fun onRideRouteUpdated(currentRoute: Route) {
         Timber.d("Ride route updated")
-        updateMapState(rideRoute = currentRoute.mapToLatLng())
+        updateMapState(rideRoute = currentRoute.points.mapToLatLng())
+        updateRideState(distance = (currentRoute.distance / 1000).format(1).replace('.', ','))
+    }
+
+    private fun updateRideState(
+        distance: String = uiState.value.rideState?.distance ?: "0,0",
+        isPaused: Boolean = uiState.value.rideState?.isPaused ?: false
+    ) {
+        _uiState.update { uiState ->
+            uiState.copy(
+                rideState = uiState.rideState?.copy(distance = distance, isPaused = isPaused)
+            )
+        }
     }
 
     private fun onRideFinished() {

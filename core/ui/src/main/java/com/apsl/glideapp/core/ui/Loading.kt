@@ -5,23 +5,27 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProgressIndicatorDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -31,7 +35,8 @@ import kotlin.math.roundToInt
 @Composable
 fun LoadingBar(
     modifier: Modifier = Modifier,
-    color: Color = MaterialTheme.colorScheme.surfaceVariant
+    color: Color = MaterialTheme.colorScheme.secondary,
+    elevation: Dp = 0.dp
 ) {
     val circleRadius = 8.dp
     val circleRadiusPx = circleRadius.toPx()
@@ -48,34 +53,33 @@ fun LoadingBar(
         label = ""
     )
 
-    Canvas(
-        modifier = modifier
-            .height(circleRadius * 2)
-            .onGloballyPositioned { size.value = it.size }
-            .offset {
+    Box(modifier = modifier.onGloballyPositioned { size.value = it.size }) {
+        Surface(
+            modifier = Modifier.offset {
                 IntOffset(x = offsetY.value.roundToInt(), y = 0)
-            }
-    ) {
-        drawCircle(
-            radius = circleRadiusPx,
+            },
+            shape = CircleShape,
             color = color,
-            center = Offset(x = circleRadiusPx, y = this.size.height / 2)
-        )
+            tonalElevation = elevation,
+            shadowElevation = elevation
+        ) {
+            Spacer(modifier = Modifier.size(circleRadius * 2))
+        }
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun LoadingBarPreview() {
     GlideAppTheme {
-        LoadingBar(modifier = Modifier.width(300.dp))
+        LoadingBar(modifier = Modifier.fillMaxWidth())
     }
 }
 
 @Composable
 fun LoadingScreen() {
     Box(modifier = Modifier.fillMaxSize()) {
-        CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+        GlideCircularLoadingIndicator(modifier = Modifier.align(Alignment.Center))
     }
 }
 
@@ -84,5 +88,29 @@ fun LoadingScreen() {
 fun LoadingScreenPreview() {
     GlideAppTheme {
         LoadingScreen()
+    }
+}
+
+@Composable
+fun GlideCircularLoadingIndicator(
+    modifier: Modifier = Modifier,
+    color: Color = ProgressIndicatorDefaults.circularColor,
+    strokeWidth: Dp = ProgressIndicatorDefaults.CircularStrokeWidth,
+    trackColor: Color = ProgressIndicatorDefaults.circularTrackColor
+) {
+    CircularProgressIndicator(
+        modifier = modifier,
+        color = color,
+        strokeWidth = strokeWidth,
+        trackColor = trackColor,
+        strokeCap = StrokeCap.Round
+    )
+}
+
+@Preview
+@Composable
+fun GlideCircularLoadingIndicatorPreview() {
+    GlideAppTheme {
+        GlideCircularLoadingIndicator()
     }
 }

@@ -53,14 +53,14 @@ fun BoxScope.MapOverlayLayout(
                     FloatingActionButton(
                         onClick = onMenuClick,
                         containerColor = MaterialTheme.colorScheme.surface,
-                        elevation = FloatingActionButtonDefaults.loweredElevation()
+                        elevation = FloatingActionButtonDefaults.elevation()
                     ) {
                         Icon(imageVector = GlideIcons.Menu, contentDescription = null)
                     }
 
                     if (showLoading) {
                         Spacer(Modifier.width(16.dp))
-                        LoadingBar(modifier = Modifier.weight(1f))
+                        LoadingBar(modifier = Modifier.weight(1f), elevation = 4.dp)
                         Spacer(Modifier.width(72.dp))
                     }
                 }

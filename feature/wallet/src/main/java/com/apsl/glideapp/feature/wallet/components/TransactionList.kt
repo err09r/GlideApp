@@ -1,6 +1,5 @@
 package com.apsl.glideapp.feature.wallet.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -10,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.paging.PagingData
@@ -22,6 +20,7 @@ import com.apsl.glideapp.core.ui.icons.Bonus
 import com.apsl.glideapp.core.ui.icons.GlideIcons
 import com.apsl.glideapp.core.ui.icons.TopUp
 import com.apsl.glideapp.core.ui.icons.Voucher
+import com.apsl.glideapp.core.ui.paddingBeforeSeparator
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.core.ui.toComposePagingItems
 import com.apsl.glideapp.feature.wallet.models.AmountType
@@ -35,7 +34,9 @@ fun TransactionList(
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
     val itemCount = transactions?.itemCount ?: 0
-    val indicesBeforeSeparators = remember { mutableStateMapOf<Int, Int>() }
+    // Change once https://issuetracker.google.com/issues/264237280 is added
+    val indicesBeforeSeparators = remember(transactions) { mutableStateMapOf<Int, Int>() }
+
     LazyColumn(
         modifier = modifier,
         contentPadding = contentPadding,
@@ -53,14 +54,12 @@ fun TransactionList(
                         indicesBeforeSeparators[index - 1] = index - 1
                         Separator(
                             text = separatorText,
-                            modifier = Modifier
-                                .background(Color.Red)
-                                .padding(start = 16.dp, bottom = 8.dp)
+                            modifier = Modifier.padding(start = 16.dp, bottom = 8.dp)
                         )
                     }
                 } else {
                     item {
-                        Divider()
+                        Divider(modifier = Modifier.padding(horizontal = 16.dp))
                     }
                 }
 
@@ -70,13 +69,7 @@ fun TransactionList(
                         TransactionItem(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .run {
-                                    if (index in indicesBeforeSeparators) {
-                                        this.padding(bottom = 24.dp)
-                                    } else {
-                                        this
-                                    }
-                                },
+                                .paddingBeforeSeparator(apply = index in indicesBeforeSeparators),
                             transaction = transaction
                         )
                     }

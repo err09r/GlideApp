@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.apsl.glideapp.core.ui.components.Graph
 import com.apsl.glideapp.core.ui.components.GraphRoutePreviewParameterProvider
+import com.apsl.glideapp.core.ui.components.RideRoute
 import com.apsl.glideapp.core.ui.icons.GlideIcons
 import com.apsl.glideapp.core.ui.icons.MapPoint
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
@@ -47,7 +48,7 @@ fun RideItem(
     headlineText: String,
     supportingText: String,
     trailingText: String,
-    route: List<Pair<Float, Float>>,
+    route: RideRoute,
     onClick: () -> Unit
 ) {
     val mapBackgroundDegree: Float = remember { arrayOf(0f, 90f, 180f, 270f).random() }
@@ -61,24 +62,24 @@ fun RideItem(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(IntrinsicSize.Min)
-                .padding(vertical = 8.dp),
+                .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(modifier = Modifier.clip(shape = CardDefaults.shape)) {
                 Image(
-                    painter = painterResource(R.drawable.img_bg_map),
+                    painter = painterResource(R.drawable.img_map_bg),
                     contentDescription = null,
                     modifier = Modifier
                         .size(80.dp)
                         .rotate(mapBackgroundDegree)
                         .scale(scaleX = mapBackgroundScaleX, scaleY = 1f),
-                    contentScale = ContentScale.Fit
+                    contentScale = ContentScale.Crop
                 )
                 Graph(
                     modifier = Modifier.size(80.dp),
-                    contentPadding = PaddingValues(8.dp),
-                    thickness = 4.dp,
-                    points = route
+                    contentPadding = PaddingValues(12.dp),
+                    thickness = 2.dp,
+                    rideRoute = route
                 )
             }
             Spacer(Modifier.width(16.dp))
@@ -114,14 +115,14 @@ fun RideItem(
 
 @Preview
 @Composable
-fun RideItemPreview(@PreviewParameter(GraphRoutePreviewParameterProvider::class) route: List<Pair<Float, Float>>) {
+fun RideItemPreview(@PreviewParameter(GraphRoutePreviewParameterProvider::class) route: RideRoute) {
     GlideAppTheme {
         RideItem(
             modifier = Modifier.fillMaxWidth(),
             overlineText = "Spacerowa 1A, Słupsk",
             headlineText = "13:48 - 14:15",
             supportingText = "1415 meters",
-            trailingText = "-13,50 zł",
+            trailingText = "13,50 zł",
             route = route,
             onClick = {}
         )

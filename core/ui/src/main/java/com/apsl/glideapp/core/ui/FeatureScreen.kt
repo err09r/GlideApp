@@ -50,7 +50,7 @@ fun FeatureScreen(
 @Composable
 fun FeatureScreenPreview() {
     GlideAppTheme {
-        FeatureScreen(topBarText = "My Wallet", onBackClick = {}) {
+        FeatureScreen(topBarText = "My wallet", onBackClick = {}) {
         }
     }
 }

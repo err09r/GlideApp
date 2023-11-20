@@ -110,9 +110,10 @@ fun TopUpScreenContent(
             ElevatedCard(modifier = Modifier.fillMaxWidth()) {
                 Column(
                     modifier = Modifier
-                        .padding(16.dp)
+                        .padding(horizontal = 16.dp)
                         .verticalScroll(rememberScrollState())
                 ) {
+                    Spacer(Modifier.height(16.dp))
 
                     GlideImage(
                         imageResId = CoreR.drawable.img_card,
@@ -178,6 +179,8 @@ fun TopUpScreenContent(
                     ) {
                         Text(text = "Top up")
                     }
+
+                    Spacer(Modifier.height(16.dp))
                 }
             }
         }

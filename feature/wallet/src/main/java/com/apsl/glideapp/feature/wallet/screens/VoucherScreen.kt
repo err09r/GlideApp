@@ -100,9 +100,11 @@ fun VoucherScreenContent(
             ElevatedCard(modifier = Modifier.fillMaxWidth()) {
                 Column(
                     modifier = Modifier
-                        .padding(16.dp)
+                        .padding(horizontal = 16.dp)
                         .verticalScroll(rememberScrollState())
                 ) {
+                    Spacer(Modifier.height(16.dp))
+
                     Text(text = "Enter your code", style = MaterialTheme.typography.headlineSmall)
 
                     Spacer(Modifier.height(16.dp))
@@ -147,6 +149,8 @@ fun VoucherScreenContent(
                     ) {
                         Text(text = "Activate")
                     }
+
+                    Spacer(Modifier.height(16.dp))
                 }
             }
         }

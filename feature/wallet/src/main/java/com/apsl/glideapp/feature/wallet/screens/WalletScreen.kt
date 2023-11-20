@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -25,6 +24,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.apsl.glideapp.core.ui.ComposableLifecycle
 import com.apsl.glideapp.core.ui.FeatureScreen
+import com.apsl.glideapp.core.ui.GlideCircularLoadingIndicator
 import com.apsl.glideapp.core.ui.PagingSeparator
 import com.apsl.glideapp.core.ui.components.Separator
 import com.apsl.glideapp.core.ui.icons.Bonus
@@ -84,10 +84,10 @@ fun WalletScreenContent(
     onSeeAllTransactionsClick: () -> Unit,
     onRedeemVoucherClick: () -> Unit,
     onTopUpClick: () -> Unit,
-    onPullRefresh: () -> Unit,
+    onPullRefresh: () -> Unit
 ) {
     FeatureScreen(
-        topBarText = "My Wallet",
+        topBarText = "My wallet",
         onBackClick = onBackClick
     ) {
         val refreshing = uiState.isRefreshing
@@ -153,7 +153,7 @@ fun WalletScreenContent(
                 when {
                     uiState.isLoading -> {
                         Box(modifier = Modifier.weight(1f)) {
-                            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                            GlideCircularLoadingIndicator(modifier = Modifier.align(Alignment.Center))
                         }
                     }
 

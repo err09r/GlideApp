@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -34,6 +35,7 @@ import com.apsl.glideapp.core.ui.LoadingScreen
 import com.apsl.glideapp.core.ui.ScreenActions
 import com.apsl.glideapp.core.ui.components.GlideImage
 import com.apsl.glideapp.core.ui.components.PasswordTextField
+import com.apsl.glideapp.core.ui.scrollToCenterOnFocused
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.feature.auth.viewmodels.LoginAction
 import com.apsl.glideapp.feature.auth.viewmodels.LoginUiState
@@ -90,8 +92,9 @@ fun LoginScreenContent(
         else -> {
             val focusManager = LocalFocusManager.current
             val keyboardController = LocalSoftwareKeyboardController.current
+            val scrollState = rememberScrollState()
 
-            AuthScreen(snackbarHostState = snackbarHostState) {
+            AuthScreen(snackbarHostState = snackbarHostState, scrollState = scrollState) {
                 Spacer(Modifier.height(16.dp))
                 Text(text = "Welcome!", style = MaterialTheme.typography.headlineSmall)
                 Spacer(Modifier.height(4.dp))
@@ -111,7 +114,9 @@ fun LoginScreenContent(
                 OutlinedTextField(
                     value = uiState.usernameTextFieldValue ?: "",
                     onValueChange = onUsernameTextFieldValueChange,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .scrollToCenterOnFocused(scrollState),
                     label = { Text(text = "Username") },
                     keyboardOptions = KeyboardOptions(
                         capitalization = KeyboardCapitalization.None,
@@ -126,7 +131,9 @@ fun LoginScreenContent(
                 PasswordTextField(
                     value = uiState.passwordTextFieldValue ?: "",
                     label = "Password",
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .scrollToCenterOnFocused(scrollState),
                     passwordVisible = uiState.isPasswordVisible,
                     onTogglePasswordVisibilityClick = onTogglePasswordVisibilityClick,
                     onValueChange = onPasswordTextFieldValueChange,
@@ -144,7 +151,7 @@ fun LoginScreenContent(
                     enabled = uiState.isActionButtonActive
                 ) {
                     Text(
-                        text = "Sign In",
+                        text = "Sign in",
                         modifier = Modifier.padding(horizontal = 16.dp)
                     )
                 }

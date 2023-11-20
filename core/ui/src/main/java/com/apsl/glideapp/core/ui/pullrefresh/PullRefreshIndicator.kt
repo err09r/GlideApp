@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
@@ -34,6 +33,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import com.apsl.glideapp.core.ui.GlideCircularLoadingIndicator
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -81,10 +81,10 @@ fun PullRefreshIndicator(
                 val spinnerSize = (ArcRadius + StrokeWidth).times(2)
 
                 if (refreshing) {
-                    CircularProgressIndicator(
-                        color = contentColor,
-                        strokeWidth = StrokeWidth,
+                    GlideCircularLoadingIndicator(
                         modifier = Modifier.size(spinnerSize),
+                        color = contentColor,
+                        strokeWidth = StrokeWidth
                     )
                 } else {
                     CircularArrowIndicator(state, contentColor, Modifier.size(spinnerSize))
@@ -101,7 +101,7 @@ fun PullRefreshIndicator(
 private fun CircularArrowIndicator(
     state: PullRefreshState,
     color: Color,
-    modifier: Modifier,
+    modifier: Modifier
 ) {
     val path = remember { Path().apply { fillType = PathFillType.EvenOdd } }
 

@@ -13,6 +13,8 @@ import com.apsl.glideapp.core.domain.ride.GetAllRideCoordinatesUseCase
 import com.apsl.glideapp.core.domain.ride.GetUserRidesPaginatedUseCase
 import com.apsl.glideapp.core.domain.user.GetUserUseCase
 import com.apsl.glideapp.core.ui.BaseViewModel
+import com.apsl.glideapp.core.ui.ComposePagingItems
+import com.apsl.glideapp.core.ui.toComposePagingItems
 import com.apsl.glideapp.feature.rides.models.RideUiModel
 import com.apsl.glideapp.feature.rides.models.toRideUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -99,7 +101,11 @@ class AllRidesViewModel @Inject constructor(
 
             else -> {
                 _uiState.update {
-                    it.copy(isLoading = false, isRefreshing = false, rides = pagingItems)
+                    it.copy(
+                        isLoading = false,
+                        isRefreshing = false,
+                        rides = pagingItems.toComposePagingItems()
+                    )
                 }
             }
         }
@@ -114,7 +120,7 @@ class AllRidesViewModel @Inject constructor(
 data class AllRidesUiState(
     val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,
-    val rides: LazyPagingItems<RideUiModel>? = null,
+    val rides: ComposePagingItems<RideUiModel>? = null,
     val totalRides: String = "0",
     val totalDistance: String = "0,0",
     val error: AllRidesUiError? = null

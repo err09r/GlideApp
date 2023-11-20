@@ -27,7 +27,7 @@ fun PaymentMethod.toPaymentUiModel(): PaymentMethodUiModel {
         }
 
         PaymentMethod.Card -> {
-            title = "Debit Card"
+            title = "Debit card"
             R.drawable.ic_debit_card
         }
     }

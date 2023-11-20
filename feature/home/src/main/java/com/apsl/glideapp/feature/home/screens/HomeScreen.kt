@@ -160,8 +160,6 @@ fun HomeScreenContent(
         CameraPositionState().apply {
             if (uiState.initialCameraPosition != null) {
                 position = CameraPosition.fromLatLngZoom(uiState.initialCameraPosition, 13f)
-//                    LatLng(54.4, 17.1),
-//                    13f
             }
         }
     }
@@ -331,7 +329,7 @@ fun HomeScreenContent(
                         }
                     }
                 )
-                if (uiState.isRideActive) {
+                if (uiState.isRideActive && uiState.rideState != null) {
                     RideLayout(rideState = uiState.rideState)
                 }
             }

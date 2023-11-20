@@ -38,7 +38,7 @@ fun rememberPullRefreshState(
     refreshing: Boolean,
     onRefresh: () -> Unit,
     refreshThreshold: Dp = PullRefreshDefaults.RefreshThreshold,
-    refreshingOffset: Dp = PullRefreshDefaults.RefreshingOffset,
+    refreshingOffset: Dp = PullRefreshDefaults.RefreshingOffset
 ): PullRefreshState {
     require(refreshThreshold > 0.dp) { "The refresh trigger must be greater than zero!" }
 

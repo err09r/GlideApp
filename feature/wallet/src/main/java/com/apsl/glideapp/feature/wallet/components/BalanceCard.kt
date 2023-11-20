@@ -11,8 +11,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
@@ -36,7 +36,7 @@ fun BalanceCard(
     modifier: Modifier = Modifier,
     onAddMoneyClick: () -> Unit
 ) {
-    Card(
+    ElevatedCard(
         onClick = {},
         modifier = modifier
     ) {
@@ -47,7 +47,7 @@ fun BalanceCard(
             ) {
                 Column {
                     Text(
-                        text = "Your Balance",
+                        text = "Your balance",
                         style = MaterialTheme.typography.bodyLarge
                     )
                     Spacer(Modifier.height(4.dp))

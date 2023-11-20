@@ -55,7 +55,7 @@ fun AllTransactionsScreenContent(
     onPullRefresh: () -> Unit
 ) {
     FeatureScreen(
-        topBarText = "My Transactions",
+        topBarText = "My transactions",
         onBackClick = onBackClick
     ) {
         when {

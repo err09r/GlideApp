@@ -86,7 +86,7 @@ fun WalletPager(
                     }
 
                     alpha = lerp(
-                        start = 0.7f,
+                        start = 0.9f,
                         stop = 1f,
                         fraction = 1f - pageOffset.coerceIn(0f, 1f)
                     )

@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -36,6 +38,7 @@ import com.apsl.glideapp.core.ui.components.GlideImage
 import com.apsl.glideapp.core.ui.components.PasswordTextField
 import com.apsl.glideapp.core.ui.icons.ArrowBack
 import com.apsl.glideapp.core.ui.icons.GlideIcons
+import com.apsl.glideapp.core.ui.scrollToCenterOnFocused
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.feature.auth.viewmodels.RegisterAction
 import com.apsl.glideapp.feature.auth.viewmodels.RegisterUiState
@@ -94,12 +97,13 @@ fun RegisterScreenContent(
         else -> {
             val focusManager = LocalFocusManager.current
             val keyboardController = LocalSoftwareKeyboardController.current
+            val scrollState = rememberScrollState()
 
-            AuthScreen(snackbarHostState = snackbarHostState) {
+            AuthScreen(snackbarHostState = snackbarHostState, scrollState = scrollState) {
                 Spacer(Modifier.height(16.dp))
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    IconButton(onClick = onBackClick) {
+                    IconButton(onClick = onBackClick, modifier = Modifier.size(32.dp)) {
                         Icon(
                             imageVector = GlideIcons.ArrowBack,
                             contentDescription = null
@@ -112,7 +116,7 @@ fun RegisterScreenContent(
                 Spacer(Modifier.height(4.dp))
 
                 Text(
-                    text = "Create a new account",
+                    text = "Create a new account and get a bonus to start",
                     style = MaterialTheme.typography.bodyLarge.copy(
                         color = MaterialTheme.colorScheme.secondary
                     )
@@ -127,7 +131,9 @@ fun RegisterScreenContent(
                 OutlinedTextField(
                     value = uiState.usernameTextFieldValue ?: "",
                     onValueChange = onUsernameTextFieldValueChange,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .scrollToCenterOnFocused(scrollState),
                     label = { Text(text = "Username") },
                     isError = uiState.usernameError != null,
                     supportingText = if (uiState.usernameError != null) {
@@ -150,12 +156,14 @@ fun RegisterScreenContent(
                 PasswordTextField(
                     value = uiState.passwordTextFieldValue ?: "",
                     label = "Password",
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .scrollToCenterOnFocused(scrollState),
                     passwordVisible = uiState.isPasswordVisible,
                     isError = uiState.passwordError != null,
                     errorText = uiState.passwordError,
                     onTogglePasswordVisibilityClick = onTogglePasswordVisibilityClick,
-                    onValueChange = onPasswordTextFieldValueChange,
+                    onValueChange = onPasswordTextFieldValueChange
                 )
 
                 Spacer(Modifier.height(8.dp))
@@ -163,11 +171,13 @@ fun RegisterScreenContent(
                 PasswordTextField(
                     value = uiState.repeatPasswordTextFieldValue ?: "",
                     label = "Repeat password",
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .scrollToCenterOnFocused(scrollState),
                     passwordVisible = uiState.isRepeatPasswordVisible,
                     isError = uiState.passwordError != null,
                     onTogglePasswordVisibilityClick = onToggleRepeatPasswordVisibilityClick,
-                    onValueChange = onRepeatPasswordTextFieldValueChange,
+                    onValueChange = onRepeatPasswordTextFieldValueChange
                 )
 
                 Spacer(Modifier.height(32.dp))
@@ -182,7 +192,7 @@ fun RegisterScreenContent(
                     enabled = uiState.isActionButtonActive
                 ) {
                     Text(
-                        text = "Sign Up",
+                        text = "Sign up",
                         modifier = Modifier.padding(horizontal = 16.dp)
                     )
                 }

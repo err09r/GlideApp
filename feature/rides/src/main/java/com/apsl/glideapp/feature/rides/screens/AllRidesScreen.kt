@@ -17,8 +17,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -39,6 +39,7 @@ import com.apsl.glideapp.core.ui.FeatureScreen
 import com.apsl.glideapp.core.ui.LoadingScreen
 import com.apsl.glideapp.core.ui.PagingSeparator
 import com.apsl.glideapp.core.ui.components.GraphRoutePreviewParameterProvider
+import com.apsl.glideapp.core.ui.components.RideRoute
 import com.apsl.glideapp.core.ui.icons.ElectricScooter
 import com.apsl.glideapp.core.ui.icons.GlideIcons
 import com.apsl.glideapp.core.ui.icons.NotificationRemove
@@ -48,6 +49,7 @@ import com.apsl.glideapp.core.ui.pullrefresh.pullRefresh
 import com.apsl.glideapp.core.ui.pullrefresh.rememberPullRefreshState
 import com.apsl.glideapp.core.ui.receiveAsLazyPagingItems
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
+import com.apsl.glideapp.core.ui.toComposePagingItems
 import com.apsl.glideapp.feature.rides.components.RideList
 import com.apsl.glideapp.feature.rides.models.RideUiModel
 import com.apsl.glideapp.feature.rides.viewmodels.AllRidesUiState
@@ -83,7 +85,7 @@ fun AllRidesScreenContent(
     onPullRefresh: () -> Unit
 ) {
     FeatureScreen(
-        topBarText = "My Rides",
+        topBarText = "My rides",
         onBackClick = onBackClick
     ) {
         when {
@@ -114,11 +116,7 @@ fun AllRidesScreenContent(
                             RideList(
                                 rides = uiState.rides,
                                 modifier = Modifier.fillMaxSize(),
-                                contentPadding = PaddingValues(
-                                    start = 16.dp,
-                                    end = 16.dp,
-                                    bottom = 32.dp
-                                ),
+                                contentPadding = PaddingValues(bottom = 32.dp),
                                 onRideClick = onRideClick
                             )
                         }
@@ -137,7 +135,7 @@ fun AllRidesScreenContent(
 
 @Composable
 fun RideStats(modifier: Modifier = Modifier, rides: String, distance: String) {
-    Card(
+    ElevatedCard(
         onClick = {},
         modifier = modifier
             .fillMaxWidth()
@@ -256,7 +254,7 @@ fun AllRidesEmptyScreen() {
 
 @Preview(showBackground = true)
 @Composable
-fun AllRidesScreenPreview(@PreviewParameter(GraphRoutePreviewParameterProvider::class) route: List<Pair<Float, Float>>) {
+fun AllRidesScreenPreview(@PreviewParameter(GraphRoutePreviewParameterProvider::class) route: RideRoute) {
     GlideAppTheme {
         val rides = MutableStateFlow(
             PagingData.from(
@@ -265,6 +263,7 @@ fun AllRidesScreenPreview(@PreviewParameter(GraphRoutePreviewParameterProvider::
                         id = "1",
                         startTime = "16:01",
                         finishTime = "16:02",
+                        address = "Spacerowa 1A, Słupsk",
                         route = route,
                         distance = 426,
                         fare = "3,75",
@@ -274,6 +273,7 @@ fun AllRidesScreenPreview(@PreviewParameter(GraphRoutePreviewParameterProvider::
                         id = "2",
                         startTime = "16:01",
                         finishTime = "16:02",
+                        address = "Spacerowa 1A, Słupsk",
                         route = route,
                         distance = 426,
                         fare = "4,05",
@@ -283,6 +283,7 @@ fun AllRidesScreenPreview(@PreviewParameter(GraphRoutePreviewParameterProvider::
                         id = "3",
                         startTime = "16:01",
                         finishTime = "16:02",
+                        address = "Spacerowa 1A, Słupsk",
                         route = route,
                         distance = 426,
                         fare = "8,99",
@@ -290,7 +291,9 @@ fun AllRidesScreenPreview(@PreviewParameter(GraphRoutePreviewParameterProvider::
                     )
                 )
             )
-        ).collectAsLazyPagingItems()
+        )
+            .collectAsLazyPagingItems()
+            .toComposePagingItems()
 
         AllRidesScreenContent(
             uiState = AllRidesUiState(rides = rides, totalRides = "12", totalDistance = "19,5"),
@@ -305,7 +308,10 @@ fun AllRidesScreenPreview(@PreviewParameter(GraphRoutePreviewParameterProvider::
 @Composable
 fun AllRidesScreenEmptyPreview() {
     GlideAppTheme {
-        val rides = MutableStateFlow(PagingData.empty<RideUiModel>()).collectAsLazyPagingItems()
+        val rides = MutableStateFlow(PagingData.empty<RideUiModel>())
+            .collectAsLazyPagingItems()
+            .toComposePagingItems()
+
         AllRidesScreenContent(
             uiState = AllRidesUiState(rides = rides),
             onBackClick = {},

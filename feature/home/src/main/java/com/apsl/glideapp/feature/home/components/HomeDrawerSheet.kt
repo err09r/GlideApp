@@ -59,7 +59,7 @@ fun HomeDrawerSheet(
             ),
             DrawerMenuItem(
                 icon = GlideIcons.MyRides,
-                title = "My Rides",
+                title = "My rides",
                 onClick = onMyRidesClick
             ),
             DrawerMenuItem(
@@ -74,7 +74,7 @@ fun HomeDrawerSheet(
             ),
             DrawerMenuItem(
                 icon = GlideIcons.Logout,
-                title = "Log Out",
+                title = "Log out",
                 onClick = onLogoutClick
             )
         )
@@ -116,13 +116,11 @@ fun HomeDrawerSheet(
 
         menuItems.forEachIndexed { index, item ->
             if (index == 0) {
-                Divider(thickness = 1.dp)
+                Divider()
             }
             ListItem(
                 modifier = Modifier.clickable(onClick = item.onClick),
-                headlineContent = {
-                    Text(text = item.title)
-                },
+                headlineContent = { Text(text = item.title) },
                 leadingContent = {
                     Icon(imageVector = item.icon, contentDescription = null)
                 }
@@ -137,7 +135,8 @@ private fun StatsComponent(icon: ImageVector, value: Int, units: String) {
         Icon(
             imageVector = icon,
             contentDescription = null,
-            modifier = Modifier.size(32.dp)
+            modifier = Modifier.size(32.dp),
+            tint = MaterialTheme.colorScheme.tertiary
         )
         Spacer(Modifier.height(4.dp))
         Text(text = value.toString(), style = MaterialTheme.typography.headlineSmall)
@@ -151,7 +150,7 @@ fun HomeDrawerSheetPreview() {
     GlideAppTheme {
         HomeDrawerSheet(
             userInfo = UserInfo(
-                username = "err09r",
+                username = "f00b4r",
                 totalDistance = 1405,
                 totalRides = 23
             ),
