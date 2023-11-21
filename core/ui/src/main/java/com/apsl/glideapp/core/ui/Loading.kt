@@ -35,7 +35,7 @@ import kotlin.math.roundToInt
 @Composable
 fun LoadingBar(
     modifier: Modifier = Modifier,
-    color: Color = MaterialTheme.colorScheme.secondary,
+    color: Color = MaterialTheme.colorScheme.primary,
     elevation: Dp = 0.dp
 ) {
     val circleRadius = 8.dp
