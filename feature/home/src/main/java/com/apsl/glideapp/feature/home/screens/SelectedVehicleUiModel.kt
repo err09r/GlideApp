@@ -26,7 +26,7 @@ fun Vehicle.toSelectedVehicleUiModel(): SelectedVehicleUiModel {
         unlockingFee = this.unlockingFee,
         farePerMinute = this.farePerMinute,
         coordinates = this.coordinates.toLatLng(),
-        batteryCharge = batteryCharge,
+        batteryCharge = this.batteryCharge,
         batteryState = when (this.batteryCharge) {
             in 0..34 -> BatteryState.Low
             in 35..84 -> BatteryState.Medium
