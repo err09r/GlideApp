@@ -175,6 +175,7 @@ class HomeViewModel @Inject constructor(
     fun updateSelectedVehicle(id: String?) {
         if (id == null) {
             _uiState.update { it.copy(selectedVehicle = null) }
+            updateVehicleClusterItems(selectedId = null)
             return
         }
 
@@ -182,7 +183,20 @@ class HomeViewModel @Inject constructor(
 
         if (selectedVehicle != null) {
             _uiState.update { it.copy(selectedVehicle = selectedVehicle.toSelectedVehicleUiModel()) }
+            updateVehicleClusterItems(selectedId = id)
         }
+    }
+
+    private fun updateVehicleClusterItems(selectedId: String?) {
+        updateMapState(
+            vehicleClusterItems = uiState.value.mapState.vehicleClusterItems.map { item ->
+                if (item.id == selectedId) {
+                    item.copy(isSelected = true)
+                } else {
+                    item.copy(isSelected = false)
+                }
+            }
+        )
     }
 
     fun loadMapContentWithinBounds(bounds: LatLngBounds) {
@@ -369,7 +383,9 @@ class HomeViewModel @Inject constructor(
                             hideMapLoading()
                             vehiclesOnMap = mapContent.availableVehicles
                             updateMapState(
-                                vehicleClusterItems = mapContent.availableVehicles.mapToClusterItem(),
+                                vehicleClusterItems = mapContent.availableVehicles.mapToClusterItem(
+                                    selectedId = uiState.value.selectedVehicle?.id
+                                ),
                                 ridingZones = mapContent.ridingZones.map { it.coordinates.mapToLatLng() },
                                 noParkingZones = mapContent.noParkingZones.mapToUiModel()
                             )

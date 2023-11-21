@@ -9,7 +9,8 @@ import com.google.maps.android.clustering.ClusterItem
 @Immutable
 data class VehicleClusterItem(
     val id: String,
-    val itemPosition: LatLng,
+    private val itemPosition: LatLng,
+    val isSelected: Boolean = false,
     val charge: Float
 ) : ClusterItem {
 
@@ -22,14 +23,15 @@ data class VehicleClusterItem(
     override fun getZIndex(): Float? = null
 }
 
-fun Vehicle.toClusterItem(): VehicleClusterItem {
+fun Vehicle.toClusterItem(isSelected: Boolean): VehicleClusterItem {
     return VehicleClusterItem(
         id = this.id,
         itemPosition = this.coordinates.toLatLng(),
+        isSelected = isSelected,
         charge = this.batteryCharge.toFloat()
     )
 }
 
-fun List<Vehicle>.mapToClusterItem(): List<VehicleClusterItem> {
-    return this.map(Vehicle::toClusterItem)
+fun List<Vehicle>.mapToClusterItem(selectedId: String?): List<VehicleClusterItem> {
+    return this.map { it.toClusterItem(isSelected = selectedId == it.id) }
 }
