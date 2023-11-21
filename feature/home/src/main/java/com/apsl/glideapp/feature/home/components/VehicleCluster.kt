@@ -19,14 +19,16 @@ import com.apsl.glideapp.core.ui.icons.GlideIcons
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 
 @Composable
-fun VehicleCluster(
-    modifier: Modifier = Modifier,
-    outlineColor: Color = MaterialTheme.colorScheme.primary,
-    outlineWidth: Dp = 2.dp
-) {
+fun VehicleCluster(modifier: Modifier = Modifier) {
+    val outlineColor: Color = MaterialTheme.colorScheme.primary
+    val outlineWidth: Dp = 2.dp
+    val elevation: Dp = 4.dp
+
     Surface(
         modifier = modifier,
         shape = CircleShape,
+        shadowElevation = elevation,
+        tonalElevation = elevation,
         border = BorderStroke(width = outlineWidth, color = outlineColor)
     ) {
         Box(modifier = Modifier.padding(5.dp)) {
@@ -34,7 +36,7 @@ fun VehicleCluster(
                 imageVector = GlideIcons.ElectricScooter,
                 contentDescription = null,
                 modifier = Modifier.size(25.dp),
-                tint = outlineColor
+                tint = MaterialTheme.colorScheme.onSurface
             )
         }
     }

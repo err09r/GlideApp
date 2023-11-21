@@ -1,15 +1,15 @@
 package com.apsl.glideapp.feature.home.screens
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.apsl.glideapp.core.ui.toDp
+import com.apsl.glideapp.core.ui.theme.Colors
 import com.apsl.glideapp.core.ui.toPx
 import com.apsl.glideapp.core.util.maps.MapsConfiguration
 import com.apsl.glideapp.feature.home.components.NoParkingMarker
@@ -87,7 +87,14 @@ fun GlideMap(
             },
             onClusterClick = {
                 scope.launch {
-                    cameraPositionState.animate(CameraUpdateFactory.zoomIn())
+                    cameraPositionState.run {
+                        animate(
+                            CameraUpdateFactory.newLatLngZoom(
+                                it.position,
+                                position.zoom + 1.0f
+                            )
+                        )
+                    }
                 }
                 false
             },
@@ -95,41 +102,42 @@ fun GlideMap(
                 VehicleCluster()
             },
             clusterItemContent = {
-                VehicleMarker(
-                    selected = it.id == selectedVehicle?.id,
-                    charge = it.charge
-                )
+                VehicleMarker(selected = it.isSelected, charge = it.charge)
             }
         )
 
         if (selectedVehicle != null && mapState.selectedVehicleRadius != null) {
             Circle(
                 center = selectedVehicle.coordinates,
-                fillColor = Color.Red.copy(alpha = 0.2f),
+                fillColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
                 radius = mapState.selectedVehicleRadius,
-                strokeColor = Color.Black,
-                strokeWidth = 2.toDp().toPx(),
+                strokeColor = MaterialTheme.colorScheme.primary,
+                strokeWidth = 2.dp.toPx(),
                 visible = cameraPositionState.position.zoom >= MapsConfiguration.VEHICLE_CIRCLE_VISIBILITY_ZOOM_LEVEL
             )
         }
 
         Polygon(
             points = MapsConfiguration.mapBorders,
-            fillColor = Color(15, 49, 119, 80),
+            fillColor = Colors.NoRiding.copy(alpha = 0.3f),
             holes = mapState.ridingZones,
-            strokeWidth = 0f
+            strokeWidth = 2.dp.toPx(),
+            strokeJointType = JointType.ROUND,
+            strokeColor = Colors.NoRiding
         )
 
         mapState.noParkingZones.forEach { zone ->
             Polygon(
                 points = zone.coordinates,
-                fillColor = Color(196, 45, 45, 85),
-                strokeWidth = 0f
+                fillColor = Colors.NoParking.copy(alpha = 0.3f),
+                strokeWidth = 2.dp.toPx(),
+                strokeJointType = JointType.ROUND,
+                strokeColor = Colors.NoParking
             )
             MarkerComposable(
                 state = rememberMarkerState(key = zone.id, position = zone.center),
                 visible = cameraPositionState.position.zoom >= MapsConfiguration.NO_PARKING_ZONE_VISIBILITY_ZOOM_LEVEL,
-                alpha = 0.85f,
+                alpha = 0.8f,
                 content = { NoParkingMarker() }
             )
         }
