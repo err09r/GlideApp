@@ -33,7 +33,7 @@ fun Navigation(navHostController: NavHostController, modifier: Modifier = Modifi
         navController = navHostController,
         startDestination = AppNavGraph.Home.route,
         modifier = modifier,
-        route = AppNavHost.Root.route,//AppNavHost.Root.route,
+        route = AppNavHost.Root.route,
         enterTransition = { fadeIn(animationSpec = tween(300)) },
         exitTransition = { fadeOut(animationSpec = tween(300)) }
     ) {
