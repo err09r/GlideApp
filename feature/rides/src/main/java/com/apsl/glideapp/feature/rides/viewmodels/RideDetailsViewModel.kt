@@ -4,10 +4,10 @@ import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
 import com.apsl.glideapp.core.domain.ride.GetRideByIdUseCase
 import com.apsl.glideapp.core.ui.BaseViewModel
+import com.apsl.glideapp.core.util.maps.MapsConfiguration
 import com.apsl.glideapp.core.util.maps.toLatLngBounds
 import com.apsl.glideapp.feature.rides.models.RideDetailsUiModel
 import com.apsl.glideapp.feature.rides.models.toRideDetailsUiModel
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -51,6 +51,6 @@ class RideDetailsViewModel @Inject constructor(
 data class RideDetailsUiState(
     val isLoading: Boolean = false,
     val ride: RideDetailsUiModel? = null,
-    val mapCameraBounds: LatLngBounds = LatLngBounds(LatLng(0.0, 0.0), LatLng(0.0, 0.0)),
+    val mapCameraBounds: LatLngBounds = MapsConfiguration.initialRideDetailsCameraBounds,
     val error: RideDetailsUiError? = null
 )
