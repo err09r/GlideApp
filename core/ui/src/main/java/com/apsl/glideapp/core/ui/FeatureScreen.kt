@@ -21,6 +21,7 @@ fun FeatureScreen(
     topBarText: String,
     onBackClick: () -> Unit,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
+    contentWindowInsets: WindowInsets = WindowInsets.navigationBars,
     content: @Composable BoxScope.() -> Unit
 ) {
     Scaffold(
@@ -28,13 +29,10 @@ fun FeatureScreen(
             .fillMaxSize()
             .onContentClickResettable(),
         topBar = {
-            FeatureTopBar(
-                text = topBarText,
-                onBackClick = onBackClick
-            )
+            FeatureTopBar(text = topBarText, onBackClick = onBackClick)
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
-        contentWindowInsets = WindowInsets.navigationBars
+        contentWindowInsets = contentWindowInsets
     ) { padding ->
         Box(
             modifier = Modifier
