@@ -2,15 +2,21 @@
 
 package com.apsl.glideapp.core.ui
 
+import android.app.Activity
+import android.view.View
+import android.view.Window
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.SheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -79,4 +85,18 @@ fun Int?.toDp(density: Density = LocalDensity.current): Dp {
 @Composable
 fun Dp.toPx(density: Density = LocalDensity.current): Float {
     return with(density) { this@toPx.toPx() }
+}
+
+@Composable
+fun UpdateNavigationBarColor(color: Color, view: View = LocalView.current) {
+    if (!view.isInEditMode) {
+        DisposableEffect(Unit) {
+            val window: Window? = (view.context as Activity).window
+            val previousColor = window?.navigationBarColor ?: android.graphics.Color.TRANSPARENT
+            window?.navigationBarColor = color.toArgb()
+            onDispose {
+                window?.navigationBarColor = previousColor
+            }
+        }
+    }
 }
