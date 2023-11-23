@@ -34,9 +34,9 @@ value class RideRoute(val value: List<Pair<Float, Float>>)
 fun Graph(
     rideRoute: RideRoute,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(0.dp),
     color: Color = MaterialTheme.colorScheme.primary,
-    thickness: Dp = 1.dp
+    contentPadding: PaddingValues = PaddingValues(0.dp),
+    thickness: Dp = 2.dp
 ) {
     val points = rideRoute.value
     val (minX, maxX) = remember(points) {
@@ -48,7 +48,9 @@ fun Graph(
     val xDiff = maxX - minX
     val yDiff = maxY - minY
 
+    val outlineColor = MaterialTheme.colorScheme.surface
     val path = remember { Path() }
+
     Canvas(modifier.padding(contentPadding)) {
         path.reset()
 
@@ -95,8 +97,8 @@ fun Graph(
 
         drawPath(
             path = path,
-            color = Color.White,
-            style = Stroke(width = (thickness + 1.5.dp).toPx(), cap = StrokeCap.Round)
+            color = outlineColor,
+            style = Stroke(width = (thickness + 2.dp).toPx(), cap = StrokeCap.Round)
         )
         drawPath(
             path = path,
