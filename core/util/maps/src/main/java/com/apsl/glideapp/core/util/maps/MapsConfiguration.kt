@@ -11,14 +11,14 @@ object MapsConfiguration {
 
     val mapBorders by lazy {
         listOf(
-            LatLng(90.0, 0.0),
-            LatLng(90.0, 90.0),
-            LatLng(-90.0, 90.0),
-            LatLng(-90.0, 0.0)
+            // Boundary values are not used due to problems with display on the map
+            LatLng(-179.0, -89.0),
+            LatLng(-179.0, 89.0),
+            LatLng(179.0, 89.0),
+            LatLng(179.0, -89.0)
         )
     }
 
-    val homeCameraBounds by lazy {
-        LatLngBounds(LatLng(48.45, 13.9), LatLng(55.75, 23.15))
-    }
+    val homeCameraBounds by lazy { LatLngBounds(LatLng(48.45, 13.9), LatLng(55.75, 23.15)) }
+    val initialRideDetailsCameraBounds by lazy { LatLngBounds(LatLng(0.0, 0.0), LatLng(0.0, 0.0)) }
 }

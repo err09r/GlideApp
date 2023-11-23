@@ -60,7 +60,7 @@ fun LatLngBounds.toCoordinatesBounds() = CoordinatesBounds(
     northeast = this.northeast.toCoordinates()
 )
 
-@JvmName("listToLatLngBounds")
+@JvmName("latLngToLatLngBounds")
 fun List<LatLng>.toLatLngBounds(): LatLngBounds {
     val topmostLatitude = this.maxOf { it.latitude }
     val bottommostLatitude = this.minOf { it.latitude }
