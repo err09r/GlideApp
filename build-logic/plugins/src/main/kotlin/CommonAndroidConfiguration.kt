@@ -27,12 +27,6 @@ private fun BaseExtension.configureDefaultConfig() {
 
         resourceConfigurations += Config.resourceConfigurations
     }
-
-    packagingOptions {
-        resources {
-            excludes.add("/META-INF/{AL2.0,LGPL2.1}")
-        }
-    }
 }
 
 private fun BaseExtension.configureBuildTypes() {
@@ -73,16 +67,8 @@ private fun BaseExtension.configureJavaCompileOptions() {
 private fun Project.configureKotlinCompileOptions() {
     tasks.withType<KotlinCompile>().configureEach {
         kotlinOptions {
-            jvmTarget = Config.javaVersion.toString()
-            freeCompilerArgs += listOf(
-                "-opt-in=androidx.paging.ExperimentalPagingApi",
-                "-opt-in=com.google.maps.android.compose.MapsComposeExperimentalApi",
-                "-opt-in=kotlin.RequiresOptIn",
-                "-opt-in=kotlin.time.ExperimentalTime",
-                "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-                "-opt-in=kotlinx.coroutines.FlowPreview",
-                "-opt-in=kotlinx.serialization.ExperimentalSerializationApi"
-            )
+            defaultKotlinConfiguration()
+            freeCompilerArgs += listOf("-opt-in=androidx.paging.ExperimentalPagingApi")
         }
     }
 }

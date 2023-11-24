@@ -1,10 +1,12 @@
 package com.apsl.glideapp.feature.wallet.viewmodels
 
+import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
 import com.apsl.glideapp.common.util.format
 import com.apsl.glideapp.core.domain.transaction.GetUserTransactionsUseCase
 import com.apsl.glideapp.core.domain.user.GetUserUseCase
 import com.apsl.glideapp.core.ui.BaseViewModel
+import com.apsl.glideapp.feature.wallet.models.TransactionUiModel
 import com.apsl.glideapp.feature.wallet.models.toTransactionUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -23,6 +25,8 @@ class WalletViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(WalletUiState())
     val uiState = _uiState.asStateFlow()
 
+    private var userTransactions: List<TransactionUiModel> = emptyList()
+
     fun getUserBalance() {
         viewModelScope.launch {
             getUserUseCase()
@@ -32,12 +36,17 @@ class WalletViewModel @Inject constructor(
                     }
                     _uiState.update { state ->
                         state.copy(
-                            userBalance = "${user.balance.format(2)} PLN",
+                            userBalance = "${user.balance.format(2)} zł",
                             isRentalAvailable = user.balance > 0
                         )
                     }
                 }
-                .onFailure(Timber::d)
+                .onFailure { throwable ->
+                    Timber.d(throwable.message)
+                    if (userTransactions.isNotEmpty()) {
+                        _uiState.update { it.copy(isLoading = false) }
+                    }
+                }
         }
     }
 
@@ -47,18 +56,19 @@ class WalletViewModel @Inject constructor(
             getUserTransactionsUseCase(limit = 4)
                 .onSuccess { transactions ->
                     _uiState.update { state ->
+                        val lastTransactions = transactions
+                            .take(4)
+                            .map { it.toTransactionUiModel() }
+
+                        userTransactions = lastTransactions
+
                         state.copy(
                             isLoading = false,
-                            recentTransactions = transactions
-                                .take(4)
-                                .map { it.toTransactionUiModel() }
+                            recentTransactions = lastTransactions
                         )
                     }
                 }
-                .onFailure { throwable ->
-                    Timber.d(throwable)
-                    _uiState.update { it.copy(isLoading = false, error = WalletUiError(throwable)) }
-                }
+                .onFailure { Timber.d(it.message) }
         }
     }
 
@@ -78,7 +88,7 @@ class WalletViewModel @Inject constructor(
                     }
                 }
                 .onFailure { throwable ->
-                    Timber.d(throwable)
+                    Timber.d(throwable.message)
                     _uiState.update {
                         it.copy(isRefreshing = false, error = WalletUiError(throwable))
                     }
@@ -94,3 +104,13 @@ class WalletViewModel @Inject constructor(
         _uiState.update { it.copy(isRefreshing = true) }
     }
 }
+
+@Immutable
+data class WalletUiState(
+    val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
+    val userBalance: String = "0,00 zł",
+    val isRentalAvailable: Boolean = true,
+    val recentTransactions: List<TransactionUiModel> = emptyList(),
+    val error: WalletUiError? = null
+)

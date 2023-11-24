@@ -1,10 +1,14 @@
 package com.apsl.glideapp.feature.rides.viewmodels
 
+import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
 import com.apsl.glideapp.core.domain.ride.GetRideByIdUseCase
 import com.apsl.glideapp.core.ui.BaseViewModel
+import com.apsl.glideapp.core.util.maps.MapsConfiguration
 import com.apsl.glideapp.core.util.maps.toLatLngBounds
+import com.apsl.glideapp.feature.rides.models.RideDetailsUiModel
 import com.apsl.glideapp.feature.rides.models.toRideDetailsUiModel
+import com.google.android.gms.maps.model.LatLngBounds
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,7 +38,7 @@ class RideDetailsViewModel @Inject constructor(
                         )
                     }
                 }
-                .onFailure(Timber::d)
+                .onFailure { Timber.d(it.message) }
         }
     }
 
@@ -42,3 +46,11 @@ class RideDetailsViewModel @Inject constructor(
         _uiState.update { it.copy(isLoading = true) }
     }
 }
+
+@Immutable
+data class RideDetailsUiState(
+    val isLoading: Boolean = false,
+    val ride: RideDetailsUiModel? = null,
+    val mapCameraBounds: LatLngBounds = MapsConfiguration.initialRideDetailsCameraBounds,
+    val error: RideDetailsUiError? = null
+)

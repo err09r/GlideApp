@@ -1,46 +1,47 @@
 package com.apsl.glideapp.feature.auth.screens
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.apsl.glideapp.core.ui.LoadingScreen
+import com.apsl.glideapp.core.ui.ScreenActions
+import com.apsl.glideapp.core.ui.components.GlideImage
+import com.apsl.glideapp.core.ui.components.PasswordTextField
+import com.apsl.glideapp.core.ui.scrollToCenterOnFocused
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
+import com.apsl.glideapp.feature.auth.viewmodels.LoginAction
 import com.apsl.glideapp.feature.auth.viewmodels.LoginUiState
 import com.apsl.glideapp.feature.auth.viewmodels.LoginViewModel
+import kotlinx.coroutines.launch
+import com.apsl.glideapp.core.ui.R as CoreR
 
 @Composable
 fun LoginScreen(
@@ -50,127 +51,127 @@ fun LoginScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(uiState.isLoggedIn) {
-        if (uiState.isLoggedIn) {
-            onNavigateToHome()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
+    ScreenActions(actions = viewModel.actions) { action ->
+        when (action) {
+            is LoginAction.NavigateToHome -> onNavigateToHome()
+            is LoginAction.NavigateToRegister -> onNavigateToRegister()
+            is LoginAction.ShowError -> {
+                scope.launch {
+                    snackbarHostState.showSnackbar(action.error.toString())
+                }
+            }
         }
     }
 
     LoginScreenContent(
         uiState = uiState,
-        onLoginClick = viewModel::login,
+        snackbarHostState = snackbarHostState,
+        onLoginClick = viewModel::logIn,
         onSignUpClick = onNavigateToRegister,
         onUsernameTextFieldValueChange = viewModel::updateUsernameTextFieldValue,
-        onPasswordTextFieldValueChange = viewModel::updatePasswordTextFieldValue
+        onPasswordTextFieldValueChange = viewModel::updatePasswordTextFieldValue,
+        onTogglePasswordVisibilityClick = viewModel::togglePasswordVisibility
     )
 }
 
 @Composable
 fun LoginScreenContent(
     uiState: LoginUiState,
+    snackbarHostState: SnackbarHostState,
     onLoginClick: () -> Unit,
     onSignUpClick: () -> Unit,
     onUsernameTextFieldValueChange: (String) -> Unit,
-    onPasswordTextFieldValueChange: (String) -> Unit
+    onPasswordTextFieldValueChange: (String) -> Unit,
+    onTogglePasswordVisibilityClick: () -> Unit
 ) {
     when {
         uiState.isLoading -> LoadingScreen()
-        uiState.exception != null -> Text(text = "Error occured")
         else -> {
             val focusManager = LocalFocusManager.current
             val keyboardController = LocalSoftwareKeyboardController.current
+            val scrollState = rememberScrollState()
 
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .systemBarsPadding()
-                    .background(color = Color.White)
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null
-                    ) {
+            AuthScreen(snackbarHostState = snackbarHostState, scrollState = scrollState) {
+                Spacer(Modifier.height(16.dp))
+                Text(text = "Welcome!", style = MaterialTheme.typography.headlineSmall)
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    text = "Sign in to start a ride",
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                )
+
+                GlideImage(
+                    imageResId = CoreR.drawable.img_email,
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    contentPadding = PaddingValues(32.dp)
+                )
+
+                OutlinedTextField(
+                    value = uiState.usernameTextFieldValue ?: "",
+                    onValueChange = onUsernameTextFieldValueChange,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .scrollToCenterOnFocused(scrollState),
+                    label = { Text(text = "Username") },
+                    keyboardOptions = KeyboardOptions(
+                        capitalization = KeyboardCapitalization.None,
+                        autoCorrect = false,
+                        keyboardType = KeyboardType.Text
+                    ),
+                    singleLine = true
+                )
+
+                Spacer(Modifier.height(8.dp))
+
+                PasswordTextField(
+                    value = uiState.passwordTextFieldValue ?: "",
+                    label = "Password",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .scrollToCenterOnFocused(scrollState),
+                    passwordVisible = uiState.isPasswordVisible,
+                    onTogglePasswordVisibilityClick = onTogglePasswordVisibilityClick,
+                    onValueChange = onPasswordTextFieldValueChange,
+                )
+
+                Spacer(Modifier.height(32.dp))
+
+                Button(
+                    onClick = {
                         keyboardController?.hide()
                         focusManager.clearFocus(true)
-                    }
-            ) {
-                Column(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        onLoginClick()
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = uiState.isActionButtonActive
                 ) {
-                    Spacer(Modifier.weight(1f))
-
-                    Box(modifier = Modifier.fillMaxWidth()) {
-                        Text(text = "Login", fontSize = 32.sp)
-                    }
-
-                    Spacer(Modifier.height(32.dp))
-
-                    OutlinedTextField(
-                        value = uiState.usernameTextFieldValue ?: "",
-                        onValueChange = onUsernameTextFieldValueChange,
-                        modifier = Modifier.fillMaxWidth(),
-                        label = { Text(text = "Username") },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Email,
-                            capitalization = KeyboardCapitalization.None
-                        ),
-                        singleLine = true
+                    Text(
+                        text = "Sign in",
+                        modifier = Modifier.padding(horizontal = 16.dp)
                     )
+                }
 
-                    Spacer(Modifier.height(8.dp))
+                Spacer(Modifier.height(96.dp))
+                Spacer(Modifier.weight(1f))
 
-                    OutlinedTextField(
-                        value = uiState.passwordTextFieldValue ?: "",
-                        onValueChange = onPasswordTextFieldValueChange,
-                        modifier = Modifier.fillMaxWidth(),
-                        label = { Text(text = "Password") },
-                        visualTransformation = PasswordVisualTransformation(),
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Password,
-                            capitalization = KeyboardCapitalization.None
-                        ),
-                        singleLine = true,
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(text = "Don't have an account?")
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        text = "Sign up",
+                        modifier = Modifier.clickable(onClick = onSignUpClick),
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.SemiBold
                     )
-
-                    Spacer(Modifier.height(16.dp))
-
-                    Box(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.CenterEnd
-                    ) {
-                        Button(
-                            elevation = ButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp, 0.dp),
-                            shape = CircleShape,
-                            onClick = {
-                                keyboardController?.hide()
-                                focusManager.clearFocus(true)
-                                onLoginClick()
-                            }
-                        ) {
-                            Text(
-                                text = "Login",
-                                modifier = Modifier.padding(horizontal = 16.dp)
-                            )
-                        }
-                    }
-
-                    Spacer(Modifier.weight(1f))
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Text(text = "Don't have an account?")
-                        Text(
-                            modifier = Modifier.clickable(onClick = onSignUpClick),
-                            text = " Sign up",
-                            color = MaterialTheme.colors.primary,
-                        )
-                    }
-
-                    Spacer(Modifier.height(32.dp))
                 }
             }
         }
@@ -181,6 +182,14 @@ fun LoginScreenContent(
 @Composable
 fun LoginScreenPreview() {
     GlideAppTheme {
-        LoginScreenContent(uiState = LoginUiState(), {}, {}, {}, {})
+        LoginScreenContent(
+            uiState = LoginUiState(),
+            snackbarHostState = SnackbarHostState(),
+            onLoginClick = {},
+            onSignUpClick = {},
+            onUsernameTextFieldValueChange = {},
+            onPasswordTextFieldValueChange = {},
+            onTogglePasswordVisibilityClick = {}
+        )
     }
 }

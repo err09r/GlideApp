@@ -1,3 +1,5 @@
+@file:Suppress("FoldInitializerAndIfToElvis")
+
 package com.apsl.glideapp.core.data.paging
 
 import androidx.paging.LoadType
@@ -7,6 +9,7 @@ import androidx.room.withTransaction
 import com.apsl.glideapp.common.util.now
 import com.apsl.glideapp.core.database.AppDatabase
 import com.apsl.glideapp.core.database.entities.TransactionEntity
+import com.apsl.glideapp.core.domain.connectivity.ConnectivityObserver
 import com.apsl.glideapp.core.network.http.GlideApi
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -16,7 +19,8 @@ import timber.log.Timber
 @Singleton
 class TransactionRemoteMediator @Inject constructor(
     private val api: GlideApi,
-    private val appDatabase: AppDatabase
+    private val appDatabase: AppDatabase,
+    private val connectivityObserver: ConnectivityObserver
 ) : RemoteMediator<Int, TransactionEntity>() {
 
     private val transactionDao = appDatabase.transactionDao()
@@ -25,7 +29,7 @@ class TransactionRemoteMediator @Inject constructor(
         loadType: LoadType,
         state: PagingState<Int, TransactionEntity>
     ): MediatorResult {
-        return try {
+        try {
             val loadKey = when (loadType) {
                 LoadType.REFRESH -> 1
                 LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
@@ -39,7 +43,7 @@ class TransactionRemoteMediator @Inject constructor(
             }
 
             //TODO: to change (empty table error)
-//            if (connectivityObserver.connectivityState.firstOrNull() == ConnectionState.Available) {
+//            if (connectivityObserver.connectivityState.isConnected()) {
 //                return if (transactionDao.isTableEmpty()) {
 //                    MediatorResult.Error(Exception("Transaction table is empty"))
 //                } else {
@@ -49,8 +53,10 @@ class TransactionRemoteMediator @Inject constructor(
 
             Timber.d("Loadkey: $loadKey")
 
-            val transactionDtos =
-                api.getUserTransactions(page = loadKey, limit = state.config.pageSize)
+            val transactionDtos = api.getUserTransactions(
+                page = loadKey,
+                limit = state.config.pageSize
+            )
 
             appDatabase.withTransaction {
                 if (loadType == LoadType.REFRESH) {
@@ -70,9 +76,9 @@ class TransactionRemoteMediator @Inject constructor(
                 }
                 transactionDao.upsertTransactions(transactionEntities)
             }
-            MediatorResult.Success(endOfPaginationReached = transactionDtos.size < state.config.pageSize)
+            return MediatorResult.Success(endOfPaginationReached = transactionDtos.size < state.config.pageSize)
         } catch (e: Exception) {
-            MediatorResult.Error(e)
+            return MediatorResult.Error(e)
         }
     }
 }

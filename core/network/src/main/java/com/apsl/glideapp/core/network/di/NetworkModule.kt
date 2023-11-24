@@ -2,6 +2,7 @@ package com.apsl.glideapp.core.network.di
 
 import com.apsl.glideapp.core.network.BuildConfig
 import com.apsl.glideapp.core.network.http.GlideApi
+import com.apsl.glideapp.core.network.util.AllCertsTrustManager
 import com.apsl.glideapp.core.network.util.AuthInterceptor
 import com.apsl.glideapp.core.network.websocket.KtorWebSocketClient
 import com.apsl.glideapp.core.network.websocket.WebSocketClient
@@ -23,10 +24,13 @@ import io.ktor.client.request.url
 import io.ktor.serialization.kotlinx.KotlinxWebsocketSerializationConverter
 import io.ktor.serialization.kotlinx.json.DefaultJson
 import io.ktor.serialization.kotlinx.json.json
+import java.security.SecureRandom
 import java.time.Duration
 import javax.inject.Qualifier
 import javax.inject.Singleton
+import javax.net.ssl.SSLContext
 import kotlinx.serialization.json.Json
+import okhttp3.OkHttpClient
 import timber.log.Timber
 
 @Module
@@ -109,7 +113,7 @@ object NetworkModule {
     @Provides
     fun provideKtorfit(httpClient: HttpClient): Ktorfit {
         return Ktorfit.Builder()
-            .baseUrl(BuildConfig.GLIDE_API_BASE_URL_HTTP)
+            .baseUrl("${BuildConfig.GLIDE_API_BASE_URL_HTTP}/")
             .httpClient(httpClient)
             .build()
     }
@@ -121,8 +125,26 @@ object NetworkModule {
             addInterceptor(authInterceptor)
             config {
                 pingInterval(Duration.ofSeconds(10))
+                if (shouldTrustAllSslCertificates()) {
+                    trustAllSslCertificates()
+                }
             }
         }
+    }
+
+    private fun OkHttpClient.Builder.trustAllSslCertificates() {
+        val trustManager = AllCertsTrustManager
+        val sslContext = SSLContext.getInstance("SSL")
+        sslContext.init(null, arrayOf(trustManager), SecureRandom())
+        sslSocketFactory(sslContext.socketFactory, trustManager)
+        hostnameVerifier { _, _ -> true }
+    }
+
+    private fun shouldTrustAllSslCertificates(): Boolean {
+        return listOf(
+            BuildConfig.GLIDE_API_BASE_URL_HTTP,
+            BuildConfig.GLIDE_API_BASE_URL_WS
+        ).all { url -> url.substringAfter("://").startsWith("192.168") }
     }
 }
 

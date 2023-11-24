@@ -6,8 +6,10 @@ import com.apsl.glideapp.core.domain.auth.LoginUseCase
 import com.apsl.glideapp.core.ui.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -18,7 +20,10 @@ class LoginViewModel @Inject constructor(private val loginUseCase: LoginUseCase)
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState = _uiState.asStateFlow()
 
-    fun login() {
+    private val _actions = Channel<LoginAction>()
+    val actions = _actions.receiveAsFlow()
+
+    fun logIn() {
         showLoading()
 
         val username = uiState.value.usernameTextFieldValue
@@ -28,11 +33,20 @@ class LoginViewModel @Inject constructor(private val loginUseCase: LoginUseCase)
             viewModelScope.launch {
                 loginUseCase(username = username, password = password)
                     .onSuccess {
-                        _uiState.update {
-                            it.copy(isLoggedIn = true, isLoading = false)
-                        }
+                        _uiState.update { it.copy(isLoading = false) }
+                        _actions.send(LoginAction.NavigateToHome)
                     }
-                    .onFailure(Timber::d)
+                    .onFailure { throwable ->
+                        Timber.d(throwable.message)
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                passwordTextFieldValue = null,
+                                isPasswordVisible = false
+                            )
+                        }
+                        _actions.send(LoginAction.ShowError(throwable.message))
+                    }
             }
         } else {
             hideLoading()
@@ -51,6 +65,10 @@ class LoginViewModel @Inject constructor(private val loginUseCase: LoginUseCase)
         }
     }
 
+    fun togglePasswordVisibility() {
+        _uiState.update { it.copy(isPasswordVisible = !it.isPasswordVisible) }
+    }
+
     private fun showLoading() {
         _uiState.update { it.copy(isLoading = true) }
     }
@@ -63,9 +81,19 @@ class LoginViewModel @Inject constructor(private val loginUseCase: LoginUseCase)
 @Immutable
 data class LoginUiState(
     val isLoading: Boolean = false,
-    val isLoggedIn: Boolean = false,
+    val isPasswordVisible: Boolean = false,
     val usernameTextFieldValue: String? = null,
     val passwordTextFieldValue: String? = null,
-    val exception: Exception? = null
-)
+    val error: String? = null
+) {
+    val isActionButtonActive: Boolean
+        get() = !usernameTextFieldValue.isNullOrBlank() && !passwordTextFieldValue.isNullOrBlank()
+}
+
+@Immutable
+sealed interface LoginAction {
+    data class ShowError(val error: String?) : LoginAction
+    data object NavigateToHome : LoginAction
+    data object NavigateToRegister : LoginAction
+}
 

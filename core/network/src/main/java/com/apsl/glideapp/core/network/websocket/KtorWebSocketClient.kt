@@ -133,10 +133,9 @@ class KtorWebSocketClient @Inject constructor(
                 sendSerialized<RideAction>(RideAction.RequestCurrentState)
                 while (isActive) {
                     val rideEventDto = receiveDeserialized<RideEventDto>()
+                    emit(rideEventDto)
                     if (rideEventDto is RideEventDto.SessionCancelled) {
                         closeRideSession()
-                    } else {
-                        emit(rideEventDto)
                     }
                 }
             }

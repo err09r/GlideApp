@@ -44,7 +44,7 @@ fun HomeActionsHandler(
                 serviceBound = true
             }
 
-            override fun onServiceDisconnected(arg0: ComponentName) {
+            override fun onServiceDisconnected(className: ComponentName) {
                 serviceBound = false
             }
         }
@@ -74,6 +74,7 @@ fun HomeActionsHandler(
                     val intent = Intent(context, RideService::class.java).apply {
                         this.action = RideService.ACTION_START
                         putExtra(RideService.RIDE_ID, action.rideId)
+                        putExtra(RideService.RIDE_START_DATETIME, action.startDateTime)
                     }
                     context.startForegroundService(intent)
                 }
@@ -98,7 +99,10 @@ fun HomeActionsHandler(
 
                 is HomeAction.RestartUserLocation -> {
                     if (serviceBound) {
-                        rideService?.restartUserLocationFlow(action.rideId)
+                        rideService?.restartUserLocationFlow(
+                            rideId = action.rideId,
+                            rideStartDateTime = action.startDateTime
+                        )
                     }
                 }
 

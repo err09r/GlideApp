@@ -1,12 +1,12 @@
 package com.apsl.glideapp.core.network.util
 
 import com.apsl.glideapp.core.datastore.AppDataStore
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 class AuthInterceptor @Inject constructor(private val appDataStore: AppDataStore) : Interceptor {

@@ -5,11 +5,13 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
 import androidx.navigation.compose.navigation
-import com.apsl.glideapp.core.navigation.AppNavGraph
-import com.apsl.glideapp.core.navigation.Screen
+import com.apsl.glideapp.core.ui.navigation.AppNavGraph
+import com.apsl.glideapp.core.ui.navigation.Dialog
+import com.apsl.glideapp.core.ui.navigation.Screen
 import com.apsl.glideapp.feature.home.screens.HomeScreen
 import com.apsl.glideapp.feature.home.screens.LocationPermissionDialog
 import com.apsl.glideapp.feature.home.screens.LocationRationaleDialog
+import com.apsl.glideapp.feature.home.screens.NotificationPermissionDialog
 
 fun NavGraphBuilder.homeGraph(navController: NavController) {
     navigation(startDestination = Screen.Home.Root.route, route = AppNavGraph.Home.route) {
@@ -28,20 +30,29 @@ fun NavGraphBuilder.homeGraph(navController: NavController) {
                     navController.navigate(Screen.Wallet.Root.route)
                 },
                 onNavigateToLocationPermission = {
-                    navController.navigate(Screen.Home.LocationPermission.route)
+                    navController.navigate(Dialog.Home.LocationPermission.route)
                 },
                 onNavigateToLocationRationale = {
-                    navController.navigate(Screen.Home.LocationRationale.route)
+                    navController.navigate(Dialog.Home.LocationRationale.route)
+                },
+                onNavigateToNotificationPermission = {
+                    navController.navigate(Dialog.Home.NotificationPermission.route) {
+                        launchSingleTop = true
+                    }
                 }
             )
         }
 
-        dialog(route = Screen.Home.LocationPermission.route) {
-            LocationPermissionDialog(onNavigateBack = { navController.popBackStack() })
+        dialog(route = Dialog.Home.LocationPermission.route) {
+            LocationPermissionDialog(onDismiss = { navController.popBackStack() })
         }
 
-        dialog(route = Screen.Home.LocationRationale.route) {
-            LocationRationaleDialog(onNavigateBack = { navController.popBackStack() })
+        dialog(route = Dialog.Home.LocationRationale.route) {
+            LocationRationaleDialog(onDismiss = { navController.popBackStack() })
+        }
+
+        dialog(route = Dialog.Home.NotificationPermission.route) {
+            NotificationPermissionDialog(onDismiss = { navController.popBackStack() })
         }
     }
 }

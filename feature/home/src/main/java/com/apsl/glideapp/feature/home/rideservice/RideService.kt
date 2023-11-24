@@ -10,7 +10,6 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.apsl.glideapp.feature.home.R
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -19,6 +18,8 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import timber.log.Timber
+import javax.inject.Inject
+import com.apsl.glideapp.core.ui.R as CoreR
 
 @AndroidEntryPoint
 class RideService : Service() {
@@ -46,7 +47,7 @@ class RideService : Service() {
     }
 
     private val notificationBuilder by lazy {
-        NotificationCompat.Builder(this, "location")
+        NotificationCompat.Builder(this, getString(CoreR.string.ride_session))
             .setContentTitle("Tracking location...")
             .setContentText("Location")
             .setSmallIcon(R.drawable.img_scooter)
@@ -83,7 +84,8 @@ class RideService : Service() {
         when (intent?.action) {
             ACTION_START -> {
                 val rideId = checkNotNull(intent.extras?.getString(RIDE_ID))
-                start(rideId)
+                val rideStartDateTime = checkNotNull(intent.extras?.getString(RIDE_START_DATETIME))
+                start(rideId = rideId, rideStartDateTime = rideStartDateTime)
             }
 
             ACTION_STOP -> stop()
@@ -91,7 +93,7 @@ class RideService : Service() {
         return super.onStartCommand(intent, flags, startId)
     }
 
-    private fun start(rideId: String) {
+    private fun start(rideId: String, rideStartDateTime: String) {
         startForeground(NOTIFICATION_ID, notificationBuilder.build())
         controller?.onServiceStart(rideId = rideId)
     }
@@ -101,7 +103,7 @@ class RideService : Service() {
         stopSelf()
     }
 
-    fun restartUserLocationFlow(rideId: String) {
+    fun restartUserLocationFlow(rideId: String, rideStartDateTime: String) {
         controller?.startObservingUserLocation(rideId)
     }
 
@@ -119,7 +121,8 @@ class RideService : Service() {
         const val ACTION_START = "ACTION_START"
         const val ACTION_STOP = "ACTION_STOP"
         const val RIDE_ID = "RIDE_ID"
-        private const val NOTIFICATION_ID = 1
+        const val RIDE_START_DATETIME = "RIDE_START_DATETIME"
+        private const val NOTIFICATION_ID = 123
         private const val MAIN_ACTIVITY_CLASSNAME = "com.apsl.glideapp.app.MainActivity"
     }
 }

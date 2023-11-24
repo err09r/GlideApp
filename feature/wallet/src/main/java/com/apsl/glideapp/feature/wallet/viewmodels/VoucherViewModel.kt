@@ -1,7 +1,9 @@
 package com.apsl.glideapp.feature.wallet.viewmodels
 
+import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
 import com.apsl.glideapp.core.domain.transaction.CreateVoucherTransactionUseCase
+import com.apsl.glideapp.core.domain.transaction.TransactionException
 import com.apsl.glideapp.core.ui.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -24,7 +26,7 @@ class VoucherViewModel @Inject constructor(
     private val _actions = MutableSharedFlow<VoucherAction>(replay = 1)
     val actions = _actions.asSharedFlow()
 
-    fun setCodeTextFieldValue(value: String?) {
+    fun updateCodeTextFieldValue(value: String?) {
         _uiState.update { it.copy(codeTextFieldValue = value?.uppercase()) }
     }
 
@@ -39,10 +41,20 @@ class VoucherViewModel @Inject constructor(
                         _actions.emit(VoucherAction.VoucherProcessingCompleted)
                     }
                     .onFailure { throwable ->
-                        Timber.d(throwable)
-                        _actions.emit(VoucherAction.VoucherProcessingError("Invalid voucher code"))
+                        Timber.d(throwable.message)
+                        var text = "Connection error. Check your internet connection"
+                        if (throwable is TransactionException.InvalidVoucherCodeException) {
+                            text = "Invalid voucher code. Try again"
+                            updateCodeTextFieldValue(null)
+                        }
+                        _actions.emit(VoucherAction.VoucherActivationError(text))
                     }
             }
         }
     }
+}
+
+@Immutable
+data class VoucherUiState(val codeTextFieldValue: String? = null) {
+    val isActionButtonActive: Boolean get() = !codeTextFieldValue.isNullOrBlank()
 }

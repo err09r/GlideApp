@@ -5,6 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import dagger.hilt.android.HiltAndroidApp
+import com.apsl.glideapp.core.ui.R as CoreR
 
 @HiltAndroidApp
 class GlideApplication : Application() {
@@ -17,8 +18,12 @@ class GlideApplication : Application() {
     private fun createNotificationChannels() {
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val locationChannel =
-            NotificationChannel("location", "Location", NotificationManager.IMPORTANCE_HIGH)
-        notificationManager.createNotificationChannel(locationChannel)
+
+        val rideSessionChannel = NotificationChannel(
+            getString(CoreR.string.ride_session),
+            getString(CoreR.string.ride),
+            NotificationManager.IMPORTANCE_HIGH
+        )
+        notificationManager.createNotificationChannel(rideSessionChannel)
     }
 }

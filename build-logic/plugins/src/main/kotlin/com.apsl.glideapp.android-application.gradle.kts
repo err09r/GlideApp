@@ -22,6 +22,17 @@ configure<BaseExtension> {
         applicationId = Config.applicationId
     }
 
+    packagingOptions {
+        resources {
+            excludes.addAll(
+                listOf(
+                    "/META-INF/{AL2.0,LGPL2.1}",
+                    "**/previous-compilation-data.bin"
+                )
+            )
+        }
+    }
+
     buildFeatures.buildConfig = true
 
     signingConfigs {

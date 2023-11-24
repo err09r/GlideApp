@@ -6,8 +6,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
-import com.apsl.glideapp.core.navigation.AppNavGraph
-import com.apsl.glideapp.core.navigation.Screen
+import com.apsl.glideapp.core.ui.navigation.AppNavGraph
+import com.apsl.glideapp.core.ui.navigation.Screen
 import com.apsl.glideapp.feature.rides.screens.AllRidesScreen
 import com.apsl.glideapp.feature.rides.screens.RideDetailsScreen
 

@@ -4,8 +4,8 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import com.apsl.glideapp.core.navigation.AppNavGraph
-import com.apsl.glideapp.core.navigation.Screen
+import com.apsl.glideapp.core.ui.navigation.AppNavGraph
+import com.apsl.glideapp.core.ui.navigation.Screen
 import com.apsl.glideapp.feature.auth.screens.LoginScreen
 import com.apsl.glideapp.feature.auth.screens.RegisterScreen
 
@@ -20,7 +20,10 @@ fun NavGraphBuilder.authGraph(navController: NavController) {
         }
 
         composable(route = Screen.Auth.Register.route) {
-            RegisterScreen(onNavigateToHome = navController::navigateToHome)
+            RegisterScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToHome = navController::navigateToHome
+            )
         }
     }
 }

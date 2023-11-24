@@ -2,36 +2,42 @@ package com.apsl.glideapp.core.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Scaffold
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import com.apsl.glideapp.core.ui.components.ScreenTopBar
+import com.apsl.glideapp.core.ui.components.FeatureTopBar
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 
 @Composable
 fun FeatureScreen(
     topBarText: String,
     onBackClick: () -> Unit,
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
+    contentWindowInsets: WindowInsets = WindowInsets.navigationBars,
     content: @Composable BoxScope.() -> Unit
 ) {
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
-            .navigationBarsPadding(),
+            .onContentClickResettable(),
         topBar = {
-            ScreenTopBar(text = topBarText, onBackClick = onBackClick)
+            FeatureTopBar(text = topBarText, onBackClick = onBackClick)
         },
-        backgroundColor = Color.LightGray.copy(alpha = 0.2f)
-    ) { paddingValues ->
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        contentWindowInsets = contentWindowInsets
+    ) { padding ->
         Box(
             modifier = Modifier
-                .padding(paddingValues)
                 .fillMaxSize()
+                .padding(padding)
         ) {
             content()
         }
@@ -42,7 +48,7 @@ fun FeatureScreen(
 @Composable
 fun FeatureScreenPreview() {
     GlideAppTheme {
-        FeatureScreen(topBarText = "My Wallet", onBackClick = {}) {
+        FeatureScreen(topBarText = "My wallet", onBackClick = {}) {
         }
     }
 }

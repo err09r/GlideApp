@@ -2,33 +2,22 @@ package com.apsl.glideapp.feature.home.viewmodels
 
 import androidx.compose.runtime.Immutable
 import com.apsl.glideapp.core.model.UserAuthState
-import com.apsl.glideapp.core.model.UserLocation
-import com.apsl.glideapp.feature.home.maps.NoParkingZone
-import com.apsl.glideapp.feature.home.maps.VehicleClusterItem
+import com.apsl.glideapp.feature.home.map.MapState
+import com.apsl.glideapp.feature.home.screens.RideState
+import com.apsl.glideapp.feature.home.screens.SelectedVehicleUiModel
+import com.apsl.glideapp.feature.home.screens.UserInfo
 import com.google.android.gms.maps.model.LatLng
 
 @Immutable
 data class HomeUiState(
-    val isLoadingMapContent: Boolean = false,
     val userAuthState: UserAuthState = UserAuthState.Undefined,
-    val userTotalDistance: Int = 0,
-    val userTotalRides: Int = 0,
-    val username: String? = null,
-    val userBalance: Double = 0.0,
-    val selectedVehicle: VehicleClusterItem? = null,
-    val vehicleClusterItems: List<VehicleClusterItem> = emptyList(),
-    val ridingZones: List<List<LatLng>> = emptyList(),
-    val noParkingZones: List<NoParkingZone> = emptyList(),
+    val userInfo: UserInfo = UserInfo(),
     val initialCameraPosition: LatLng? = null,
-    val userLocation: UserLocation? = null,
-    val wasLocationPermissionRequested: Boolean = false,
+    val isLoadingMapContent: Boolean = false,
+    val mapState: MapState = MapState(),
+    val selectedVehicle: SelectedVehicleUiModel? = null,
     val rideState: RideState? = null,
-    val rideRoute: List<LatLng>? = null,
     val error: HomeUiError? = null
 ) {
-    val isInRideMode: Boolean get() = rideState == RideState.Active
-}
-
-enum class RideState {
-    Active, Paused
+    val isRideActive: Boolean get() = rideState != null && !rideState.isPaused
 }
