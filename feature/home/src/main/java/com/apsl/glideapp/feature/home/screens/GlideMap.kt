@@ -1,12 +1,17 @@
 package com.apsl.glideapp.feature.home.screens
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.apsl.glideapp.core.ui.theme.Colors
@@ -24,9 +29,11 @@ import com.google.android.gms.maps.model.RoundCap
 import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.Circle
 import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.GoogleMapComposable
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.MarkerComposable
+import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.Polygon
 import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.clustering.Clustering
@@ -145,9 +152,38 @@ fun GlideMap(
         if (!mapState.rideRoute.isNullOrEmpty()) {
             Polyline(
                 points = mapState.rideRoute,
+                color = MaterialTheme.colorScheme.primary,
                 jointType = JointType.ROUND,
-                startCap = RoundCap() //CustomCap(a)
+                startCap = RoundCap(),
+                endCap = RoundCap(),
+                width = 4.dp.toPx()
+            )
+            StartPointMarker(
+                markerState = rememberMarkerState(
+                    key = "start",
+                    position = mapState.rideRoute.first()
+                )
             )
         }
+    }
+}
+
+@GoogleMapComposable
+@Composable
+fun StartPointMarker(
+    modifier: Modifier = Modifier,
+    markerState: MarkerState = rememberMarkerState()
+) {
+    MarkerComposable(
+        state = markerState,
+        anchor = Offset(0.5f, 0.5f),
+        zIndex = 1f,
+        onClick = { true }
+    ) {
+        Box(
+            modifier = modifier
+                .size(8.dp)
+                .background(color = MaterialTheme.colorScheme.primary, shape = CircleShape)
+        )
     }
 }

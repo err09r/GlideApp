@@ -1,6 +1,9 @@
 package com.apsl.glideapp.feature.rides.screens
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -10,8 +13,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Divider
@@ -20,6 +25,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -33,10 +39,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -44,10 +53,12 @@ import com.apsl.glideapp.core.ui.LoadingScreen
 import com.apsl.glideapp.core.ui.UpdateNavigationBarColor
 import com.apsl.glideapp.core.ui.icons.ArrowBack
 import com.apsl.glideapp.core.ui.icons.Clock
+import com.apsl.glideapp.core.ui.icons.Flag
 import com.apsl.glideapp.core.ui.icons.GlideIcons
 import com.apsl.glideapp.core.ui.icons.Route
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.core.ui.toPx
+import com.apsl.glideapp.core.util.maps.MapsUtils.calculateZoomLevel
 import com.apsl.glideapp.feature.rides.models.RideDetailsUiModel
 import com.apsl.glideapp.feature.rides.viewmodels.RideDetailsUiState
 import com.apsl.glideapp.feature.rides.viewmodels.RideDetailsViewModel
@@ -57,9 +68,13 @@ import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.RoundCap
 import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.GoogleMapComposable
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapUiSettings
+import com.google.maps.android.compose.MarkerComposable
+import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.Polyline
+import com.google.maps.android.compose.rememberMarkerState
 import com.apsl.glideapp.core.ui.R as CoreR
 
 @Composable
@@ -101,8 +116,9 @@ fun RideDetailsScreenContent(
             UpdateNavigationBarColor(color = containerColor)
 
             val cameraPositionState = remember(uiState.mapCameraBounds) {
+                val zoom = calculateZoomLevel(uiState.mapCameraBounds)
                 CameraPositionState(
-                    position = CameraPosition.fromLatLngZoom(uiState.mapCameraBounds.center, 13f)
+                    position = CameraPosition.fromLatLngZoom(uiState.mapCameraBounds.center, zoom)
                 )
             }
 
@@ -159,7 +175,7 @@ fun RideDetailsScreenContent(
                         MapUiSettings(
                             compassEnabled = true,
                             indoorLevelPickerEnabled = false,
-                            mapToolbarEnabled = true,
+                            mapToolbarEnabled = false,
                             myLocationButtonEnabled = false,
                             rotationGesturesEnabled = true,
                             scrollGesturesEnabled = true,
@@ -182,15 +198,81 @@ fun RideDetailsScreenContent(
                                 points = uiState.ride.route,
                                 color = MaterialTheme.colorScheme.primary,
                                 jointType = JointType.ROUND,
-                                startCap = RoundCap(), //CustomCap()
-                                endCap = RoundCap(), //CustomCap()
-                                width = 2.dp.toPx()
+                                startCap = RoundCap(),
+                                endCap = RoundCap(),
+                                width = 4.dp.toPx()
+                            )
+
+                            StartPointMarker(
+                                markerState = rememberMarkerState(
+                                    key = "start",
+                                    position = uiState.ride.route.first()
+                                )
+                            )
+
+                            FinishPointMarker(
+                                markerState = rememberMarkerState(
+                                    key = "finish",
+                                    position = uiState.ride.route.last()
+                                ),
+                                imageVector = GlideIcons.Flag
                             )
                         }
                     }
 
                     Spacer(Modifier.height(sheetPeekHeight - sheetHandlePadding))
                 }
+            }
+        }
+    }
+}
+
+@GoogleMapComposable
+@Composable
+fun StartPointMarker(
+    modifier: Modifier = Modifier,
+    markerState: MarkerState = rememberMarkerState()
+) {
+    MarkerComposable(
+        state = markerState,
+        anchor = Offset(0.5f, 0.5f),
+        zIndex = 1f,
+        onClick = { true }
+    ) {
+        Box(
+            modifier = modifier
+                .size(8.dp)
+                .background(color = MaterialTheme.colorScheme.primary, shape = CircleShape)
+        )
+    }
+}
+
+@GoogleMapComposable
+@Composable
+fun FinishPointMarker(
+    modifier: Modifier = Modifier,
+    markerState: MarkerState = rememberMarkerState(),
+    imageVector: ImageVector
+) {
+    MarkerComposable(state = markerState, anchor = Offset(0.5f, 0.5f), zIndex = 1f) {
+        val outlineColor: Color = MaterialTheme.colorScheme.primary
+        val outlineWidth: Dp = 1.dp
+        val elevation: Dp = 4.dp
+
+        Surface(
+            modifier = modifier,
+            shape = CircleShape,
+            shadowElevation = elevation,
+            tonalElevation = elevation,
+            border = BorderStroke(width = outlineWidth, color = outlineColor)
+        ) {
+            Box(modifier = Modifier.padding(4.dp)) {
+                Icon(
+                    imageVector = imageVector,
+                    contentDescription = null,
+                    modifier = Modifier.size(14.dp),
+                    tint = outlineColor
+                )
             }
         }
     }
