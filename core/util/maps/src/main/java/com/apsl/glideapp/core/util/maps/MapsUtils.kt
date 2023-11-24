@@ -1,79 +1,34 @@
-@file:Suppress("Unused")
+@file:Suppress("Unused", "MemberVisibilityCanBePrivate")
 
 package com.apsl.glideapp.core.util.maps
 
 import android.location.Location
-import com.apsl.glideapp.common.models.Coordinates
-import com.apsl.glideapp.common.models.CoordinatesBounds
-import com.apsl.glideapp.core.model.UserLocation
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
+import kotlin.math.ln
+import kotlin.math.max
 
-fun Location.toUserLocation(): UserLocation {
-    return UserLocation(
-        provider = provider,
-        timeMs = time,
-        elapsedRealtimeNs = elapsedRealtimeNanos,
-        latitudeDegrees = latitude,
-        longitudeDegrees = longitude,
-        horizontalAccuracyMeters = accuracy,
-        altitudeMeters = altitude,
-        altitudeAccuracyMeters = verticalAccuracyMeters,
-        speedMetersPerSecond = speed,
-        speedAccuracyMetersPerSecond = speedAccuracyMetersPerSecond,
-        bearingDegrees = bearing,
-        bearingAccuracyDegrees = bearingAccuracyDegrees
-    )
-}
+object MapsUtils {
 
-fun UserLocation.toLocation(): Location {
-    return Location(this.provider).apply {
-        latitude = latitudeDegrees
-        longitude = longitudeDegrees
-        provider = provider
-        time = timeMs
-        elapsedRealtimeNanos = elapsedRealtimeNs
-        accuracy = horizontalAccuracyMeters
-        altitude = altitudeMeters
-        verticalAccuracyMeters = altitudeAccuracyMeters
-        speed = speedMetersPerSecond
-        speedAccuracyMetersPerSecond = speedAccuracyMetersPerSecond
-        bearing = bearingDegrees
-        bearingAccuracyDegrees = bearingAccuracyDegrees
+    fun calculateDistance(start: LatLng, end: LatLng): Float {
+        val results = FloatArray(1)
+        Location.distanceBetween(
+            start.latitude,
+            start.longitude,
+            end.latitude,
+            end.longitude,
+            results
+        )
+        return results.single()
     }
-}
 
-fun UserLocation.toLatLng() = LatLng(this.latitudeDegrees, this.longitudeDegrees)
-
-fun UserLocation.toCoordinates() = Coordinates(this.latitudeDegrees, this.longitudeDegrees)
-
-fun Coordinates.toLatLng() = LatLng(this.latitude, this.longitude)
-
-fun List<Coordinates>.mapToLatLng() = this.map(Coordinates::toLatLng)
-
-fun List<LatLng>.mapToCoordinates() = this.map(LatLng::toCoordinates)
-
-fun LatLng.toCoordinates() = Coordinates(this.latitude, this.longitude)
-
-fun LatLngBounds.toCoordinatesBounds() = CoordinatesBounds(
-    southwest = this.southwest.toCoordinates(),
-    northeast = this.northeast.toCoordinates()
-)
-
-@JvmName("latLngToLatLngBounds")
-fun List<LatLng>.toLatLngBounds(): LatLngBounds {
-    val topmostLatitude = this.maxOf { it.latitude }
-    val bottommostLatitude = this.minOf { it.latitude }
-    val leftmostLongitude = this.minOf { it.longitude }
-    val rightmostLongitude = this.maxOf { it.longitude }
-
-    val southwest = LatLng(bottommostLatitude, leftmostLongitude)
-    val northeast = LatLng(topmostLatitude, rightmostLongitude)
-
-    return LatLngBounds(southwest, northeast)
-}
-
-@JvmName("coordinatesToLatLngBounds")
-fun List<Coordinates>.toLatLngBounds(): LatLngBounds {
-    return this.map(Coordinates::toLatLng).toLatLngBounds()
+    fun calculateZoomLevel(bounds: LatLngBounds, maxZoom: Float = 21f, minZoom: Float = 3f): Float {
+        val center = bounds.center
+        val scale = max(
+            calculateDistance(center, bounds.southwest),
+            calculateDistance(center, bounds.northeast)
+        ) / 1000
+        val baseZoomLevel = (minZoom + maxZoom) / 2 + 0.8f
+        return baseZoomLevel - ln(scale) / ln(2f)
+    }
 }
