@@ -73,7 +73,12 @@ fun GlideMap(
             indoorLevelPickerEnabled = false,
             mapToolbarEnabled = false,
             myLocationButtonEnabled = false,
-            zoomControlsEnabled = false
+            rotationGesturesEnabled = true,
+            scrollGesturesEnabled = true,
+            scrollGesturesEnabledDuringRotateOrZoom = false,
+            tiltGesturesEnabled = true,
+            zoomControlsEnabled = false,
+            zoomGesturesEnabled = true
         )
     }
 
