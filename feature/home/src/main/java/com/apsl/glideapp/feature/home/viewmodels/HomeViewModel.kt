@@ -28,18 +28,14 @@ import com.apsl.glideapp.core.util.maps.mapToLatLng
 import com.apsl.glideapp.core.util.maps.toCoordinates
 import com.apsl.glideapp.core.util.maps.toCoordinatesBounds
 import com.apsl.glideapp.core.util.maps.toLatLng
-import com.apsl.glideapp.feature.home.map.VehicleClusterItem
-import com.apsl.glideapp.feature.home.map.ZoneUiModel
-import com.apsl.glideapp.feature.home.map.mapToClusterItem
-import com.apsl.glideapp.feature.home.map.mapToUiModel
-import com.apsl.glideapp.feature.home.screens.RideState
-import com.apsl.glideapp.feature.home.screens.toSelectedVehicleUiModel
-import com.apsl.glideapp.feature.home.screens.toVehicleUiModel
+import com.apsl.glideapp.feature.home.models.VehicleClusterItem
+import com.apsl.glideapp.feature.home.models.ZoneUiModel
+import com.apsl.glideapp.feature.home.models.mapToClusterItem
+import com.apsl.glideapp.feature.home.models.mapToUiModel
+import com.apsl.glideapp.feature.home.models.toSelectedVehicleUiModel
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
-import kotlin.math.roundToInt
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.channels.Channel
@@ -55,6 +51,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDateTime
 import timber.log.Timber
+import javax.inject.Inject
+import kotlin.math.roundToInt
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(

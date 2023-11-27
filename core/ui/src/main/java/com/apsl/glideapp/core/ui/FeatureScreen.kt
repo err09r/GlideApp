@@ -13,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.apsl.glideapp.core.ui.components.FeatureTopBar
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 
 @Composable

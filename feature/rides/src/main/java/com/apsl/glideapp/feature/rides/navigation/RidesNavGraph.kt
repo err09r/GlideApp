@@ -8,8 +8,8 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import com.apsl.glideapp.core.ui.navigation.AppNavGraph
 import com.apsl.glideapp.core.ui.navigation.Screen
-import com.apsl.glideapp.feature.rides.screens.AllRidesScreen
-import com.apsl.glideapp.feature.rides.screens.RideDetailsScreen
+import com.apsl.glideapp.feature.rides.allrides.AllRidesScreen
+import com.apsl.glideapp.feature.rides.details.RideDetailsScreen
 
 fun NavGraphBuilder.ridesGraph(navController: NavController) {
     navigation(startDestination = Screen.Rides.Root.route, route = AppNavGraph.Rides.route) {

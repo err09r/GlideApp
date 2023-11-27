@@ -8,10 +8,10 @@ import androidx.navigation.compose.navigation
 import com.apsl.glideapp.core.ui.navigation.AppNavGraph
 import com.apsl.glideapp.core.ui.navigation.Dialog
 import com.apsl.glideapp.core.ui.navigation.Screen
+import com.apsl.glideapp.feature.home.dialogs.LocationPermissionDialog
+import com.apsl.glideapp.feature.home.dialogs.LocationRationaleDialog
+import com.apsl.glideapp.feature.home.dialogs.NotificationPermissionDialog
 import com.apsl.glideapp.feature.home.screens.HomeScreen
-import com.apsl.glideapp.feature.home.screens.LocationPermissionDialog
-import com.apsl.glideapp.feature.home.screens.LocationRationaleDialog
-import com.apsl.glideapp.feature.home.screens.NotificationPermissionDialog
 
 fun NavGraphBuilder.homeGraph(navController: NavController) {
     navigation(startDestination = Screen.Home.Root.route, route = AppNavGraph.Home.route) {

@@ -9,13 +9,13 @@ import androidx.navigation.navigation
 import com.apsl.glideapp.core.ui.navigation.AppNavGraph
 import com.apsl.glideapp.core.ui.navigation.Dialog
 import com.apsl.glideapp.core.ui.navigation.Screen
-import com.apsl.glideapp.feature.wallet.screens.AllTransactionsScreen
-import com.apsl.glideapp.feature.wallet.screens.PaymentDialog
-import com.apsl.glideapp.feature.wallet.screens.TopUpScreen
-import com.apsl.glideapp.feature.wallet.screens.TopUpSuccessDialog
-import com.apsl.glideapp.feature.wallet.screens.VoucherActivatedDialog
-import com.apsl.glideapp.feature.wallet.screens.VoucherScreen
-import com.apsl.glideapp.feature.wallet.screens.WalletScreen
+import com.apsl.glideapp.feature.wallet.common.PaymentDialog
+import com.apsl.glideapp.feature.wallet.topup.TopUpScreen
+import com.apsl.glideapp.feature.wallet.topup.TopUpSuccessDialog
+import com.apsl.glideapp.feature.wallet.transactions.AllTransactionsScreen
+import com.apsl.glideapp.feature.wallet.voucher.VoucherActivatedDialog
+import com.apsl.glideapp.feature.wallet.voucher.VoucherScreen
+import com.apsl.glideapp.feature.wallet.wallet.WalletScreen
 
 fun NavGraphBuilder.walletGraph(navController: NavController) {
     navigation(startDestination = Screen.Wallet.Root.route, route = AppNavGraph.Wallet.route) {

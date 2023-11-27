@@ -42,9 +42,7 @@ import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.core.ui.toDp
 import com.apsl.glideapp.core.util.android.areNotificationsEnabled
 import com.apsl.glideapp.core.util.maps.toLatLng
-import com.apsl.glideapp.feature.home.components.ActiveRideSheetLayout
-import com.apsl.glideapp.feature.home.components.DefaultSheetLayout
-import com.apsl.glideapp.feature.home.components.HomeDrawerSheet
+import com.apsl.glideapp.feature.home.map.GlideMap
 import com.apsl.glideapp.feature.home.viewmodels.HomeUiState
 import com.apsl.glideapp.feature.home.viewmodels.HomeViewModel
 import com.google.android.gms.maps.CameraUpdateFactory

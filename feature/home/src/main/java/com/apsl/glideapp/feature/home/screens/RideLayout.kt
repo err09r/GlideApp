@@ -32,13 +32,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.apsl.glideapp.common.util.toEpochMilliseconds
-import com.apsl.glideapp.core.ui.components.AnimatedStopwatchText
-import com.apsl.glideapp.core.ui.components.AnimatedText
+import com.apsl.glideapp.core.ui.AnimatedStopwatchText
+import com.apsl.glideapp.core.ui.AnimatedText
 import com.apsl.glideapp.core.ui.icons.Clock
 import com.apsl.glideapp.core.ui.icons.GlideIcons
 import com.apsl.glideapp.core.ui.icons.Route
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.core.util.android.GlideStopwatch
+import com.apsl.glideapp.feature.home.viewmodels.BatteryState
+import com.apsl.glideapp.feature.home.viewmodels.RideState
+import com.apsl.glideapp.feature.home.viewmodels.VehicleUiModel
 import kotlinx.datetime.LocalDateTime
 import timber.log.Timber
 

@@ -6,8 +6,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.apsl.glideapp.core.ui.navigation.AppNavGraph
 import com.apsl.glideapp.core.ui.navigation.Screen
-import com.apsl.glideapp.feature.auth.screens.LoginScreen
-import com.apsl.glideapp.feature.auth.screens.RegisterScreen
+import com.apsl.glideapp.feature.auth.login.LoginScreen
+import com.apsl.glideapp.feature.auth.register.RegisterScreen
 
 fun NavGraphBuilder.authGraph(navController: NavController) {
     navigation(startDestination = Screen.Auth.Login.route, route = AppNavGraph.Auth.route) {
