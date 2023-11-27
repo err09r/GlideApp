@@ -1,6 +1,5 @@
 package com.apsl.glideapp.core.domain.auth
 
-import com.apsl.glideapp.core.domain.InvalidAuthTokenException
 import javax.inject.Inject
 
 class LoginUseCase @Inject constructor(private val authRepository: AuthRepository) {
