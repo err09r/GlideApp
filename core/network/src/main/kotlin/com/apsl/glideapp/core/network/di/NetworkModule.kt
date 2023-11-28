@@ -33,9 +33,17 @@ import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import timber.log.Timber
 
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+private annotation class MapWebSocket
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+private annotation class RideWebSocket
+
 @Module
 @InstallIn(SingletonComponent::class)
-object NetworkModule {
+internal object NetworkModule {
 
     @Singleton
     @Provides
@@ -144,14 +152,6 @@ object NetworkModule {
         return listOf(
             BuildConfig.GLIDE_API_BASE_URL_HTTP,
             BuildConfig.GLIDE_API_BASE_URL_WS
-        ).all { url -> url.substringAfter("://").startsWith("192.168") }
+        ).all { url -> url.substringAfter("://").startsWith("106.120") }
     }
 }
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-private annotation class MapWebSocket
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-private annotation class RideWebSocket

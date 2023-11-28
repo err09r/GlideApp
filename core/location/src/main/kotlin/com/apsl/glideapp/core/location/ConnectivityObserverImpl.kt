@@ -7,6 +7,7 @@ import android.net.Network
 import com.apsl.glideapp.core.domain.connectivity.ConnectivityObserver
 import com.apsl.glideapp.core.model.ConnectivityState
 import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.awaitClose
@@ -16,7 +17,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
 @SuppressLint("MissingPermission")
 class ConnectivityObserverImpl @Inject constructor(

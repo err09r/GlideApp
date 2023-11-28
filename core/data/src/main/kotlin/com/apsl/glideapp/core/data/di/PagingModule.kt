@@ -16,7 +16,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object PagingModule {
+internal object PagingModule {
 
     private const val TRANSACTIONS_PAGE_SIZE = 5
     private const val RIDES_PAGE_SIZE = 5
