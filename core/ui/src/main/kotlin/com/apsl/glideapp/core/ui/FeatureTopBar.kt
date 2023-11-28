@@ -29,7 +29,7 @@ fun FeatureTopBar(text: String, modifier: Modifier = Modifier, onBackClick: () -
 
 @Preview
 @Composable
-fun FeatureTopBarPreview() {
+private fun FeatureTopBarPreview() {
     GlideAppTheme {
         FeatureTopBar(text = "My rides", onBackClick = {})
     }

@@ -110,7 +110,7 @@ fun Graph(
 
 @Preview
 @Composable
-fun GraphPreview() {
+private fun GraphPreview() {
     GlideAppTheme {
         Graph(
             modifier = Modifier.size(120.dp),
@@ -132,7 +132,7 @@ fun GraphPreview() {
 
 @Preview
 @Composable
-fun GraphEmptyPreview() {
+private fun GraphEmptyPreview() {
     GlideAppTheme {
         Graph(
             modifier = Modifier.size(120.dp),
@@ -145,7 +145,7 @@ fun GraphEmptyPreview() {
 
 @Preview
 @Composable
-fun GraphLatLngPreview(@PreviewParameter(GraphRoutePreviewParameterProvider::class) route: RideRoute) {
+private fun GraphLatLngPreview(@PreviewParameter(GraphRoutePreviewParameterProvider::class) route: RideRoute) {
     GlideAppTheme {
         Graph(
             modifier = Modifier.size(120.dp),

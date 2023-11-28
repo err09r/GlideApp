@@ -29,7 +29,7 @@ fun TopUpSuccessDialog(onDismiss: () -> Unit, modifier: Modifier = Modifier) {
 
 @Preview(showBackground = true)
 @Composable
-fun TopUpSuccessDialogPreview() {
+private fun TopUpSuccessDialogPreview() {
     GlideAppTheme {
         Dialog(onDismissRequest = {}) {
             TopUpSuccessDialog(onDismiss = {})

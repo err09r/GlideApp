@@ -61,7 +61,7 @@ fun PasswordTextField(
 
 @Preview(showBackground = true)
 @Composable
-fun PasswordTextFieldPreview() {
+private fun PasswordTextFieldPreview() {
     GlideAppTheme {
         PasswordTextField(
             value = "qwerty",
@@ -75,7 +75,7 @@ fun PasswordTextFieldPreview() {
 
 @Preview(showBackground = true)
 @Composable
-fun PasswordTextFieldNotVisiblePreview() {
+private fun PasswordTextFieldNotVisiblePreview() {
     GlideAppTheme {
         PasswordTextField(
             value = "qwerty",

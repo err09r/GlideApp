@@ -113,7 +113,7 @@ fun NotificationPermissionDialogContent(
 
 @Preview(showBackground = true)
 @Composable
-fun NotificationPermissionDialogPreview() {
+private fun NotificationPermissionDialogPreview() {
     GlideAppTheme {
         Dialog(onDismissRequest = {}) {
             NotificationPermissionDialogContent(onDismiss = {}, onConfirmButtonClick = {})

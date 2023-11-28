@@ -109,7 +109,7 @@ fun VehicleMarker(selected: Boolean, charge: Float, modifier: Modifier = Modifie
 
 @Preview(showBackground = true)
 @Composable
-fun VehicleMarkerPreview() {
+private fun VehicleMarkerPreview() {
     GlideAppTheme {
         VehicleMarker(selected = false, charge = 25f)
     }
@@ -117,7 +117,7 @@ fun VehicleMarkerPreview() {
 
 @Preview(showBackground = true)
 @Composable
-fun VehicleMarkerSelectedPreview() {
+private fun VehicleMarkerSelectedPreview() {
     GlideAppTheme {
         VehicleMarker(selected = true, charge = 75f)
     }

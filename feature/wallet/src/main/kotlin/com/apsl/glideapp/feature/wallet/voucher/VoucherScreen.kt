@@ -156,7 +156,7 @@ fun VoucherScreenContent(
 
 @Preview(showBackground = true)
 @Composable
-fun VoucherScreenPreview() {
+private fun VoucherScreenPreview() {
     GlideAppTheme {
         VoucherScreenContent(
             uiState = VoucherUiState(),

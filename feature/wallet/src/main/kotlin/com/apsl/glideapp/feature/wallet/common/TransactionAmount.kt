@@ -26,7 +26,7 @@ fun TransactionAmount(value: String, type: AmountType) {
 
 @Preview(showBackground = true)
 @Composable
-fun TransactionAmountPreview() {
+private fun TransactionAmountPreview() {
     GlideAppTheme {
         Column {
             TransactionAmount(value = "-3,00 zł", type = AmountType.Negative)

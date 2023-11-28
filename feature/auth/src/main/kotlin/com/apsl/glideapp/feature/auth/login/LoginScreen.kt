@@ -178,7 +178,7 @@ fun LoginScreenContent(
 
 @Preview(showBackground = true)
 @Composable
-fun LoginScreenPreview() {
+private fun LoginScreenPreview() {
     GlideAppTheme {
         LoginScreenContent(
             uiState = LoginUiState(),

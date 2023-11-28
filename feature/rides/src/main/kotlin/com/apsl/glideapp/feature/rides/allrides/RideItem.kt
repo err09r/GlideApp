@@ -115,7 +115,7 @@ fun RideItem(
 
 @Preview
 @Composable
-fun RideItemPreview(@PreviewParameter(GraphRoutePreviewParameterProvider::class) route: RideRoute) {
+private fun RideItemPreview(@PreviewParameter(GraphRoutePreviewParameterProvider::class) route: RideRoute) {
     GlideAppTheme {
         RideItem(
             modifier = Modifier.fillMaxWidth(),

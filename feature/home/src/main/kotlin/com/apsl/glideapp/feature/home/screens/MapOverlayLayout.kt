@@ -79,7 +79,7 @@ fun BoxScope.MapOverlayLayout(
 
 @Preview(showBackground = true)
 @Composable
-fun MapOverlayLayoutPreview() {
+private fun MapOverlayLayoutPreview() {
     GlideAppTheme {
         Box {
             MapOverlayLayout(

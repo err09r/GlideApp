@@ -86,7 +86,7 @@ fun RideList(
 
 @Preview
 @Composable
-fun RideListPreview(@PreviewParameter(GraphRoutePreviewParameterProvider::class) route: RideRoute) {
+private fun RideListPreview(@PreviewParameter(GraphRoutePreviewParameterProvider::class) route: RideRoute) {
     GlideAppTheme {
         val rides = MutableStateFlow(
             PagingData.from(

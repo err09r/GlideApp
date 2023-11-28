@@ -180,7 +180,7 @@ fun WalletScreenContent(
 
 @Preview(showBackground = true)
 @Composable
-fun WalletScreenPreview() {
+private fun WalletScreenPreview() {
     GlideAppTheme {
         WalletScreenContent(
             uiState = WalletUiState(
@@ -225,7 +225,7 @@ fun WalletScreenPreview() {
 
 @Preview(showBackground = true)
 @Composable
-fun WalletScreenLoadingPreview() {
+private fun WalletScreenLoadingPreview() {
     GlideAppTheme {
         WalletScreenContent(
             uiState = WalletUiState(isLoading = true),

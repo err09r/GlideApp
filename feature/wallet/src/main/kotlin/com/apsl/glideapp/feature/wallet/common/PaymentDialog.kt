@@ -34,7 +34,7 @@ fun PaymentDialog(modifier: Modifier = Modifier) {
 
 @Preview(showBackground = true)
 @Composable
-fun PaymentDialogPreview() {
+private fun PaymentDialogPreview() {
     GlideAppTheme {
         Dialog(onDismissRequest = {}) {
             PaymentDialog()

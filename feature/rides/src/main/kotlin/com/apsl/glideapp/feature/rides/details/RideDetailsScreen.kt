@@ -373,7 +373,7 @@ fun RideDetailsSheetTitle(imageVector: ImageVector, text: String, modifier: Modi
 
 @Preview(showBackground = true)
 @Composable
-fun RideDetailsSheetContentPreview() {
+private fun RideDetailsSheetContentPreview() {
     GlideAppTheme {
         RideDetailsSheetContent(
             ride = RideDetailsUiModel(
@@ -393,7 +393,7 @@ fun RideDetailsSheetContentPreview() {
 
 @Preview(showBackground = true)
 @Composable
-fun RideDetailsScreenPreview() {
+private fun RideDetailsScreenPreview() {
     GlideAppTheme {
         RideDetailsScreenContent(
             uiState = RideDetailsUiState(

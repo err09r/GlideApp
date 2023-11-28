@@ -201,7 +201,7 @@ fun RideStatsItem(
 
 @Preview
 @Composable
-fun RideStatsPreview() {
+private fun RideStatsPreview() {
     GlideAppTheme {
         RideStats(rides = "12", distance = "12,5")
     }
@@ -250,7 +250,7 @@ fun AllRidesEmptyScreen() {
 
 @Preview(showBackground = true)
 @Composable
-fun AllRidesScreenPreview(@PreviewParameter(GraphRoutePreviewParameterProvider::class) route: RideRoute) {
+private fun AllRidesScreenPreview(@PreviewParameter(GraphRoutePreviewParameterProvider::class) route: RideRoute) {
     GlideAppTheme {
         val rides = MutableStateFlow(
             PagingData.from(
@@ -302,7 +302,7 @@ fun AllRidesScreenPreview(@PreviewParameter(GraphRoutePreviewParameterProvider::
 
 @Preview(showBackground = true)
 @Composable
-fun AllRidesScreenEmptyPreview() {
+private fun AllRidesScreenEmptyPreview() {
     GlideAppTheme {
         val rides = MutableStateFlow(PagingData.empty<RideUiModel>())
             .collectAsLazyPagingItems()

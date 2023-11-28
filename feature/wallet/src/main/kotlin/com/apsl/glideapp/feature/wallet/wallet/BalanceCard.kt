@@ -101,7 +101,7 @@ fun BalanceCard(
 
 @Preview
 @Composable
-fun BalanceCardPreview() {
+private fun BalanceCardPreview() {
     GlideAppTheme {
         BalanceCard(value = "1234.56 zł", onAddMoneyClick = {})
     }

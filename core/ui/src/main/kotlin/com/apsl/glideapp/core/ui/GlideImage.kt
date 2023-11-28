@@ -32,7 +32,7 @@ fun GlideImage(
 
 @Preview(showBackground = true)
 @Composable
-fun GlideImagePreview() {
+private fun GlideImagePreview() {
     GlideAppTheme {
         GlideImage(R.drawable.img_bell)
     }

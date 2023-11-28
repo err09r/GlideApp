@@ -81,7 +81,7 @@ fun TransactionList(
 
 @Preview(showBackground = true)
 @Composable
-fun TransactionListPreview() {
+private fun TransactionListPreview() {
     GlideAppTheme {
         val transactions = MutableStateFlow(
             PagingData.from(

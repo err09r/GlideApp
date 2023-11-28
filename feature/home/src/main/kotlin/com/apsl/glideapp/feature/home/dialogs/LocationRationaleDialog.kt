@@ -37,7 +37,7 @@ fun LocationRationaleDialog(onDismiss: () -> Unit, modifier: Modifier = Modifier
 
 @Preview(showBackground = true)
 @Composable
-fun LocationRationaleDialogPreview() {
+private fun LocationRationaleDialogPreview() {
     GlideAppTheme {
         Dialog(onDismissRequest = {}) {
             LocationRationaleDialog(onDismiss = {})

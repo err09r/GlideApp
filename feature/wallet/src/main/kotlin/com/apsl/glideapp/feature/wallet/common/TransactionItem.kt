@@ -59,7 +59,7 @@ fun TransactionItem(transaction: TransactionUiModel, modifier: Modifier = Modifi
 
 @Preview
 @Composable
-fun TransactionItemPreview() {
+private fun TransactionItemPreview() {
     GlideAppTheme {
         TransactionItem(
             transaction = TransactionUiModel(

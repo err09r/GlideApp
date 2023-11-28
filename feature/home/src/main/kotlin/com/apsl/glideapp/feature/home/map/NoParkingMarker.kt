@@ -76,7 +76,7 @@ fun NoParkingMarker(modifier: Modifier = Modifier) {
 
 @Preview
 @Composable
-fun NoParkingMarkerPreview() {
+private fun NoParkingMarkerPreview() {
     GlideAppTheme {
         NoParkingMarker()
     }

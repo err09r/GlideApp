@@ -89,7 +89,7 @@ fun AllTransactionsScreenContent(
 
 @Preview(showBackground = true)
 @Composable
-fun AllTransactionsScreenPreview() {
+private fun AllTransactionsScreenPreview() {
     GlideAppTheme {
         val transactions = MutableStateFlow(
             PagingData.from(

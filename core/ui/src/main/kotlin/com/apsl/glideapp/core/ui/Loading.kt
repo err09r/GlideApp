@@ -70,7 +70,7 @@ fun LoadingBar(
 
 @Preview(showBackground = true)
 @Composable
-fun LoadingBarPreview() {
+private fun LoadingBarPreview() {
     GlideAppTheme {
         LoadingBar(modifier = Modifier.fillMaxWidth())
     }
@@ -85,7 +85,7 @@ fun LoadingScreen() {
 
 @Preview(showBackground = true)
 @Composable
-fun LoadingScreenPreview() {
+private fun LoadingScreenPreview() {
     GlideAppTheme {
         LoadingScreen()
     }
@@ -109,7 +109,7 @@ fun GlideCircularLoadingIndicator(
 
 @Preview
 @Composable
-fun GlideCircularLoadingIndicatorPreview() {
+private fun GlideCircularLoadingIndicatorPreview() {
     GlideAppTheme {
         GlideCircularLoadingIndicator()
     }

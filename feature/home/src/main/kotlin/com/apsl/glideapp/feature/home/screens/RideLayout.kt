@@ -131,7 +131,7 @@ fun BoxScope.RideLayout(rideState: RideState, modifier: Modifier = Modifier) {
 
 @Preview(showBackground = true)
 @Composable
-fun RideLayoutPreview() {
+private fun RideLayoutPreview() {
     GlideAppTheme {
         Box(
             modifier = Modifier

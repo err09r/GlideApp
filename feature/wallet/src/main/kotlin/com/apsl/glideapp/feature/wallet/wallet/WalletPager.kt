@@ -137,7 +137,7 @@ private fun Int.floorMod(other: Int): Int {
 
 @Preview(showBackground = true)
 @Composable
-fun WalletPagerPreview() {
+private fun WalletPagerPreview() {
     GlideAppTheme {
         Box(modifier = Modifier.fillMaxSize()) {
             WalletPager(

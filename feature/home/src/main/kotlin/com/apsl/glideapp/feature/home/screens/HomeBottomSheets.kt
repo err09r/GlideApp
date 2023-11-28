@@ -193,7 +193,7 @@ private fun ScooterInfoComponent(
 
 @Preview(showBackground = true)
 @Composable
-fun DefaultSheetLayoutPreview() {
+private fun DefaultSheetLayoutPreview() {
     GlideAppTheme {
         DefaultSheetLayout(
             selectedVehicle = SelectedVehicleUiModel(
@@ -213,7 +213,7 @@ fun DefaultSheetLayoutPreview() {
 
 @Preview(showBackground = true)
 @Composable
-fun ActiveRideSheetLayoutPreview() {
+private fun ActiveRideSheetLayoutPreview() {
     GlideAppTheme {
         ActiveRideSheetLayout(
             vehicle = VehicleUiModel(

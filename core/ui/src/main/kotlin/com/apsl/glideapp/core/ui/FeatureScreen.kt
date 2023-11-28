@@ -45,7 +45,7 @@ fun FeatureScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun FeatureScreenPreview() {
+private fun FeatureScreenPreview() {
     GlideAppTheme {
         FeatureScreen(topBarText = "My wallet", onBackClick = {}) {
         }

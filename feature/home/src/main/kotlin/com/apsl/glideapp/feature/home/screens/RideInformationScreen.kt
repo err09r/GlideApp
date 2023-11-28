@@ -55,7 +55,7 @@ fun ZoneInfoItem(modifier: Modifier = Modifier) {
 
 @Preview(showBackground = true)
 @Composable
-fun RideInformationScreenPreview() {
+private fun RideInformationScreenPreview() {
     GlideAppTheme {
         RideInformationScreen(onNavigateBack = {})
     }

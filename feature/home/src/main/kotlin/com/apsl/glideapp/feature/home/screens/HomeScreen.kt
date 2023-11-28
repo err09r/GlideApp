@@ -337,7 +337,7 @@ fun HomeScreenContent(
 
 @Preview(showBackground = true)
 @Composable
-fun HomeScreenPreview() {
+private fun HomeScreenPreview() {
     GlideAppTheme {
         HomeScreenContent(
             uiState = HomeUiState(),

@@ -84,7 +84,7 @@ fun AnimatedText(
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewAnimatedText() {
+private fun PreviewAnimatedText() {
     GlideAppTheme {
         AnimatedText(textProvider = { "00:01" })
     }
@@ -135,7 +135,7 @@ fun AnimatedStopwatchText(
 
 @Preview(showBackground = true)
 @Composable
-fun AnimatedStopwatchTextPreview() {
+private fun AnimatedStopwatchTextPreview() {
     GlideAppTheme {
         AnimatedStopwatchText(valueProvider = { System.currentTimeMillis() })
     }

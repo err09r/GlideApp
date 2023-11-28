@@ -201,7 +201,7 @@ fun RegisterScreenContent(
 
 @Preview(showBackground = true)
 @Composable
-fun RegisterScreenPreview() {
+private fun RegisterScreenPreview() {
     GlideAppTheme {
         RegisterScreenContent(
             uiState = RegisterUiState(),

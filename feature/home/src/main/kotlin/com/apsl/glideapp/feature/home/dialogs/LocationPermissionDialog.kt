@@ -37,7 +37,7 @@ fun LocationPermissionDialog(onDismiss: () -> Unit, modifier: Modifier = Modifie
 
 @Preview(showBackground = true)
 @Composable
-fun LocationPermissionDialogPreview() {
+private fun LocationPermissionDialogPreview() {
     GlideAppTheme {
         Dialog(onDismissRequest = {}) {
             LocationPermissionDialog(onDismiss = {})

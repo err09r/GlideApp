@@ -29,7 +29,7 @@ fun VoucherActivatedDialog(onDismiss: () -> Unit, modifier: Modifier = Modifier)
 
 @Preview(showBackground = true)
 @Composable
-fun VoucherActivatedDialogPreview() {
+private fun VoucherActivatedDialogPreview() {
     GlideAppTheme {
         Dialog(onDismissRequest = {}) {
             VoucherActivatedDialog(onDismiss = {})

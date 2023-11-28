@@ -44,7 +44,7 @@ fun VehicleCluster(modifier: Modifier = Modifier) {
 
 @Preview
 @Composable
-fun VehicleClusterPreview() {
+private fun VehicleClusterPreview() {
     GlideAppTheme {
         VehicleCluster()
     }

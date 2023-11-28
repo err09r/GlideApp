@@ -37,7 +37,7 @@ fun Separator(
 
 @Preview
 @Composable
-fun SeparatorPreview() {
+private fun SeparatorPreview() {
     GlideAppTheme {
         Separator(text = "Monday, February 23")
     }
@@ -45,7 +45,7 @@ fun SeparatorPreview() {
 
 @Preview
 @Composable
-fun SeparatorNoBackgroundPreview() {
+private fun SeparatorNoBackgroundPreview() {
     GlideAppTheme {
         Separator(text = "Monday, February 23", showBackground = false)
     }

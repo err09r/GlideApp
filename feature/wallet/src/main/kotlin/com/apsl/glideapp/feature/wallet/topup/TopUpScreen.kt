@@ -252,7 +252,7 @@ fun PaymentMethodItem(
 
 @Preview(showBackground = true)
 @Composable
-fun TopUpScreenPreview() {
+private fun TopUpScreenPreview() {
     GlideAppTheme {
         TopUpScreenContent(
             uiState = TopUpUiState(paymentMethods = PaymentMethod.entries.toPaymentMethods()),

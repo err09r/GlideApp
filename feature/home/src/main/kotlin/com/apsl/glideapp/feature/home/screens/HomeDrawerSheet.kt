@@ -146,7 +146,7 @@ private fun StatsComponent(icon: ImageVector, value: Int, units: String) {
 
 @Preview(showBackground = true)
 @Composable
-fun HomeDrawerSheetPreview() {
+private fun HomeDrawerSheetPreview() {
     GlideAppTheme {
         HomeDrawerSheet(
             userInfo = UserInfo(
