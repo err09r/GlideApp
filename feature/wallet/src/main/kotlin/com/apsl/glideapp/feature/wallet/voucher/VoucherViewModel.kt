@@ -15,6 +15,11 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
+@Immutable
+data class VoucherUiState(val codeTextFieldValue: String? = null) {
+    val isActionButtonActive: Boolean get() = !codeTextFieldValue.isNullOrBlank()
+}
+
 @HiltViewModel
 class VoucherViewModel @Inject constructor(
     private val createVoucherTransactionUseCase: CreateVoucherTransactionUseCase
@@ -52,9 +57,4 @@ class VoucherViewModel @Inject constructor(
             }
         }
     }
-}
-
-@Immutable
-data class VoucherUiState(val codeTextFieldValue: String? = null) {
-    val isActionButtonActive: Boolean get() = !codeTextFieldValue.isNullOrBlank()
 }

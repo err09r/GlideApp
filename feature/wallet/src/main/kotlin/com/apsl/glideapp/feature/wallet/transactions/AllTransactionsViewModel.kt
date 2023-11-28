@@ -20,6 +20,14 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
+@Immutable
+data class AllTransactionsUiState(
+    val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
+    val transactions: ComposePagingItems<TransactionUiModel>? = null,
+    val error: AllTransactionsUiError? = null
+)
+
 @HiltViewModel
 class AllTransactionsViewModel @Inject constructor(
     getUserTransactionsPaginatedUseCase: GetUserTransactionsPaginatedUseCase
@@ -71,11 +79,3 @@ class AllTransactionsViewModel @Inject constructor(
         uiState.value.transactions?.refresh()
     }
 }
-
-@Immutable
-data class AllTransactionsUiState(
-    val isLoading: Boolean = false,
-    val isRefreshing: Boolean = false,
-    val transactions: ComposePagingItems<TransactionUiModel>? = null,
-    val error: AllTransactionsUiError? = null
-)

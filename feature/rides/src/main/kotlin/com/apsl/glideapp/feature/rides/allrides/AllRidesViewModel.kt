@@ -28,6 +28,16 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
+@Immutable
+data class AllRidesUiState(
+    val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
+    val rides: ComposePagingItems<RideUiModel>? = null,
+    val totalRides: String = "0",
+    val totalDistance: String = "0,0",
+    val error: AllRidesUiError? = null
+)
+
 @HiltViewModel
 class AllRidesViewModel @Inject constructor(
     getUserRidesPaginatedUseCase: GetUserRidesPaginatedUseCase,
@@ -113,13 +123,3 @@ class AllRidesViewModel @Inject constructor(
         uiState.value.rides?.refresh()
     }
 }
-
-@Immutable
-data class AllRidesUiState(
-    val isLoading: Boolean = false,
-    val isRefreshing: Boolean = false,
-    val rides: ComposePagingItems<RideUiModel>? = null,
-    val totalRides: String = "0",
-    val totalDistance: String = "0,0",
-    val error: AllRidesUiError? = null
-)

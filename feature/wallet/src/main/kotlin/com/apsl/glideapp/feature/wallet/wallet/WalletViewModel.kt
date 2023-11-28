@@ -16,6 +16,16 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
+@Immutable
+data class WalletUiState(
+    val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
+    val userBalance: String = "0,00 zł",
+    val isRentalAvailable: Boolean = true,
+    val recentTransactions: List<TransactionUiModel> = emptyList(),
+    val error: WalletUiError? = null
+)
+
 @HiltViewModel
 class WalletViewModel @Inject constructor(
     private val getUserUseCase: GetUserUseCase,
@@ -104,13 +114,3 @@ class WalletViewModel @Inject constructor(
         _uiState.update { it.copy(isRefreshing = true) }
     }
 }
-
-@Immutable
-data class WalletUiState(
-    val isLoading: Boolean = false,
-    val isRefreshing: Boolean = false,
-    val userBalance: String = "0,00 zł",
-    val isRentalAvailable: Boolean = true,
-    val recentTransactions: List<TransactionUiModel> = emptyList(),
-    val error: WalletUiError? = null
-)

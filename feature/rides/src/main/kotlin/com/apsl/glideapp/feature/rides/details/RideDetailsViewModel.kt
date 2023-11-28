@@ -15,6 +15,14 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
+@Immutable
+data class RideDetailsUiState(
+    val isLoading: Boolean = false,
+    val ride: RideDetailsUiModel? = null,
+    val mapCameraBounds: LatLngBounds = MapsConfiguration.initialRideDetailsCameraBounds,
+    val error: RideDetailsUiError? = null
+)
+
 @HiltViewModel
 class RideDetailsViewModel @Inject constructor(
     private val getRideByIdUseCase: GetRideByIdUseCase
@@ -44,11 +52,3 @@ class RideDetailsViewModel @Inject constructor(
         _uiState.update { it.copy(isLoading = true) }
     }
 }
-
-@Immutable
-data class RideDetailsUiState(
-    val isLoading: Boolean = false,
-    val ride: RideDetailsUiModel? = null,
-    val mapCameraBounds: LatLngBounds = MapsConfiguration.initialRideDetailsCameraBounds,
-    val error: RideDetailsUiError? = null
-)

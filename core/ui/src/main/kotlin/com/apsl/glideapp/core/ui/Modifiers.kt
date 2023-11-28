@@ -29,9 +29,9 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.center
 import androidx.compose.ui.unit.dp
-import kotlin.math.roundToInt
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 fun Modifier.clickable(
     indication: Indication?,
@@ -49,7 +49,6 @@ fun Modifier.clickable(
         interactionSource = remember { MutableInteractionSource() }
     )
 }
-
 
 fun Modifier.onContentClickResettable(
     hideKeyboard: Boolean = true,

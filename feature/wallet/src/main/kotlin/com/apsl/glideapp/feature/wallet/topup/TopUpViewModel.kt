@@ -16,6 +16,19 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
+@Immutable
+data class TopUpUiState(
+    val isLoading: Boolean = false,
+    val paymentMethods: PaymentMethods = PaymentMethods(emptyList()),
+    val selectedPaymentMethodIndex: Int = 0,
+    val amountTextFieldValue: String? = null,
+    val error: TopUpUiError? = null
+)
+
+@Immutable
+@JvmInline
+value class PaymentMethods(val value: List<PaymentMethodUiModel>)
+
 @HiltViewModel
 class TopUpViewModel @Inject constructor(
     private val getAllPaymentMethodsUseCase: GetAllPaymentMethodsUseCase,
@@ -78,16 +91,3 @@ class TopUpViewModel @Inject constructor(
         _uiState.update { it.copy(isLoading = true) }
     }
 }
-
-@Immutable
-data class TopUpUiState(
-    val isLoading: Boolean = false,
-    val paymentMethods: PaymentMethods = PaymentMethods(emptyList()),
-    val selectedPaymentMethodIndex: Int = 0,
-    val amountTextFieldValue: String? = null,
-    val error: TopUpUiError? = null
-)
-
-@Immutable
-@JvmInline
-value class PaymentMethods(val value: List<PaymentMethodUiModel>)

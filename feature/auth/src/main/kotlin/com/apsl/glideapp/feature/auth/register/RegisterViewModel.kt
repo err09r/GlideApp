@@ -17,6 +17,29 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
+@Immutable
+data class RegisterUiState(
+    val isLoading: Boolean = false,
+    val isPasswordVisible: Boolean = false,
+    val isRepeatPasswordVisible: Boolean = false,
+    val usernameTextFieldValue: String? = null,
+    val passwordTextFieldValue: String? = null,
+    val repeatPasswordTextFieldValue: String? = null,
+    val usernameError: String? = null,
+    val passwordError: String? = null
+) {
+    val isActionButtonActive: Boolean
+        get() = !usernameTextFieldValue.isNullOrBlank()
+                && !passwordTextFieldValue.isNullOrBlank()
+                && !repeatPasswordTextFieldValue.isNullOrBlank()
+}
+
+@Immutable
+sealed interface RegisterAction {
+    data class ShowError(val error: String?) : RegisterAction
+    data object NavigateToHome : RegisterAction
+}
+
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
     private val registerUseCase: RegisterUseCase,
@@ -153,27 +176,3 @@ class RegisterViewModel @Inject constructor(
         _uiState.update { it.copy(isLoading = false) }
     }
 }
-
-@Immutable
-data class RegisterUiState(
-    val isLoading: Boolean = false,
-    val isPasswordVisible: Boolean = false,
-    val isRepeatPasswordVisible: Boolean = false,
-    val usernameTextFieldValue: String? = null,
-    val passwordTextFieldValue: String? = null,
-    val repeatPasswordTextFieldValue: String? = null,
-    val usernameError: String? = null,
-    val passwordError: String? = null
-) {
-    val isActionButtonActive: Boolean
-        get() = !usernameTextFieldValue.isNullOrBlank()
-                && !passwordTextFieldValue.isNullOrBlank()
-                && !repeatPasswordTextFieldValue.isNullOrBlank()
-}
-
-@Immutable
-sealed interface RegisterAction {
-    data class ShowError(val error: String?) : RegisterAction
-    data object NavigateToHome : RegisterAction
-}
-

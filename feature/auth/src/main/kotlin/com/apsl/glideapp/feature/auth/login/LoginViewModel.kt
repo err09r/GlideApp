@@ -14,8 +14,29 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
+@Immutable
+data class LoginUiState(
+    val isLoading: Boolean = false,
+    val isPasswordVisible: Boolean = false,
+    val usernameTextFieldValue: String? = null,
+    val passwordTextFieldValue: String? = null,
+    val error: String? = null
+) {
+    val isActionButtonActive: Boolean
+        get() = !usernameTextFieldValue.isNullOrBlank() && !passwordTextFieldValue.isNullOrBlank()
+}
+
+@Immutable
+sealed interface LoginAction {
+    data class ShowError(val error: String?) : LoginAction
+    data object NavigateToHome : LoginAction
+    data object NavigateToRegister : LoginAction
+}
+
 @HiltViewModel
-class LoginViewModel @Inject constructor(private val loginUseCase: LoginUseCase) : BaseViewModel() {
+class LoginViewModel @Inject constructor(
+    private val loginUseCase: LoginUseCase
+) : BaseViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState = _uiState.asStateFlow()
@@ -77,23 +98,3 @@ class LoginViewModel @Inject constructor(private val loginUseCase: LoginUseCase)
         _uiState.update { it.copy(isLoading = false) }
     }
 }
-
-@Immutable
-data class LoginUiState(
-    val isLoading: Boolean = false,
-    val isPasswordVisible: Boolean = false,
-    val usernameTextFieldValue: String? = null,
-    val passwordTextFieldValue: String? = null,
-    val error: String? = null
-) {
-    val isActionButtonActive: Boolean
-        get() = !usernameTextFieldValue.isNullOrBlank() && !passwordTextFieldValue.isNullOrBlank()
-}
-
-@Immutable
-sealed interface LoginAction {
-    data class ShowError(val error: String?) : LoginAction
-    data object NavigateToHome : LoginAction
-    data object NavigateToRegister : LoginAction
-}
-
