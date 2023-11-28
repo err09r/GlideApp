@@ -1,3 +1,5 @@
+@file:Suppress("Unused")
+
 package com.apsl.glideapp.core.domain.connectivity
 
 import com.apsl.glideapp.core.model.ConnectivityState

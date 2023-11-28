@@ -6,6 +6,7 @@ class VerifyRegisterFieldsUseCase @Inject constructor(
     private val checkIfUsernameValidUseCase: CheckIfUsernameValidUseCase,
     private val checkIfPasswordValidUseCase: CheckIfPasswordValidUseCase
 ) {
+
     operator fun invoke(
         username: String,
         password: String,

@@ -1,20 +1,20 @@
 package com.apsl.glideapp.core.datastore
 
 import androidx.datastore.core.Serializer
-import java.io.InputStream
-import java.io.OutputStream
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.encodeToByteArray
 import kotlinx.serialization.protobuf.ProtoBuf
 import timber.log.Timber
+import java.io.InputStream
+import java.io.OutputStream
 
 @Serializable
 data class EncryptedAppPreferences(
     val authToken: String? = null
 )
 
-object EncryptedAppPreferencesSerializer : Serializer<EncryptedAppPreferences> {
+internal object EncryptedAppPreferencesSerializer : Serializer<EncryptedAppPreferences> {
 
     override val defaultValue: EncryptedAppPreferences = EncryptedAppPreferences()
 

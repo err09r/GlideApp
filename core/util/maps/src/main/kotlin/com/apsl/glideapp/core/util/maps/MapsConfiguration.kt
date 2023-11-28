@@ -6,6 +6,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 
 object MapsConfiguration {
+
     const val VEHICLE_CIRCLE_VISIBILITY_ZOOM_LEVEL: Float = 15.5f
     const val NO_PARKING_ZONE_VISIBILITY_ZOOM_LEVEL: Float = 13f
 

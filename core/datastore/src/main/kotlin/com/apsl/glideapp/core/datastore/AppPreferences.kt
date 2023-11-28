@@ -2,13 +2,13 @@ package com.apsl.glideapp.core.datastore
 
 import androidx.datastore.core.Serializer
 import com.apsl.glideapp.common.models.Coordinates
-import java.io.InputStream
-import java.io.OutputStream
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.encodeToByteArray
 import kotlinx.serialization.protobuf.ProtoBuf
 import timber.log.Timber
+import java.io.InputStream
+import java.io.OutputStream
 
 @Serializable
 data class AppPreferences(
@@ -18,7 +18,7 @@ data class AppPreferences(
     val unlockDistance: Double? = null
 )
 
-object AppPreferencesSerializer : Serializer<AppPreferences> {
+internal object AppPreferencesSerializer : Serializer<AppPreferences> {
 
     override val defaultValue: AppPreferences = AppPreferences()
 

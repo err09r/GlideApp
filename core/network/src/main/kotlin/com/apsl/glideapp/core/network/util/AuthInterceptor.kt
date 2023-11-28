@@ -9,7 +9,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class AuthInterceptor @Inject constructor(private val appDataStore: AppDataStore) : Interceptor {
+class AuthInterceptor @Inject constructor(
+    private val appDataStore: AppDataStore
+) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val requestBuilder = chain.request().newBuilder()
