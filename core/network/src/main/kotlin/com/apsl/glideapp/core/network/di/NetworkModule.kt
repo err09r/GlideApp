@@ -149,9 +149,10 @@ internal object NetworkModule {
     }
 
     private fun shouldTrustAllSslCertificates(): Boolean {
+        // Trust if server is running on local network
         return listOf(
             BuildConfig.GLIDE_API_BASE_URL_HTTP,
             BuildConfig.GLIDE_API_BASE_URL_WS
-        ).all { url -> url.substringAfter("://").startsWith("106.120") }
+        ).all { url -> url.substringAfter("://").startsWith("192.168") }
     }
 }
