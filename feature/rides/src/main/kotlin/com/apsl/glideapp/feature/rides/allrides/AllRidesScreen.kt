@@ -62,8 +62,8 @@ fun AllRidesScreen(
         viewModel.refreshRidesSummary()
     }
 
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     viewModel.pagingData.receiveAsLazyPagingItems(action = viewModel::onNewPagerLoadState)
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     AllRidesScreenContent(
         uiState = uiState,

@@ -37,8 +37,8 @@ fun AllTransactionsScreen(
     viewModel: AllTransactionsViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     viewModel.pagingData.receiveAsLazyPagingItems(action = viewModel::onNewPagerLoadState)
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     AllTransactionsScreenContent(
         uiState = uiState,
         onBackClick = onNavigateBack,

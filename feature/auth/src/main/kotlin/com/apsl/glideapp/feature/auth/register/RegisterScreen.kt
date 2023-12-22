@@ -49,12 +49,10 @@ fun RegisterScreen(
     onNavigateBack: () -> Unit,
     onNavigateToHome: () -> Unit
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-    ScreenActions(actions = viewModel.actions) { action ->
+    ScreenActions(viewModel.actions) { action ->
         when (action) {
             is RegisterAction.NavigateToHome -> onNavigateToHome()
             is RegisterAction.ShowError -> {
@@ -65,6 +63,7 @@ fun RegisterScreen(
         }
     }
 
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     RegisterScreenContent(
         uiState = uiState,
         snackbarHostState = snackbarHostState,

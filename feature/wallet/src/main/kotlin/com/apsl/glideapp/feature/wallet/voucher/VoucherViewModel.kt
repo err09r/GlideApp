@@ -6,14 +6,14 @@ import com.apsl.glideapp.core.domain.transaction.CreateVoucherTransactionUseCase
 import com.apsl.glideapp.core.domain.transaction.TransactionException
 import com.apsl.glideapp.core.ui.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
+import javax.inject.Inject
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
 @Immutable
 data class VoucherUiState(val codeTextFieldValue: String? = null) {
@@ -28,8 +28,8 @@ class VoucherViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(VoucherUiState())
     val uiState = _uiState.asStateFlow()
 
-    private val _actions = MutableSharedFlow<VoucherAction>(replay = 1)
-    val actions = _actions.asSharedFlow()
+    private val _actions = Channel<VoucherAction>()
+    val actions = _actions.receiveAsFlow()
 
     fun updateCodeTextFieldValue(value: String?) {
         _uiState.update { it.copy(codeTextFieldValue = value?.uppercase()) }
@@ -39,11 +39,11 @@ class VoucherViewModel @Inject constructor(
         viewModelScope.launch {
             val voucherCode = uiState.value.codeTextFieldValue
             if (voucherCode != null) {
-                _actions.emit(VoucherAction.VoucherProcessingStarted)
+                _actions.send(VoucherAction.VoucherProcessingStarted)
                 createVoucherTransactionUseCase(voucherCode = voucherCode)
                     .onSuccess {
                         _uiState.update { it.copy(codeTextFieldValue = null) }
-                        _actions.emit(VoucherAction.VoucherProcessingCompleted)
+                        _actions.send(VoucherAction.VoucherProcessingCompleted)
                     }
                     .onFailure { throwable ->
                         Timber.d(throwable.message)
@@ -52,7 +52,7 @@ class VoucherViewModel @Inject constructor(
                             text = "Invalid voucher code. Try again"
                             updateCodeTextFieldValue(null)
                         }
-                        _actions.emit(VoucherAction.VoucherActivationError(text))
+                        _actions.send(VoucherAction.VoucherActivationError(text))
                     }
             }
         }

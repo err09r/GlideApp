@@ -28,9 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.apsl.glideapp.core.model.UserAuthState
 import com.apsl.glideapp.core.ui.ComposableLifecycle
-import com.apsl.glideapp.core.ui.LoadingScreen
 import com.apsl.glideapp.core.ui.RequestMultiplePermissions
 import com.apsl.glideapp.core.ui.RequestMultiplePermissionsState
 import com.apsl.glideapp.core.ui.navigationBarHeight
@@ -63,71 +61,68 @@ fun HomeScreen(
     onNavigateToNotificationPermission: () -> Unit
 ) {
     val context = LocalContext.current
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    when (uiState.userAuthState) {
-        UserAuthState.NotAuthenticated -> onNavigateToLogin()
-        UserAuthState.Authenticated -> {
-            val requestPermissionsState = rememberRequestMultiplePermissionState(
-                permissions = listOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                )
-            )
-            HomeActionsHandler(
-                actions = viewModel.actions,
-                onStartObservingUserLocation = viewModel::startObservingUserLocation,
-                onRequestLocationPermissions = { requestPermissionsState.requestPermissions = true }
-            )
-            ComposableLifecycle { event ->
-                when (event) {
-                    Lifecycle.Event.ON_START -> {
-                        viewModel.run {
-                            getUser()
-                            startReceivingRideEvents()
-                            startObservingMapContent()
-                            startObservingUserLocation()
-                            if (!context.areNotificationsEnabled) {
-                                onNavigateToNotificationPermission()
-                            }
-                        }
+    val requestPermissionsState = rememberRequestMultiplePermissionState(
+        permissions = listOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+    )
+
+    HomeActionsHandler(
+        actions = viewModel.actions,
+        onNavigateToLogin = onNavigateToLogin,
+        onStartObservingUserLocation = viewModel::startObservingUserLocation,
+        onRequestLocationPermissions = { requestPermissionsState.requestPermissions = true }
+    )
+
+    ComposableLifecycle { event ->
+        when (event) {
+            Lifecycle.Event.ON_START -> {
+                viewModel.run {
+                    getUser()
+                    startReceivingRideEvents()
+                    startObservingMapContent()
+                    startObservingUserLocation()
+                    if (!context.areNotificationsEnabled) {
+                        onNavigateToNotificationPermission()
                     }
-
-                    Lifecycle.Event.ON_STOP -> {
-                        viewModel.run {
-                            stopObservingMapContent()
-                            stopObservingUserLocation()
-                        }
-                    }
-
-                    else -> Unit
                 }
             }
-            HomeScreenContent(
-                uiState = uiState,
-                requestPermissionsState = requestPermissionsState,
-                onRefreshUserData = viewModel::getUser,
-                onLocationButtonClick = viewModel::startObservingUserLocation,
-                onOpenLocationPermissionDialog = onNavigateToLocationPermission,
-                onOpenLocationRationaleDialog = onNavigateToLocationRationale,
-                onVehicleSelect = viewModel::updateSelectedVehicle,
-                onLoadMapDataWithinBounds = viewModel::loadMapContentWithinBounds,
-                onStartRideClick = viewModel::startRide,
-                onFinishRideClick = viewModel::finishRide,
-                onMyRidesClick = {
-                    viewModel.updateSelectedVehicle(null)
-                    onNavigateToAllRides()
-                },
-                onWalletClick = {
-                    viewModel.updateSelectedVehicle(null)
-                    onNavigateToWallet()
-                },
-                onLogoutClick = viewModel::logOut
-            )
-        }
 
-        else -> LoadingScreen()
+            Lifecycle.Event.ON_STOP -> {
+                viewModel.run {
+                    stopObservingMapContent()
+                    stopObservingUserLocation()
+                }
+            }
+
+            else -> Unit
+        }
     }
+
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    HomeScreenContent(
+        uiState = uiState,
+        requestPermissionsState = requestPermissionsState,
+        onRefreshUserData = viewModel::getUser,
+        onLocationButtonClick = viewModel::startObservingUserLocation,
+        onOpenLocationPermissionDialog = onNavigateToLocationPermission,
+        onOpenLocationRationaleDialog = onNavigateToLocationRationale,
+        onVehicleSelect = viewModel::updateSelectedVehicle,
+        onLoadMapDataWithinBounds = viewModel::loadMapContentWithinBounds,
+        onStartRideClick = viewModel::startRide,
+        onFinishRideClick = viewModel::finishRide,
+        onMyRidesClick = {
+            viewModel.updateSelectedVehicle(null)
+            onNavigateToAllRides()
+        },
+        onWalletClick = {
+            viewModel.updateSelectedVehicle(null)
+            onNavigateToWallet()
+        },
+        onLogoutClick = viewModel::logOut
+    )
 }
 
 @Composable

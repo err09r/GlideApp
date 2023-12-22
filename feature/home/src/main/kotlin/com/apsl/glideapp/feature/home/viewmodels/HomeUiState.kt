@@ -1,13 +1,11 @@
 package com.apsl.glideapp.feature.home.viewmodels
 
 import androidx.compose.runtime.Immutable
-import com.apsl.glideapp.core.model.UserAuthState
 import com.apsl.glideapp.feature.home.models.SelectedVehicleUiModel
 import com.google.android.gms.maps.model.LatLng
 
 @Immutable
 data class HomeUiState(
-    val userAuthState: UserAuthState = UserAuthState.Undefined,
     val userInfo: UserInfo = UserInfo(),
     val initialCameraPosition: LatLng? = null,
     val isLoadingMapContent: Boolean = false,

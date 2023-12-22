@@ -21,9 +21,9 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -36,8 +36,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.apsl.glideapp.core.ui.FeatureScreen
 import com.apsl.glideapp.core.ui.GlideImage
+import com.apsl.glideapp.core.ui.ScreenActions
 import com.apsl.glideapp.core.ui.imeCollapsible
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
+import kotlinx.coroutines.launch
 import com.apsl.glideapp.core.ui.R as CoreR
 
 @Composable
@@ -48,21 +50,22 @@ fun VoucherScreen(
     onNavigateToVoucherActivated: () -> Unit
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val scope = rememberCoroutineScope()
 
-    LaunchedEffect(Unit) {
-        viewModel.actions.collect { action ->
-            when (action) {
-                is VoucherAction.VoucherProcessingStarted -> onNavigateToPayment()
-                is VoucherAction.VoucherProcessingCompleted -> onNavigateToVoucherActivated()
-                is VoucherAction.VoucherActivationError -> {
-                    onNavigateBack()
+    ScreenActions(viewModel.actions) { action ->
+        when (action) {
+            is VoucherAction.VoucherProcessingStarted -> onNavigateToPayment()
+            is VoucherAction.VoucherProcessingCompleted -> onNavigateToVoucherActivated()
+            is VoucherAction.VoucherActivationError -> {
+                onNavigateBack()
+                scope.launch {
                     snackbarHostState.showSnackbar(action.message)
                 }
             }
         }
     }
 
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     VoucherScreenContent(
         uiState = uiState,
         snackbarHostState = snackbarHostState,

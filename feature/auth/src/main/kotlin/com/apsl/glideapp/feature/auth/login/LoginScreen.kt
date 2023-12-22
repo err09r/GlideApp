@@ -46,12 +46,10 @@ fun LoginScreen(
     onNavigateToHome: () -> Unit,
     onNavigateToRegister: () -> Unit
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-    ScreenActions(actions = viewModel.actions) { action ->
+    ScreenActions(viewModel.actions) { action ->
         when (action) {
             is LoginAction.NavigateToHome -> onNavigateToHome()
             is LoginAction.NavigateToRegister -> onNavigateToRegister()
@@ -63,6 +61,7 @@ fun LoginScreen(
         }
     }
 
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     LoginScreenContent(
         uiState = uiState,
         snackbarHostState = snackbarHostState,

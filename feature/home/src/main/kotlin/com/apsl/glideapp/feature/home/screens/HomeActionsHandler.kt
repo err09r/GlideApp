@@ -9,11 +9,11 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
 import com.apsl.glideapp.core.ui.ComposableLifecycle
+import com.apsl.glideapp.core.ui.ScreenActions
 import com.apsl.glideapp.core.util.android.findActivity
 import com.apsl.glideapp.feature.home.map.openLocationSettingsDialog
 import com.apsl.glideapp.feature.home.map.shouldOpenLocationSettingsDialog
@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.Flow
 @Composable
 fun HomeActionsHandler(
     actions: Flow<HomeAction>,
+    onNavigateToLogin: () -> Unit,
     onStartObservingUserLocation: () -> Unit,
     onRequestLocationPermissions: () -> Unit
 ) {
@@ -68,50 +69,47 @@ fun HomeActionsHandler(
         }
     }
 
-    LaunchedEffect(actions) {
-        actions.collect { action ->
-            when (action) {
+    ScreenActions(actions) { action ->
+        when (action) {
+            is HomeAction.LogOut -> onNavigateToLogin()
 
-                is HomeAction.StartRide -> {
-                    val intent = Intent(context, RideService::class.java).apply {
-                        this.action = RideService.ACTION_START
-                        putExtra(RideService.RIDE_ID, action.rideId)
-                        putExtra(RideService.RIDE_START_DATETIME, action.startDateTime)
-                    }
-                    context.startForegroundService(intent)
+            is HomeAction.StartRide -> {
+                val intent = Intent(context, RideService::class.java).apply {
+                    this.action = RideService.ACTION_START
+                    putExtra(RideService.RIDE_ID, action.rideId)
+                    putExtra(RideService.RIDE_START_DATETIME, action.startDateTime)
                 }
-
-                is HomeAction.FinishRide -> {
-                    val intent = Intent(context, RideService::class.java).apply {
-                        this.action = RideService.ACTION_STOP
-                    }
-
-                    context.startForegroundService(intent)
-                }
-
-                is HomeAction.Toast -> {
-                    Toast.makeText(context, action.message, Toast.LENGTH_LONG).show()
-                }
-
-                is HomeAction.OpenLocationSettingsDialog -> {
-                    if (context.shouldOpenLocationSettingsDialog) {
-                        context.findActivity()?.openLocationSettingsDialog(locationSettingsLauncher)
-                    }
-                }
-
-                is HomeAction.RestartUserLocation -> {
-                    if (serviceBound) {
-                        rideService?.restartUserLocationFlow(
-                            rideId = action.rideId,
-                            rideStartDateTime = action.startDateTime
-                        )
-                    }
-                }
-
-                is HomeAction.RequestLocationPermissions -> onRequestLocationPermissions()
-
-                else -> Unit
+                context.startForegroundService(intent)
             }
+
+            is HomeAction.FinishRide -> {
+                val intent = Intent(context, RideService::class.java).apply {
+                    this.action = RideService.ACTION_STOP
+                }
+
+                context.startForegroundService(intent)
+            }
+
+            is HomeAction.Toast -> {
+                Toast.makeText(context, action.message, Toast.LENGTH_LONG).show()
+            }
+
+            is HomeAction.OpenLocationSettingsDialog -> {
+                if (context.shouldOpenLocationSettingsDialog) {
+                    context.findActivity()?.openLocationSettingsDialog(locationSettingsLauncher)
+                }
+            }
+
+            is HomeAction.RestartUserLocation -> {
+                if (serviceBound) {
+                    rideService?.restartUserLocationFlow(
+                        rideId = action.rideId,
+                        rideStartDateTime = action.startDateTime
+                    )
+                }
+            }
+
+            is HomeAction.RequestLocationPermissions -> onRequestLocationPermissions()
         }
     }
 }

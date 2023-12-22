@@ -21,6 +21,7 @@ import com.apsl.glideapp.core.domain.ride.ObserveRideEventsUseCase
 import com.apsl.glideapp.core.domain.ride.StartRideUseCase
 import com.apsl.glideapp.core.domain.user.GetUserUseCase
 import com.apsl.glideapp.core.model.RideEvent
+import com.apsl.glideapp.core.model.UserAuthState
 import com.apsl.glideapp.core.model.UserLocation
 import com.apsl.glideapp.core.model.Vehicle
 import com.apsl.glideapp.core.ui.BaseViewModel
@@ -36,6 +37,8 @@ import com.apsl.glideapp.feature.home.models.toSelectedVehicleUiModel
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+import kotlin.math.roundToInt
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.channels.Channel
@@ -51,8 +54,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDateTime
 import timber.log.Timber
-import javax.inject.Inject
-import kotlin.math.roundToInt
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
@@ -99,7 +100,9 @@ class HomeViewModel @Inject constructor(
             .distinctUntilChanged()
             .onEach { authState ->
                 Timber.d("User authentication state: $authState")
-                _uiState.update { it.copy(userAuthState = authState) }
+                if (authState == UserAuthState.NotAuthenticated) {
+                    _actions.send(HomeAction.LogOut)
+                }
             }
             .launchIn(viewModelScope)
     }

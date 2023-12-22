@@ -27,7 +27,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,6 +45,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.apsl.glideapp.core.model.PaymentMethod
 import com.apsl.glideapp.core.ui.FeatureScreen
 import com.apsl.glideapp.core.ui.GlideImage
+import com.apsl.glideapp.core.ui.ScreenActions
 import com.apsl.glideapp.core.ui.clickable
 import com.apsl.glideapp.core.ui.icons.CardMoney
 import com.apsl.glideapp.core.ui.icons.GlideIcons
@@ -61,18 +61,14 @@ fun TopUpScreen(
     onNavigateToPayment: () -> Unit,
     onNavigateToTopUpSuccess: () -> Unit
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-    LaunchedEffect(Unit) {
-        viewModel.actions.collect { action ->
-            when (action) {
-                is TopUpAction.PaymentProcessingStarted -> onNavigateToPayment()
-                is TopUpAction.PaymentProcessingCompleted -> onNavigateToTopUpSuccess()
-                is TopUpAction.PaymentProcessingFailed -> onNavigateBack()
-            }
+    ScreenActions(viewModel.actions) { action ->
+        when (action) {
+            is TopUpAction.PaymentProcessingStarted -> onNavigateToPayment()
+            is TopUpAction.PaymentProcessingCompleted -> onNavigateToTopUpSuccess()
+            is TopUpAction.PaymentProcessingFailed -> onNavigateBack()
         }
     }
-
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     TopUpScreenContent(
         uiState = uiState,
         onBackClick = onNavigateBack,
