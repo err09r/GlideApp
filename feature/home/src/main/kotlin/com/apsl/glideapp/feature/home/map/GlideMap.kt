@@ -118,19 +118,19 @@ fun GlideMap(
         if (selectedVehicle != null && mapState.selectedVehicleRadius != null) {
             Circle(
                 center = selectedVehicle.coordinates,
-                fillColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
+                fillColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
                 radius = mapState.selectedVehicleRadius,
                 strokeColor = MaterialTheme.colorScheme.primary,
-                strokeWidth = 2.dp.toPx(),
+                strokeWidth = 1.dp.toPx(),
                 visible = cameraPositionState.position.zoom >= MapsConfiguration.VEHICLE_CIRCLE_VISIBILITY_ZOOM_LEVEL
             )
         }
 
         Polygon(
             points = MapsConfiguration.mapBorders,
-            fillColor = Colors.NoRiding.copy(alpha = 0.3f),
+            fillColor = Colors.NoRiding.copy(alpha = 0.2f),
             holes = mapState.ridingZones,
-            strokeWidth = 2.dp.toPx(),
+            strokeWidth = 1.dp.toPx(),
             strokeJointType = JointType.ROUND,
             strokeColor = Colors.NoRiding
         )
@@ -138,8 +138,8 @@ fun GlideMap(
         mapState.noParkingZones.forEach { zone ->
             Polygon(
                 points = zone.coordinates,
-                fillColor = Colors.NoParking.copy(alpha = 0.3f),
-                strokeWidth = 2.dp.toPx(),
+                fillColor = Colors.NoParking.copy(alpha = 0.2f),
+                strokeWidth = 1.dp.toPx(),
                 strokeJointType = JointType.ROUND,
                 strokeColor = Colors.NoParking
             )
