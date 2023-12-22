@@ -108,16 +108,15 @@ fun RegisterScreenContent(
                         )
                     }
                     Spacer(Modifier.width(8.dp))
-                    Text(text = "Hello!", style = MaterialTheme.typography.headlineSmall)
+                    Text(text = "Hello!", style = MaterialTheme.typography.headlineMedium)
                 }
 
                 Spacer(Modifier.height(4.dp))
 
                 Text(
                     text = "Create a new account and get a bonus to start",
-                    style = MaterialTheme.typography.bodyLarge.copy(
-                        color = MaterialTheme.colorScheme.secondary
-                    )
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyLarge
                 )
 
                 GlideImage(
