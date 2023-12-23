@@ -41,7 +41,7 @@ firebase-perf-plugin = "1.4.2"
 glideapp-common = "0.2.12"
 javax-inject = "1"
 ktor = "2.3.7"
-ktorfit = "1.11.0"
+ktorfit = "1.11.1"
 security-crypto-datastore = "1.0.0-beta01"
 timber = "5.0.1"
 
