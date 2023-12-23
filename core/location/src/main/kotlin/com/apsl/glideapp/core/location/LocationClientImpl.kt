@@ -104,7 +104,7 @@ class LocationClientImpl @Inject constructor(
                 val locationRequest = LocationRequest.Builder(locationUpdateIntervalMs)
                     .setMinUpdateIntervalMillis(locationUpdateIntervalMs)
                     .setQuality(LocationRequest.QUALITY_HIGH_ACCURACY)
-                    .setMinUpdateDistanceMeters(LOCATION_UPDATE_MIN_DISTANCE)
+                    .setMinUpdateDistanceMeters(LocationClient.LOCATION_UPDATE_MIN_DISTANCE)
                     .build()
 
                 locationManager.requestLocationUpdates(
@@ -117,7 +117,7 @@ class LocationClientImpl @Inject constructor(
                 locationManager.requestLocationUpdates(
                     LocationManager.GPS_PROVIDER,
                     locationUpdateIntervalMs,
-                    LOCATION_UPDATE_MIN_DISTANCE,
+                    LocationClient.LOCATION_UPDATE_MIN_DISTANCE,
                     locationListener
                 )
             }
@@ -149,8 +149,4 @@ class LocationClientImpl @Inject constructor(
         } catch (e: Exception) {
             false
         }
-
-    private companion object {
-        private const val LOCATION_UPDATE_MIN_DISTANCE = 0.8f
-    }
 }
