@@ -66,61 +66,113 @@ private val nunitoFamily = FontFamily(
 )
 
 private val nunitoSansFamily = FontFamily(
+//    Font(
+//        resId = R.font.nunito_sans_light,
+//        weight = FontWeight.Light,
+//        style = FontStyle.Normal
+//    ),
+//    Font(
+//        resId = R.font.nunito_sans_light_italic,
+//        weight = FontWeight.Light,
+//        style = FontStyle.Italic
+//    ),
     Font(
-        resId = R.font.nunito_sans_light,
-        weight = FontWeight.Light,
-        style = FontStyle.Normal
-    ),
-    Font(
-        resId = R.font.nunito_sans_light_italic,
-        weight = FontWeight.Light,
-        style = FontStyle.Italic
-    ),
-    Font(
-        resId = R.font.nunito_sans_regular,
+        resId = R.font.regular,
         weight = FontWeight.Normal,
         style = FontStyle.Normal
     ),
-    Font(
-        resId = R.font.nunito_sans_regular_italic,
-        weight = FontWeight.Normal,
-        style = FontStyle.Italic
-    ),
-    Font(
-        resId = R.font.nunito_sans_medium,
-        weight = FontWeight.Medium,
-        style = FontStyle.Normal
-    ),
-    Font(
-        resId = R.font.nunito_sans_medium_italic,
-        weight = FontWeight.Medium,
-        style = FontStyle.Italic
-    ),
-    Font(
-        resId = R.font.nunito_sans_semibold,
-        weight = FontWeight.SemiBold,
-        style = FontStyle.Normal
-    ),
-    Font(
-        resId = R.font.nunito_sans_semibold_italic,
-        weight = FontWeight.SemiBold,
-        style = FontStyle.Italic
-    ),
-    Font(
-        resId = R.font.nunito_sans_bold,
-        weight = FontWeight.Bold,
-        style = FontStyle.Normal
-    ),
-    Font(
-        resId = R.font.nunito_sans_bold_italic,
-        weight = FontWeight.Bold,
-        style = FontStyle.Italic
-    )
+//    Font(
+//        resId = R.font.nunito_sans_regular_italic,
+//        weight = FontWeight.Normal,
+//        style = FontStyle.Italic
+//    ),
+//    Font(
+//        resId = R.font.nunito_sans_medium,
+//        weight = FontWeight.Medium,
+//        style = FontStyle.Normal
+//    ),
+//    Font(
+//        resId = R.font.nunito_sans_medium_italic,
+//        weight = FontWeight.Medium,
+//        style = FontStyle.Italic
+//    ),
+//    Font(
+//        resId = R.font.nunito_sans_semibold,
+//        weight = FontWeight.SemiBold,
+//        style = FontStyle.Normal
+//    ),
+//    Font(
+//        resId = R.font.nunito_sans_semibold_italic,
+//        weight = FontWeight.SemiBold,
+//        style = FontStyle.Italic
+//    ),
+//    Font(
+//        resId = R.font.nunito_sans_bold,
+//        weight = FontWeight.Bold,
+//        style = FontStyle.Normal
+//    ),
+//    Font(
+//        resId = R.font.nunito_sans_bold_italic,
+//        weight = FontWeight.Bold,
+//        style = FontStyle.Italic
+//    )
 )
+
+//private val nunitoSansFamily = FontFamily(
+//    Font(
+//        resId = R.font.nunito_sans_light,
+//        weight = FontWeight.Light,
+//        style = FontStyle.Normal
+//    ),
+//    Font(
+//        resId = R.font.nunito_sans_light_italic,
+//        weight = FontWeight.Light,
+//        style = FontStyle.Italic
+//    ),
+//    Font(
+//        resId = R.font.nunito_sans_regular,
+//        weight = FontWeight.Normal,
+//        style = FontStyle.Normal
+//    ),
+//    Font(
+//        resId = R.font.nunito_sans_regular_italic,
+//        weight = FontWeight.Normal,
+//        style = FontStyle.Italic
+//    ),
+//    Font(
+//        resId = R.font.nunito_sans_medium,
+//        weight = FontWeight.Medium,
+//        style = FontStyle.Normal
+//    ),
+//    Font(
+//        resId = R.font.nunito_sans_medium_italic,
+//        weight = FontWeight.Medium,
+//        style = FontStyle.Italic
+//    ),
+//    Font(
+//        resId = R.font.nunito_sans_semibold,
+//        weight = FontWeight.SemiBold,
+//        style = FontStyle.Normal
+//    ),
+//    Font(
+//        resId = R.font.nunito_sans_semibold_italic,
+//        weight = FontWeight.SemiBold,
+//        style = FontStyle.Italic
+//    ),
+//    Font(
+//        resId = R.font.nunito_sans_bold,
+//        weight = FontWeight.Bold,
+//        style = FontStyle.Normal
+//    ),
+//    Font(
+//        resId = R.font.nunito_sans_bold_italic,
+//        weight = FontWeight.Bold,
+//        style = FontStyle.Italic
+//    )
+//)
 
 private val platformStyle = PlatformTextStyle(includeFontPadding = false)
 
-//TODO: Replace 'Nunito' with 'Nunito Sans' for display and headline typography
 internal val Typography = Typography(
     displayLarge = TextStyle(
         fontSize = 57.sp,
@@ -197,7 +249,7 @@ internal val Typography = Typography(
     bodyLarge = TextStyle(
         fontSize = 16.sp,
         fontWeight = FontWeight.Normal,
-        fontFamily = nunitoFamily,
+        fontFamily = nunitoSansFamily,
         letterSpacing = 0.5.sp,
         lineHeight = 24.sp,
         platformStyle = platformStyle
@@ -205,7 +257,7 @@ internal val Typography = Typography(
     bodyMedium = TextStyle(
         fontSize = 14.sp,
         fontWeight = FontWeight.Normal,
-        fontFamily = nunitoFamily,
+        fontFamily = nunitoSansFamily,
         letterSpacing = 0.25.sp,
         lineHeight = 20.sp,
         platformStyle = platformStyle
@@ -213,31 +265,31 @@ internal val Typography = Typography(
     bodySmall = TextStyle(
         fontSize = 12.sp,
         fontWeight = FontWeight.Normal,
-        fontFamily = nunitoFamily,
+        fontFamily = nunitoSansFamily,
         letterSpacing = 0.4.sp,
         lineHeight = 16.sp,
         platformStyle = platformStyle
     ),
     labelLarge = TextStyle(
         fontSize = 14.sp,
-        fontWeight = FontWeight.Medium,
-        fontFamily = nunitoFamily,
+        fontWeight = FontWeight.Normal,
+        fontFamily = nunitoSansFamily,
         letterSpacing = 0.1.sp,
         lineHeight = 20.sp,
         platformStyle = platformStyle
     ),
     labelMedium = TextStyle(
         fontSize = 12.sp,
-        fontWeight = FontWeight.Medium,
-        fontFamily = nunitoFamily,
+        fontWeight = FontWeight.Normal,
+        fontFamily = nunitoSansFamily,
         letterSpacing = 0.5.sp,
         lineHeight = 16.sp,
         platformStyle = platformStyle
     ),
     labelSmall = TextStyle(
         fontSize = 11.sp,
-        fontWeight = FontWeight.Medium,
-        fontFamily = nunitoFamily,
+        fontWeight = FontWeight.Normal,
+        fontFamily = nunitoSansFamily,
         letterSpacing = 0.5.sp,
         lineHeight = 16.sp,
         platformStyle = platformStyle

@@ -286,7 +286,7 @@ fun RideDetailsSheetContent(ride: RideDetailsUiModel, modifier: Modifier = Modif
     ) {
         Column {
             RideDetailsSheetTitle(imageVector = GlideIcons.Route, text = "Route")
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(8.dp))
             Column(modifier = Modifier.padding(start = 16.dp)) {
                 TitleValueText(title = "Total distance", value = "${ride.distance} m")
                 Spacer(Modifier.height(4.dp))
@@ -305,7 +305,7 @@ fun RideDetailsSheetContent(ride: RideDetailsUiModel, modifier: Modifier = Modif
 
         Column {
             RideDetailsSheetTitle(imageVector = GlideIcons.Clock, text = "Time")
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(8.dp))
             Column(modifier = Modifier.padding(start = 16.dp)) {
                 Text(
                     text = "Ride lasted ${ride.timeInMinutes} minutes",
@@ -364,10 +364,10 @@ fun RideDetailsSheetTitle(imageVector: ImageVector, text: String, modifier: Modi
         Icon(
             imageVector = imageVector,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.secondary
+            tint = MaterialTheme.colorScheme.tertiary
         )
         Spacer(Modifier.width(8.dp))
-        Text(text = text, style = MaterialTheme.typography.titleMedium)
+        Text(text = text, style = MaterialTheme.typography.titleLarge)
     }
 }
 

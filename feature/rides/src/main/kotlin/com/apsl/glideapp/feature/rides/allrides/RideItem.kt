@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -83,7 +84,11 @@ fun RideItem(
                 )
             }
             Spacer(Modifier.width(16.dp))
-            Column(modifier = Modifier.fillMaxHeight()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .weight(1f)
+            ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         imageVector = GlideIcons.MapPoint,
@@ -91,7 +96,12 @@ fun RideItem(
                         modifier = Modifier.size(12.dp)
                     )
                     Spacer(Modifier.width(4.dp))
-                    Text(text = overlineText, style = MaterialTheme.typography.bodySmall)
+                    Text(
+                        text = overlineText,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.bodySmall
+                    )
                 }
                 Spacer(Modifier.height(4.dp))
                 Text(
@@ -104,9 +114,10 @@ fun RideItem(
                 Spacer(Modifier.weight(1f))
                 Text(text = supportingText, style = MaterialTheme.typography.bodyMedium)
             }
-            Spacer(Modifier.weight(1f))
+            Spacer(Modifier.width(16.dp))
             Text(
                 text = trailingText,
+                maxLines = 1,
                 style = MaterialTheme.typography.bodyMedium
             )
         }
