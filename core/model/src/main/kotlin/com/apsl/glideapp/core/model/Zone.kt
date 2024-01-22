@@ -1,0 +1,12 @@
+package com.apsl.glideapp.core.model
+
+import com.apsl.glideapp.common.models.Coordinates
+import com.apsl.glideapp.common.models.ZoneType
+
+data class Zone(
+    val id: String,
+    val code: Int,
+    val title: String,
+    val type: ZoneType,
+    val coordinates: List<Coordinates>
+)

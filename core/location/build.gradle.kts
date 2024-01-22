@@ -6,7 +6,8 @@ plugins {
 dependencies {
     implementation(project(":core:datastore"))
     implementation(project(":core:domain"))
-    implementation(project(":core:util"))
+    implementation(project(":core:util:android"))
+    implementation(project(":core:util:maps"))
 
     implementation(libs.kotlinx.coroutines.core)
 }

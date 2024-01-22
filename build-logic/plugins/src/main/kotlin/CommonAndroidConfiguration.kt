@@ -27,22 +27,18 @@ private fun BaseExtension.configureDefaultConfig() {
 
         resourceConfigurations += Config.resourceConfigurations
     }
-
-    packagingOptions {
-        resources {
-            excludes.add("/META-INF/{AL2.0,LGPL2.1}")
-        }
-    }
 }
 
 private fun BaseExtension.configureBuildTypes() {
     buildTypes {
         debug {
             isDebuggable = true
+            manifestPlaceholders["performanceLogcatEnabled"] = true
         }
         staging {
             isDebuggable = false
             isMinifyEnabled = true
+            manifestPlaceholders["performanceLogcatEnabled"] = true
             signingConfig = signingConfigs.getByName("debug")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -52,6 +48,7 @@ private fun BaseExtension.configureBuildTypes() {
         release {
             isDebuggable = false
             isMinifyEnabled = true
+            manifestPlaceholders["performanceLogcatEnabled"] = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -70,16 +67,8 @@ private fun BaseExtension.configureJavaCompileOptions() {
 private fun Project.configureKotlinCompileOptions() {
     tasks.withType<KotlinCompile>().configureEach {
         kotlinOptions {
-            jvmTarget = Config.javaVersion.toString()
-            freeCompilerArgs += listOf(
-                "-opt-in=androidx.paging.ExperimentalPagingApi",
-                "-opt-in=com.google.maps.android.compose.MapsComposeExperimentalApi",
-                "-opt-in=kotlin.RequiresOptIn",
-                "-opt-in=kotlin.time.ExperimentalTime",
-                "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-                "-opt-in=kotlinx.coroutines.FlowPreview",
-                "-opt-in=kotlinx.serialization.ExperimentalSerializationApi"
-            )
+            defaultKotlinConfiguration()
+            freeCompilerArgs += listOf("-opt-in=androidx.paging.ExperimentalPagingApi")
         }
     }
 }
