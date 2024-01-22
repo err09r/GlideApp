@@ -38,6 +38,8 @@ jobs:
         - name: Create local.properties
           env:
             MAPS_API_KEY: ${{ secrets.MAPS_API_KEY }}
+            GLIDE_API_BASE_URL_HTTP: ${{ secrets.GLIDE_API_BASE_URL_HTTP }}
+            GLIDE_API_BASE_URL_WS: ${{ secrets.GLIDE_API_BASE_URL_WS }}
           run: echo -e "MAPS_API_KEY=$MAPS_API_KEY\nGLIDE_API_BASE_URL_HTTP=$GLIDE_API_BASE_URL_HTTP\nGLIDE_API_BASE_URL_WS=$GLIDE_API_BASE_URL_WS" > ./local.properties
 
         - name: Create keystore.jks
