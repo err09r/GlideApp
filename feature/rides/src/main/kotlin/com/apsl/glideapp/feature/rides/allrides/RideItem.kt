@@ -40,7 +40,7 @@ import com.apsl.glideapp.core.ui.RideRoute
 import com.apsl.glideapp.core.ui.icons.GlideIcons
 import com.apsl.glideapp.core.ui.icons.MapPoint
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
-import com.apsl.glideapp.feature.rides.R
+import com.apsl.glideapp.core.ui.R as CoreR
 
 @Composable
 fun RideItem(
@@ -68,7 +68,7 @@ fun RideItem(
         ) {
             Box(modifier = Modifier.clip(shape = CardDefaults.shape)) {
                 Image(
-                    painter = painterResource(R.drawable.img_map_bg),
+                    painter = painterResource(CoreR.drawable.img_map_bg),
                     contentDescription = null,
                     modifier = Modifier
                         .size(80.dp)
