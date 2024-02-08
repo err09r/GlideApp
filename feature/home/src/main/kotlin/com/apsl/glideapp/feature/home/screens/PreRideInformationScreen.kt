@@ -42,7 +42,7 @@ import com.apsl.glideapp.feature.home.map.NoParkingMarker
 import com.apsl.glideapp.core.ui.R as CoreR
 
 @Composable
-fun RideInformationScreen(onNavigateBack: () -> Unit, text: String) {
+fun PreRideInformationScreen(onNavigateBack: () -> Unit, text: String) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -127,8 +127,8 @@ private fun ZoneThumbnail(modifier: Modifier = Modifier) {
 
 @Preview(showBackground = true)
 @Composable
-private fun RideInformationScreenPreview(@PreviewParameter(LoremIpsum::class) text: String) {
+private fun PreRideInformationScreenPreview(@PreviewParameter(LoremIpsum::class) text: String) {
     GlideAppTheme {
-        RideInformationScreen(onNavigateBack = {}, text = text)
+        PreRideInformationScreen(onNavigateBack = {}, text = text)
     }
 }
