@@ -5,6 +5,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.Dialog
 import com.apsl.glideapp.core.ui.GlideImage
@@ -17,13 +18,13 @@ fun VoucherActivatedDialog(onDismiss: () -> Unit, modifier: Modifier = Modifier)
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text(text = "Continue")
+                Text(text = stringResource(CoreR.string.voucher_activated_dialog_button))
             }
         },
         modifier = modifier,
         icon = { GlideImage(CoreR.drawable.img_gift) },
-        title = { Text(text = "Success!") },
-        text = { Text(text = "Voucher code has been activated. Funds will be added to your account") }
+        title = { Text(text = stringResource(CoreR.string.voucher_activated_dialog_title)) },
+        text = { Text(text = stringResource(CoreR.string.voucher_activated_dialog_text)) }
     )
 }
 

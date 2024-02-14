@@ -1,5 +1,6 @@
 package com.apsl.glideapp.feature.auth.register
 
+import androidx.annotation.StringRes
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
 import com.apsl.glideapp.core.domain.auth.RegisterFieldsVerificationResult
@@ -8,6 +9,7 @@ import com.apsl.glideapp.core.domain.auth.VerifyRegisterFieldsUseCase
 import com.apsl.glideapp.core.domain.auth.isError
 import com.apsl.glideapp.core.ui.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,7 +17,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
+import com.apsl.glideapp.core.ui.R as CoreR
 
 @Immutable
 data class RegisterUiState(
@@ -25,8 +27,8 @@ data class RegisterUiState(
     val usernameTextFieldValue: String? = null,
     val passwordTextFieldValue: String? = null,
     val repeatPasswordTextFieldValue: String? = null,
-    val usernameError: String? = null,
-    val passwordError: String? = null
+    @StringRes val usernameErrorResId: Int? = null,
+    @StringRes val passwordErrorResId: Int? = null
 ) {
     val isActionButtonActive: Boolean
         get() = !usernameTextFieldValue.isNullOrBlank()
@@ -75,7 +77,7 @@ class RegisterViewModel @Inject constructor(
                 RegisterFieldsVerificationResult.InvalidUsernameFormat -> {
                     _uiState.update {
                         it.copy(
-                            usernameError = "Invalid username format",
+                            usernameErrorResId = CoreR.string.invalid_username_format,
                             isLoading = false
                         )
                     }
@@ -85,7 +87,7 @@ class RegisterViewModel @Inject constructor(
                 RegisterFieldsVerificationResult.InvalidPasswordFormat -> {
                     _uiState.update {
                         it.copy(
-                            passwordError = "Invalid password format",
+                            passwordErrorResId = CoreR.string.invalid_password_format,
                             isLoading = false
                         )
                     }
@@ -95,7 +97,7 @@ class RegisterViewModel @Inject constructor(
                 RegisterFieldsVerificationResult.PasswordsDoNotMatch -> {
                     _uiState.update {
                         it.copy(
-                            passwordError = "Passwords do not match",
+                            passwordErrorResId = CoreR.string.passwords_donot_match,
                             isLoading = false
                         )
                     }
@@ -109,7 +111,7 @@ class RegisterViewModel @Inject constructor(
                 registerUseCase(username = username, password = password)
                     .onSuccess {
                         _uiState.update {
-                            it.copy(isLoading = false, usernameError = null)
+                            it.copy(isLoading = false, usernameErrorResId = null)
                         }
                         resetPasswordFields()
                         _actions.send(RegisterAction.NavigateToHome)
@@ -133,7 +135,7 @@ class RegisterViewModel @Inject constructor(
                 repeatPasswordTextFieldValue = null,
                 isPasswordVisible = false,
                 isRepeatPasswordVisible = false,
-                passwordError = null
+                passwordErrorResId = null
             )
         }
     }

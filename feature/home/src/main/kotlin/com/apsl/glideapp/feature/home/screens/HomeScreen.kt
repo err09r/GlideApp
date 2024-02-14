@@ -197,15 +197,14 @@ fun HomeScreenContent(
         onPermanentlyDenied = onOpenLocationPermissionDialog
     )
 
-    //TODO to be completely refactored to load data on first dispay
-    //TODO **********************************************************
+    //TODO to be completely refactored to load data on first display
     val visibleBounds = cameraPositionState.projection?.visibleRegion?.latLngBounds
     LaunchedEffect(cameraPositionState.isMoving) {
         if (!cameraPositionState.isMoving) {
             visibleBounds?.let { onLoadMapDataWithinBounds(it) }
         }
     }
-//
+
 //    LaunchedEffect(cameraPositionState.projection) {
 //        Timber.d("load block")
 //        if (visibleBounds != null && uiState.vehicleClusterItems.isEmpty()) {
@@ -213,7 +212,6 @@ fun HomeScreenContent(
 //            onLoadMapDataWithinBounds(visibleBounds)
 //        }
 //    }
-    //TODO **********************************************************
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 

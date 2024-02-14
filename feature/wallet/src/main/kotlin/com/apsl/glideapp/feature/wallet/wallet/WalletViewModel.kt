@@ -9,18 +9,18 @@ import com.apsl.glideapp.core.ui.BaseViewModel
 import com.apsl.glideapp.feature.wallet.common.TransactionUiModel
 import com.apsl.glideapp.feature.wallet.common.toTransactionUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
 @Immutable
 data class WalletUiState(
     val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,
-    val userBalance: String = "0,00 zł",
+    val userBalance: String = "0,00",
     val isRentalAvailable: Boolean = true,
     val recentTransactions: List<TransactionUiModel> = emptyList(),
     val error: WalletUiError? = null
@@ -46,7 +46,7 @@ class WalletViewModel @Inject constructor(
                     }
                     _uiState.update { state ->
                         state.copy(
-                            userBalance = "${user.balance.format(2)} zł",
+                            userBalance = user.balance.format(2),
                             isRentalAvailable = user.balance > 0
                         )
                     }

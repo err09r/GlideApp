@@ -1,6 +1,7 @@
 package com.apsl.glideapp.feature.wallet.topup
 
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,6 +36,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -87,7 +89,7 @@ fun TopUpScreenContent(
     onTopUpClick: () -> Unit
 ) {
     FeatureScreen(
-        topBarText = "Account top up",
+        topBarText = stringResource(CoreR.string.top_up_screen_title),
         onBackClick = onBackClick
     ) {
         Column(
@@ -113,11 +115,14 @@ fun TopUpScreenContent(
 
                     Spacer(Modifier.height(16.dp))
 
-                    TitleWithIcon(text = "Top up your account", image = GlideIcons.CardMoney)
+                    TitleWithIcon(
+                        text = stringResource(CoreR.string.top_up_title1),
+                        image = GlideIcons.CardMoney
+                    )
 
                     Spacer(Modifier.height(16.dp))
 
-                    Text(text = "Enter the amount you want to top up your account")
+                    Text(text = stringResource(CoreR.string.top_up_description1))
 
                     Spacer(Modifier.height(16.dp))
 
@@ -137,9 +142,12 @@ fun TopUpScreenContent(
                                     }
                                 }
                             },
-                        label = { Text(text = "Amount") },
+                        label = { Text(text = stringResource(CoreR.string.amount)) },
                         trailingIcon = {
-                            Text(text = "zł", modifier = Modifier.padding(horizontal = 16.dp))
+                            Text(
+                                text = stringResource(CoreR.string.zloty),
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            )
                         },
                         keyboardOptions = KeyboardOptions(
                             capitalization = KeyboardCapitalization.None,
@@ -152,7 +160,10 @@ fun TopUpScreenContent(
 
                     Spacer(Modifier.height(32.dp))
 
-                    TitleWithIcon(text = "Select payment method", image = GlideIcons.Wallet)
+                    TitleWithIcon(
+                        text = stringResource(CoreR.string.top_up_title2),
+                        image = GlideIcons.Wallet
+                    )
 
                     Spacer(Modifier.height(16.dp))
 
@@ -168,7 +179,7 @@ fun TopUpScreenContent(
                         onClick = onTopUpClick,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text(text = "Top up")
+                        Text(text = stringResource(CoreR.string.top_up_button))
                     }
 
                     Spacer(Modifier.height(16.dp))
@@ -201,7 +212,7 @@ fun PaymentMethodList(
     Column(modifier = modifier) {
         items.value.forEachIndexed { index, paymentMethod ->
             PaymentMethodItem(
-                title = paymentMethod.title,
+                titleResId = paymentMethod.titleResId,
                 iconResId = paymentMethod.iconResId,
                 selected = index == selectedIndex,
                 modifier = Modifier.fillMaxWidth(),
@@ -216,7 +227,7 @@ fun PaymentMethodList(
 
 @Composable
 fun PaymentMethodItem(
-    title: String,
+    @StringRes titleResId: Int,
     @DrawableRes iconResId: Int,
     selected: Boolean,
     modifier: Modifier = Modifier,
@@ -232,7 +243,7 @@ fun PaymentMethodItem(
         )
         Spacer(Modifier.width(16.dp))
         Text(
-            text = title,
+            text = stringResource(titleResId),
             style = MaterialTheme.typography.labelLarge
         )
         Spacer(Modifier.weight(1f))

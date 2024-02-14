@@ -1,10 +1,11 @@
 package com.apsl.glideapp.feature.wallet.voucher
 
-import javax.annotation.concurrent.Immutable
+import androidx.annotation.StringRes
+import androidx.compose.runtime.Immutable
 
 @Immutable
 sealed interface VoucherAction {
     data object VoucherProcessingStarted : VoucherAction
     data object VoucherProcessingCompleted : VoucherAction
-    data class VoucherActivationError(val message: String) : VoucherAction
+    data class VoucherActivationError(@StringRes val textResId: Int) : VoucherAction
 }

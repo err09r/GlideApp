@@ -1,3 +1,5 @@
+@file:Suppress("ConstPropertyName")
+
 import org.gradle.api.JavaVersion
 
 object Config {
@@ -8,12 +10,12 @@ object Config {
     const val compileSdk = 34
     const val targetSdk = 33
 
-    const val versionName = "0.1.0"
+    const val versionName = "0.1.1"
     const val versionCode = 1
 
     val javaVersion = JavaVersion.VERSION_17
 
     const val testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-    val resourceConfigurations = arrayOf("en")
+    val resourceConfigurations = arrayOf("en", "pl")
 }

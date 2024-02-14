@@ -6,11 +6,11 @@ import com.apsl.glideapp.common.util.format
 import com.apsl.glideapp.core.model.Ride
 import com.apsl.glideapp.core.util.maps.mapToLatLng
 import com.google.android.gms.maps.model.LatLng
+import java.time.format.DateTimeFormatter
+import kotlin.math.roundToInt
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toJavaLocalDateTime
-import java.time.format.DateTimeFormatter
-import kotlin.math.roundToInt
 
 @Immutable
 data class RideDetailsUiModel(
@@ -20,9 +20,9 @@ data class RideDetailsUiModel(
     val startTime: String,
     val finishTime: String,
     val route: List<LatLng>,
-    val distance: Int,
+    val distance: String,
     val averageSpeed: String,
-    val timeInMinutes: Int
+    val timeInMinutes: String
 )
 
 private val formatter by lazy { DateTimeFormatter.ofPattern("EEEE, d MMMM") }
@@ -42,8 +42,8 @@ fun Ride.toRideDetailsUiModel(): RideDetailsUiModel {
         startTime = startTime,
         finishTime = finishTime,
         route = route.points.mapToLatLng(),
-        distance = route.distance.roundToInt(),
-        averageSpeed = "${averageSpeed.format(1)} km/h",
-        timeInMinutes = timeInMinutes.toInt()
+        distance = route.distance.roundToInt().toString(),
+        averageSpeed = averageSpeed.format(1),
+        timeInMinutes = timeInMinutes.toInt().toString()
     )
 }

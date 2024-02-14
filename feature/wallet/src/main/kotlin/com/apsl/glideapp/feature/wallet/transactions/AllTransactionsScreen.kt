@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -31,6 +32,7 @@ import com.apsl.glideapp.feature.wallet.common.AmountType
 import com.apsl.glideapp.feature.wallet.common.TransactionList
 import com.apsl.glideapp.feature.wallet.common.TransactionUiModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import com.apsl.glideapp.core.ui.R as CoreR
 
 @Composable
 fun AllTransactionsScreen(
@@ -53,13 +55,16 @@ fun AllTransactionsScreenContent(
     onPullRefresh: () -> Unit
 ) {
     FeatureScreen(
-        topBarText = "My transactions",
+        topBarText = stringResource(CoreR.string.all_transactions_screen_title),
         onBackClick = onBackClick
     ) {
         when {
             uiState.isLoading -> LoadingScreen()
             uiState.error != null -> {
-                Text(text = uiState.error.text, modifier = Modifier.align(Alignment.Center))
+                Text(
+                    text = stringResource(uiState.error.textResId),
+                    modifier = Modifier.align(Alignment.Center)
+                )
             }
 
             else -> {
@@ -96,27 +101,27 @@ private fun AllTransactionsScreenPreview() {
                 listOf(
                     TransactionUiModel(
                         id = "1",
-                        amount = "-3,00 zł",
+                        amount = "-3,00",
                         amountType = AmountType.Negative,
-                        title = "Account top up",
+                        titleResId = CoreR.string.transaction_type_top_up,
                         image = GlideIcons.TopUp,
                         separator = PagingSeparator("Monday, February 26"),
                         dateTime = "26 Feb, 03:13"
                     ),
                     TransactionUiModel(
                         id = "2",
-                        amount = "0,00 zł",
+                        amount = "0,00",
                         amountType = AmountType.Normal,
-                        title = "Account top up",
+                        titleResId = CoreR.string.transaction_type_top_up,
                         image = GlideIcons.Bonus,
                         separator = PagingSeparator("Monday, February 26"),
                         dateTime = "26 Feb, 03:13"
                     ),
                     TransactionUiModel(
                         id = "3",
-                        amount = "+3,00 zł",
+                        amount = "+3,00",
                         amountType = AmountType.Positive,
-                        title = "Account top up",
+                        titleResId = CoreR.string.transaction_type_top_up,
                         image = GlideIcons.Voucher,
                         separator = PagingSeparator("Monday, February 25"),
                         dateTime = "25 Feb, 03:13"

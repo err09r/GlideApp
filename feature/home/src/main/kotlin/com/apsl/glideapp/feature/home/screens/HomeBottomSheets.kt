@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -41,6 +42,7 @@ import com.apsl.glideapp.feature.home.models.SelectedVehicleUiModel
 import com.apsl.glideapp.feature.home.viewmodels.BatteryState
 import com.apsl.glideapp.feature.home.viewmodels.VehicleUiModel
 import com.google.android.gms.maps.model.LatLng
+import com.apsl.glideapp.core.ui.R as CoreR
 
 @Composable
 fun ActiveRideSheetLayout(
@@ -60,18 +62,21 @@ fun ActiveRideSheetLayout(
         ) {
             Column {
                 Text(
-                    text = "Scooter ${vehicle.code}",
+                    text = stringResource(CoreR.string.home_bottom_sheet_scooter, vehicle.code),
                     style = MaterialTheme.typography.titleLarge
                 )
                 Spacer(Modifier.height(16.dp))
                 ScooterInfoComponent(
                     imageVector = GlideIcons.Battery,
-                    text = "${vehicle.batteryCharge}% battery"
+                    text = stringResource(
+                        CoreR.string.home_bottom_sheet_battery,
+                        vehicle.batteryCharge
+                    )
                 )
                 Spacer(Modifier.height(4.dp))
                 ScooterInfoComponent(
                     imageVector = GlideIcons.Route2,
-                    text = "${vehicle.range} km range"
+                    text = stringResource(CoreR.string.home_bottom_sheet_range, vehicle.range)
                 )
             }
             Column {
@@ -90,14 +95,14 @@ fun ActiveRideSheetLayout(
                 onClick = {},
                 modifier = Modifier.weight(1f)
             ) {
-                Text(text = "Pause")
+                Text(text = stringResource(CoreR.string.pause))
             }
             Spacer(Modifier.width(16.dp))
             Button(
                 onClick = onFinishRideClick,
                 modifier = Modifier.weight(1f)
             ) {
-                Text(text = "Finish")
+                Text(text = stringResource(CoreR.string.finish))
             }
         }
     }
@@ -121,7 +126,10 @@ fun DefaultSheetLayout(
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Scooter ${selectedVehicle.code}",
+                    text = stringResource(
+                        CoreR.string.home_bottom_sheet_scooter,
+                        selectedVehicle.code
+                    ),
                     style = MaterialTheme.typography.titleLarge
                 )
                 Spacer(Modifier.height(20.dp))
@@ -132,12 +140,19 @@ fun DefaultSheetLayout(
                         BatteryState.Full -> GlideIcons.BatteryFull
                         BatteryState.Undefined -> GlideIcons.Battery
                     },
-                    text = "${selectedVehicle.range} km range"
+                    text = stringResource(
+                        CoreR.string.home_bottom_sheet_range,
+                        selectedVehicle.range
+                    )
                 )
                 Spacer(Modifier.height(4.dp))
                 ScooterInfoComponent(
                     imageVector = GlideIcons.Card,
-                    text = "${selectedVehicle.unlockingFee} zł to start, then ${selectedVehicle.farePerMinute} zł/min"
+                    text = stringResource(
+                        CoreR.string.home_bottom_sheet_fare,
+                        selectedVehicle.unlockingFee,
+                        selectedVehicle.farePerMinute
+                    )
                 )
             }
             Image(
@@ -151,12 +166,12 @@ fun DefaultSheetLayout(
             FilledTonalButton(onClick = {}) {
                 Icon(imageVector = GlideIcons.Bell, contentDescription = null)
                 Spacer(Modifier.width(8.dp))
-                Text(text = "Ring")
+                Text(text = stringResource(CoreR.string.ring))
             }
             FilledTonalButton(onClick = {}) {
                 Icon(imageVector = GlideIcons.WarningTriangle, contentDescription = null)
                 Spacer(Modifier.width(8.dp))
-                Text(text = "Report issue")
+                Text(text = stringResource(CoreR.string.report_issue))
             }
         }
         Spacer(Modifier.height(48.dp))
@@ -164,7 +179,7 @@ fun DefaultSheetLayout(
             onClick = onStartRideClick,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = "Start Ride")
+            Text(text = stringResource(CoreR.string.home_bottom_sheet_button))
         }
     }
 }

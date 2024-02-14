@@ -72,7 +72,7 @@ fun NavGraphBuilder.walletGraph(navController: NavController) {
         dialog(
             route = Dialog.Wallet.TopUpSuccess.route,
 //            arguments = listOf(navArgument("amount") { type = NavType.StringType })
-        ) { backStackEntry ->
+        ) {
 //            val amount = backStackEntry.arguments?.getString("amount")
             TopUpSuccessDialog(onDismiss = { navController.popBackStack() })//amount = requireNotNull(amount))
         }

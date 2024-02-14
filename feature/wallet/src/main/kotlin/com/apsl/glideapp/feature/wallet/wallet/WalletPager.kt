@@ -1,5 +1,7 @@
 package com.apsl.glideapp.feature.wallet.wallet
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,15 +40,23 @@ import com.apsl.glideapp.core.ui.R as CoreR
 @Immutable
 data class WalletPagerItem(
     val id: Int,
-    val title: String,
-    val text: String,
-    val imageResId: Int,
+    @StringRes val titleResId: Int,
+    @StringRes val textResId: Int,
+    @DrawableRes val imageResId: Int,
     val onClick: () -> Unit
 )
 
+@Immutable
+@JvmInline
+value class WalletPagerItems(val value: List<WalletPagerItem>)
+
+fun List<WalletPagerItem>.toWalletPagerItems(): WalletPagerItems {
+    return WalletPagerItems(value = this)
+}
+
 @Composable
 fun WalletPager(
-    items: List<WalletPagerItem>,
+    items: WalletPagerItems,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
@@ -63,8 +74,8 @@ fun WalletPager(
         beyondBoundsPageCount = 3,
         pageSpacing = 8.dp
     ) { index ->
-        val page = (index - startIndex).floorMod(items.size)
-        val item = items[page]
+        val page = (index - startIndex).floorMod(items.value.size)
+        val item = items.value[page]
         Column {
             ElevatedCard(
                 onClick = item.onClick,
@@ -106,10 +117,10 @@ fun WalletPager(
                             .weight(1f)
                             .padding(horizontal = 16.dp)
                     ) {
-                        Text(text = item.title)
+                        Text(text = stringResource(item.titleResId))
                         Spacer(Modifier.height(4.dp))
                         Text(
-                            text = item.text,
+                            text = stringResource(item.textResId),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             style = MaterialTheme.typography.bodyMedium,
                             overflow = TextOverflow.Ellipsis
@@ -144,19 +155,19 @@ private fun WalletPagerPreview() {
                 items = listOf(
                     WalletPagerItem(
                         id = 1,
-                        title = "Redeem voucher",
-                        text = "Have a code? Activate it and enjoy the ride!",
+                        titleResId = CoreR.string.wallet_pager_item_title1,
+                        textResId = CoreR.string.wallet_pager_item_text1,
                         imageResId = CoreR.drawable.img_gift_front,
                         onClick = {}
                     ),
                     WalletPagerItem(
                         id = 2,
-                        title = "Add payment method",
-                        text = "More methods for more convenience",
+                        titleResId = CoreR.string.wallet_pager_item_title2,
+                        textResId = CoreR.string.wallet_pager_item_text2,
                         imageResId = CoreR.drawable.img_card_front,
                         onClick = {}
                     )
-                ),
+                ).toWalletPagerItems(),
                 modifier = Modifier.fillMaxWidth(),
                 contentPadding = PaddingValues(horizontal = 32.dp)
             )

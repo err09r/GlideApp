@@ -10,6 +10,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.apsl.glideapp.feature.home.R
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -18,7 +19,6 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import timber.log.Timber
-import javax.inject.Inject
 import com.apsl.glideapp.core.ui.R as CoreR
 
 @AndroidEntryPoint
@@ -48,8 +48,8 @@ class RideService : Service() {
 
     private val notificationBuilder by lazy {
         NotificationCompat.Builder(this, getString(CoreR.string.ride_session))
-            .setContentTitle("Tracking location...")
-            .setContentText("Location")
+            .setContentTitle(getString(CoreR.string.ride_notification_title))
+            .setContentText(getString(CoreR.string.ride_notification_text_default))
             .setSmallIcon(R.drawable.img_scooter)
             .setOngoing(true)
             .setAutoCancel(false)
@@ -74,10 +74,11 @@ class RideService : Service() {
 
     @SuppressLint("MissingPermission")
     private fun updateNotification(address: String) {
-        notificationManager.notify(
-            NOTIFICATION_ID,
-            notificationBuilder.setContentText("Driving around: $address").build()
-        )
+        val builder = notificationBuilder.setContentText(
+            getString(CoreR.string.ride_notification_text, address)
+        ).build()
+
+        notificationManager.notify(NOTIFICATION_ID, builder)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {

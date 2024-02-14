@@ -43,6 +43,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -135,7 +136,7 @@ fun RideDetailsScreenContent(
                 scaffoldState = scaffoldState,
                 topBar = {
                     TopAppBar(
-                        title = { Text(text = "Ride details") },
+                        title = { Text(text = stringResource(CoreR.string.ride_details_screen_title)) },
                         navigationIcon = {
                             IconButton(onClick = onBackClick) {
                                 Icon(imageVector = GlideIcons.ArrowBack, contentDescription = null)
@@ -150,9 +151,7 @@ fun RideDetailsScreenContent(
                     )
                 },
                 sheetContent = {
-                    uiState.ride?.let {
-                        RideDetailsSheetContent(ride = it)
-                    }
+                    uiState.ride?.let { RideDetailsSheetContent(ride = it) }
                 }
             ) {
                 Column(modifier = Modifier.fillMaxSize()) {
@@ -285,15 +284,30 @@ fun RideDetailsSheetContent(ride: RideDetailsUiModel, modifier: Modifier = Modif
             .verticalScroll(rememberScrollState())
     ) {
         Column {
-            RideDetailsSheetTitle(imageVector = GlideIcons.Route, text = "Route")
+            RideDetailsSheetTitle(
+                imageVector = GlideIcons.Route,
+                text = stringResource(CoreR.string.ride_details_sheet_title1)
+            )
             Spacer(Modifier.height(8.dp))
             Column(modifier = Modifier.padding(start = 16.dp)) {
-                TitleValueText(title = "Total distance", value = "${ride.distance} m")
+                TitleValueText(
+                    title = stringResource(CoreR.string.ride_details_sheet_subtitle1),
+                    value = stringResource(CoreR.string.meters, ride.distance)
+                )
                 Spacer(Modifier.height(4.dp))
-                TitleValueText(title = "Average speed", value = ride.averageSpeed)
+                TitleValueText(
+                    title = stringResource(CoreR.string.ride_details_sheet_subtitle2),
+                    value = stringResource(CoreR.string.value_kmh, ride.averageSpeed)
+                )
                 Spacer(Modifier.height(24.dp))
+
+                val addressText = if (ride.startAddress == null || ride.finishAddress == null) {
+                    stringResource(CoreR.string.address_not_defined)
+                } else {
+                    stringResource(CoreR.string.value_range, ride.startAddress, ride.finishAddress)
+                }
                 Text(
-                    text = "${ride.startAddress ?: "Address not defined"} - ${ride.finishAddress ?: "Address not defined "}",
+                    text = addressText,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
@@ -304,11 +318,17 @@ fun RideDetailsSheetContent(ride: RideDetailsUiModel, modifier: Modifier = Modif
         Spacer(Modifier.height(16.dp))
 
         Column {
-            RideDetailsSheetTitle(imageVector = GlideIcons.Clock, text = "Time")
+            RideDetailsSheetTitle(
+                imageVector = GlideIcons.Clock,
+                text = stringResource(CoreR.string.ride_details_sheet_title2)
+            )
             Spacer(Modifier.height(8.dp))
             Column(modifier = Modifier.padding(start = 16.dp)) {
                 Text(
-                    text = "Ride lasted ${ride.timeInMinutes} minutes",
+                    text = stringResource(
+                        CoreR.string.ride_details_sheet_ride_lasted,
+                        ride.timeInMinutes
+                    ),
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(Modifier.height(24.dp))
@@ -317,7 +337,7 @@ fun RideDetailsSheetContent(ride: RideDetailsUiModel, modifier: Modifier = Modif
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "Date and time",
+                        text = stringResource(CoreR.string.ride_details_sheet_date_time),
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Column(horizontalAlignment = Alignment.End) {
@@ -327,7 +347,11 @@ fun RideDetailsSheetContent(ride: RideDetailsUiModel, modifier: Modifier = Modif
                             fontWeight = FontWeight.SemiBold
                         )
                         Text(
-                            text = "${ride.startTime} - ${ride.finishTime}",
+                            text = stringResource(
+                                CoreR.string.value_range,
+                                ride.startTime,
+                                ride.finishTime
+                            ),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontWeight = FontWeight.SemiBold
                         )
@@ -383,9 +407,9 @@ private fun RideDetailsSheetContentPreview() {
                 startTime = "16:24",
                 finishTime = "16:56",
                 route = emptyList(),
-                distance = 4154,
+                distance = "4154",
                 averageSpeed = "15,3 km/h",
-                timeInMinutes = 32
+                timeInMinutes = "32"
             )
         )
     }
@@ -404,9 +428,9 @@ private fun RideDetailsScreenPreview() {
                     startTime = "16:24",
                     finishTime = "16:56",
                     route = emptyList(),
-                    distance = 4154,
+                    distance = "4154",
                     averageSpeed = "15.3 km/h",
-                    timeInMinutes = 32
+                    timeInMinutes = "32"
                 )
             ),
             snackbarHostState = SnackbarHostState(),

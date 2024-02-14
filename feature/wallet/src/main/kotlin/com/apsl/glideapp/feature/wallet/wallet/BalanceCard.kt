@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.apsl.glideapp.core.ui.icons.CardMoney
@@ -47,12 +48,12 @@ fun BalanceCard(
             ) {
                 Column {
                     Text(
-                        text = "Your balance",
+                        text = stringResource(CoreR.string.balance_card_title),
                         style = MaterialTheme.typography.bodyLarge
                     )
                     Spacer(Modifier.height(4.dp))
                     Text(
-                        text = value,
+                        text = stringResource(CoreR.string.value_zloty, value),
                         style = MaterialTheme.typography.titleLarge
                     )
                 }
@@ -74,7 +75,7 @@ fun BalanceCard(
                         contentDescription = null
                     )
                     Spacer(Modifier.width(8.dp))
-                    Text(text = "Add money")
+                    Text(text = stringResource(CoreR.string.balance_card_button))
                 }
                 FilledTonalIconButton(
                     onClick = {},
@@ -103,6 +104,6 @@ fun BalanceCard(
 @Composable
 private fun BalanceCardPreview() {
     GlideAppTheme {
-        BalanceCard(value = "1234.56 zł", onAddMoneyClick = {})
+        BalanceCard(value = "1234,56", onAddMoneyClick = {})
     }
 }

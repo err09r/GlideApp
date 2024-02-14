@@ -9,20 +9,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.apsl.glideapp.core.ui.ComposePagingItems
-import com.apsl.glideapp.core.ui.GraphRoutePreviewParameterProvider
 import com.apsl.glideapp.core.ui.PagingSeparator
-import com.apsl.glideapp.core.ui.RideRoute
 import com.apsl.glideapp.core.ui.Separator
 import com.apsl.glideapp.core.ui.paddingBeforeSeparator
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.core.ui.toComposePagingItems
 import kotlinx.coroutines.flow.MutableStateFlow
+import com.apsl.glideapp.core.ui.R as CoreR
 
 @Composable
 fun RideList(
@@ -32,7 +32,7 @@ fun RideList(
     onRideClick: (String) -> Unit
 ) {
     val itemCount = rides?.itemCount ?: 0
-    // Change once https://issuetracker.google.com/issues/264237280 is added
+    // Change once https://issuetracker.google.com/issues/264237280 is implemented
     val indicesBeforeSeparators = remember(rides) { mutableStateMapOf<Int, Int>() }
 
     LazyColumn(
@@ -68,10 +68,18 @@ fun RideList(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .paddingBeforeSeparator(apply = index in indicesBeforeSeparators),
-                            overlineText = ride.address ?: "Address not defined",
-                            headlineText = "${ride.startTime} - ${ride.finishTime}",
-                            supportingText = "${ride.distance} meters",
-                            trailingText = "${ride.fare} zł",
+                            overlineText = ride.address
+                                ?: stringResource(CoreR.string.address_not_defined),
+                            headlineText = stringResource(
+                                CoreR.string.value_range,
+                                ride.startTime,
+                                ride.finishTime
+                            ),
+                            supportingText = stringResource(
+                                CoreR.string.value_meters_full,
+                                ride.distance
+                            ),
+                            trailingText = stringResource(CoreR.string.value_zloty, ride.fare),
                             route = ride.route,
                             onClick = { onRideClick(ride.id) }
                         )
@@ -86,7 +94,7 @@ fun RideList(
 
 @Preview
 @Composable
-private fun RideListPreview(@PreviewParameter(GraphRoutePreviewParameterProvider::class) route: RideRoute) {
+private fun RideListPreview(@PreviewParameter(RideRoutePreviewParameterProvider::class) route: RideRoute) {
     GlideAppTheme {
         val rides = MutableStateFlow(
             PagingData.from(
@@ -97,7 +105,7 @@ private fun RideListPreview(@PreviewParameter(GraphRoutePreviewParameterProvider
                         finishTime = "16:02",
                         address = "Spacerowa 1A, Słupsk",
                         route = route,
-                        distance = 426,
+                        distance = "426",
                         fare = "3,75",
                         separator = PagingSeparator("Monday, February 25")
                     ),
@@ -107,7 +115,7 @@ private fun RideListPreview(@PreviewParameter(GraphRoutePreviewParameterProvider
                         finishTime = "16:02",
                         address = "Spacerowa 1A, Słupsk",
                         route = route,
-                        distance = 426,
+                        distance = "426",
                         fare = "4,05",
                         separator = PagingSeparator("Monday, February 25")
                     ),
@@ -117,7 +125,7 @@ private fun RideListPreview(@PreviewParameter(GraphRoutePreviewParameterProvider
                         finishTime = "16:02",
                         address = "Spacerowa 1A, Słupsk",
                         route = route,
-                        distance = 426,
+                        distance = "426",
                         fare = "8,99",
                         separator = PagingSeparator("Monday, February 26")
                     )

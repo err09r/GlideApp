@@ -29,6 +29,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.apsl.glideapp.common.util.toEpochMilliseconds
@@ -44,6 +46,7 @@ import com.apsl.glideapp.feature.home.viewmodels.RideState
 import com.apsl.glideapp.feature.home.viewmodels.VehicleUiModel
 import kotlinx.datetime.LocalDateTime
 import timber.log.Timber
+import com.apsl.glideapp.core.ui.R as CoreR
 
 @Composable
 fun BoxScope.RideLayout(rideState: RideState, modifier: Modifier = Modifier) {
@@ -75,7 +78,7 @@ fun BoxScope.RideLayout(rideState: RideState, modifier: Modifier = Modifier) {
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Active ride")
+            Text(text = stringResource(CoreR.string.ride_layout_header))
             Spacer(Modifier.height(16.dp))
             Row(
                 modifier = Modifier
@@ -117,11 +120,16 @@ fun BoxScope.RideLayout(rideState: RideState, modifier: Modifier = Modifier) {
                         tint = MaterialTheme.colorScheme.tertiary
                     )
                     Spacer(Modifier.width(8.dp))
+
+                    val context = LocalContext.current
                     AnimatedText(
-                        textProvider = { "${rideState.distance} km" },
+                        textProvider = {
+                            context.getString(CoreR.string.value_kilometers, rideState.distance)
+                        },
                         maxLines = 1,
                         style = MaterialTheme.typography.headlineLarge
                     )
+
                     Spacer(Modifier.weight(1f))
                 }
             }

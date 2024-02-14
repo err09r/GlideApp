@@ -34,9 +34,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.apsl.glideapp.core.ui.Graph
-import com.apsl.glideapp.core.ui.GraphRoutePreviewParameterProvider
-import com.apsl.glideapp.core.ui.RideRoute
 import com.apsl.glideapp.core.ui.icons.GlideIcons
 import com.apsl.glideapp.core.ui.icons.MapPoint
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
@@ -76,7 +73,7 @@ fun RideItem(
                         .scale(scaleX = mapBackgroundScaleX, scaleY = 1f),
                     contentScale = ContentScale.Crop
                 )
-                Graph(
+                RideGraph(
                     modifier = Modifier.size(80.dp),
                     contentPadding = PaddingValues(12.dp),
                     thickness = 2.dp,
@@ -126,7 +123,7 @@ fun RideItem(
 
 @Preview
 @Composable
-private fun RideItemPreview(@PreviewParameter(GraphRoutePreviewParameterProvider::class) route: RideRoute) {
+private fun RideItemPreview(@PreviewParameter(RideRoutePreviewParameterProvider::class) route: RideRoute) {
     GlideAppTheme {
         RideItem(
             modifier = Modifier.fillMaxWidth(),

@@ -24,6 +24,7 @@ import com.apsl.glideapp.core.ui.paddingBeforeSeparator
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.core.ui.toComposePagingItems
 import kotlinx.coroutines.flow.MutableStateFlow
+import com.apsl.glideapp.core.ui.R as CoreR
 
 @Composable
 fun TransactionList(
@@ -32,7 +33,7 @@ fun TransactionList(
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
     val itemCount = transactions?.itemCount ?: 0
-    // Change once https://issuetracker.google.com/issues/264237280 is added
+    // Change once https://issuetracker.google.com/issues/264237280 is implemented
     val indicesBeforeSeparators = remember(transactions) { mutableStateMapOf<Int, Int>() }
 
     LazyColumn(
@@ -88,72 +89,72 @@ private fun TransactionListPreview() {
                 listOf(
                     TransactionUiModel(
                         id = "1",
-                        amount = "-3,00 zł",
+                        amount = "-3,00",
                         amountType = AmountType.Negative,
-                        title = "Account top up",
+                        titleResId = CoreR.string.transaction_type_top_up,
                         image = GlideIcons.TopUp,
                         separator = PagingSeparator("Monday, February 26"),
                         dateTime = "26 Feb, 03:13"
                     ),
                     TransactionUiModel(
                         id = "2",
-                        amount = "0,00 zł",
+                        amount = "0,00",
                         amountType = AmountType.Normal,
-                        title = "Account top up",
+                        titleResId = CoreR.string.transaction_type_top_up,
                         image = GlideIcons.Bonus,
                         separator = PagingSeparator("Monday, February 26"),
                         dateTime = "26 Feb, 03:13"
                     ),
                     TransactionUiModel(
                         id = "3",
-                        amount = "+3,00 zł",
+                        amount = "+3,00",
                         amountType = AmountType.Positive,
-                        title = "Account top up",
+                        titleResId = CoreR.string.transaction_type_top_up,
                         image = GlideIcons.Voucher,
                         separator = PagingSeparator("Monday, February 26"),
                         dateTime = "25 Feb, 03:13"
                     ),
                     TransactionUiModel(
                         id = "4",
-                        amount = "-3,00 zł",
+                        amount = "-3,00",
                         amountType = AmountType.Negative,
-                        title = "Account top up",
+                        titleResId = CoreR.string.transaction_type_top_up,
                         image = GlideIcons.TopUp,
                         separator = PagingSeparator("Monday, February 26"),
                         dateTime = "26 Feb, 03:13"
                     ),
                     TransactionUiModel(
                         id = "5",
-                        amount = "0,00 zł",
+                        amount = "0,00",
                         amountType = AmountType.Normal,
-                        title = "Account top up",
+                        titleResId = CoreR.string.transaction_type_top_up,
                         image = GlideIcons.Bonus,
                         separator = PagingSeparator("Monday, February 26"),
                         dateTime = "26 Feb, 03:13"
                     ),
                     TransactionUiModel(
                         id = "6",
-                        amount = "+3,00 zł",
+                        amount = "+3,00",
                         amountType = AmountType.Positive,
-                        title = "Account top up",
+                        titleResId = CoreR.string.transaction_type_top_up,
                         image = GlideIcons.Voucher,
                         separator = PagingSeparator("Monday, February 20"),
                         dateTime = "25 Feb, 03:13"
                     ),
                     TransactionUiModel(
                         id = "7",
-                        amount = "+3,00 zł",
+                        amount = "+3,00",
                         amountType = AmountType.Positive,
-                        title = "Account top up",
+                        titleResId = CoreR.string.transaction_type_top_up,
                         image = GlideIcons.Voucher,
                         separator = PagingSeparator("Monday, February 20"),
                         dateTime = "25 Feb, 03:13"
                     ),
                     TransactionUiModel(
                         id = "8",
-                        amount = "+3,00 zł",
+                        amount = "+3,00",
                         amountType = AmountType.Positive,
-                        title = "Account top up",
+                        titleResId = CoreR.string.transaction_type_top_up,
                         image = GlideIcons.Voucher,
                         separator = PagingSeparator("Monday, February 20"),
                         dateTime = "25 Feb, 03:13"

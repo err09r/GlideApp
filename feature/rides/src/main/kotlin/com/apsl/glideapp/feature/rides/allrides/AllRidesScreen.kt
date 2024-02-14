@@ -28,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -36,10 +37,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.apsl.glideapp.core.ui.FeatureScreen
-import com.apsl.glideapp.core.ui.GraphRoutePreviewParameterProvider
 import com.apsl.glideapp.core.ui.LoadingScreen
 import com.apsl.glideapp.core.ui.PagingSeparator
-import com.apsl.glideapp.core.ui.RideRoute
 import com.apsl.glideapp.core.ui.icons.ElectricScooter
 import com.apsl.glideapp.core.ui.icons.GlideIcons
 import com.apsl.glideapp.core.ui.icons.NotificationRemove
@@ -51,6 +50,7 @@ import com.apsl.glideapp.core.ui.receiveAsLazyPagingItems
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.core.ui.toComposePagingItems
 import kotlinx.coroutines.flow.MutableStateFlow
+import com.apsl.glideapp.core.ui.R as CoreR
 
 @Composable
 fun AllRidesScreen(
@@ -81,13 +81,16 @@ fun AllRidesScreenContent(
     onPullRefresh: () -> Unit
 ) {
     FeatureScreen(
-        topBarText = "My rides",
+        topBarText = stringResource(CoreR.string.all_rides_screen_title),
         onBackClick = onBackClick
     ) {
         when {
             uiState.isLoading -> LoadingScreen()
             uiState.error != null -> {
-                Text(text = uiState.error.text, modifier = Modifier.align(Alignment.Center))
+                Text(
+                    text = stringResource(uiState.error.textResId),
+                    modifier = Modifier.align(Alignment.Center)
+                )
             }
 
             else -> {
@@ -145,13 +148,13 @@ fun RideStats(modifier: Modifier = Modifier, rides: String, distance: String) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             RideStatsItem(
-                title = "Total travelled",
-                text = "$distance km",
+                title = stringResource(CoreR.string.all_rides_stats_travelled),
+                text = stringResource(CoreR.string.value_kilometers, distance),
                 imageVector = GlideIcons.Route
             )
             Spacer(Modifier.weight(1f))
             RideStatsItem(
-                title = "Total rides",
+                title = stringResource(CoreR.string.all_rides_stats_rides),
                 text = rides,
                 imageVector = GlideIcons.ElectricScooter
             )
@@ -235,13 +238,13 @@ fun AllRidesEmptyScreen() {
         Spacer(Modifier.height(16.dp))
 
         Text(
-            text = "No rides",
+            text = stringResource(CoreR.string.all_rides_empty_title),
             style = MaterialTheme.typography.headlineMedium
         )
 
         Spacer(Modifier.height(8.dp))
         Text(
-            text = "Start your first ride and it will show up here",
+            text = stringResource(CoreR.string.all_rides_empty_text),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyLarge
         )
@@ -250,7 +253,7 @@ fun AllRidesEmptyScreen() {
 
 @Preview(showBackground = true)
 @Composable
-private fun AllRidesScreenPreview(@PreviewParameter(GraphRoutePreviewParameterProvider::class) route: RideRoute) {
+private fun AllRidesScreenPreview(@PreviewParameter(RideRoutePreviewParameterProvider::class) route: RideRoute) {
     GlideAppTheme {
         val rides = MutableStateFlow(
             PagingData.from(
@@ -261,7 +264,7 @@ private fun AllRidesScreenPreview(@PreviewParameter(GraphRoutePreviewParameterPr
                         finishTime = "16:02",
                         address = "Spacerowa 1A, Słupsk",
                         route = route,
-                        distance = 426,
+                        distance = "426",
                         fare = "3,75",
                         separator = PagingSeparator("Monday, February 25")
                     ),
@@ -271,7 +274,7 @@ private fun AllRidesScreenPreview(@PreviewParameter(GraphRoutePreviewParameterPr
                         finishTime = "16:02",
                         address = "Spacerowa 1A, Słupsk",
                         route = route,
-                        distance = 426,
+                        distance = "426",
                         fare = "4,05",
                         separator = PagingSeparator("Monday, February 25")
                     ),
@@ -281,7 +284,7 @@ private fun AllRidesScreenPreview(@PreviewParameter(GraphRoutePreviewParameterPr
                         finishTime = "16:02",
                         address = "Spacerowa 1A, Słupsk",
                         route = route,
-                        distance = 426,
+                        distance = "426",
                         fare = "8,99",
                         separator = PagingSeparator("Monday, February 26")
                     )

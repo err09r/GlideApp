@@ -1,5 +1,6 @@
 package com.apsl.glideapp.feature.home.screens
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -34,11 +36,12 @@ import com.apsl.glideapp.core.ui.icons.Settings
 import com.apsl.glideapp.core.ui.icons.Wallet
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.feature.home.viewmodels.UserInfo
+import com.apsl.glideapp.core.ui.R as CoreR
 
 @Immutable
 data class DrawerMenuItem(
     val icon: ImageVector,
-    val title: String,
+    @StringRes val titleResId: Int,
     val onClick: () -> Unit
 )
 
@@ -54,27 +57,27 @@ fun HomeDrawerSheet(
         listOf(
             DrawerMenuItem(
                 icon = GlideIcons.Wallet,
-                title = "Wallet",
+                titleResId = CoreR.string.home_drawer_menu_item1,
                 onClick = onWalletClick
             ),
             DrawerMenuItem(
                 icon = GlideIcons.MyRides,
-                title = "My rides",
+                titleResId = CoreR.string.home_drawer_menu_item2,
                 onClick = onMyRidesClick
             ),
             DrawerMenuItem(
                 icon = GlideIcons.Help,
-                title = "Help",
+                titleResId = CoreR.string.home_drawer_menu_item3,
                 onClick = {}
             ),
             DrawerMenuItem(
                 icon = GlideIcons.Settings,
-                title = "Settings",
+                titleResId = CoreR.string.home_drawer_menu_item4,
                 onClick = {}
             ),
             DrawerMenuItem(
                 icon = GlideIcons.Logout,
-                title = "Log out",
+                titleResId = CoreR.string.home_drawer_menu_item5,
                 onClick = onLogoutClick
             )
         )
@@ -90,7 +93,7 @@ fun HomeDrawerSheet(
 
             if (userInfo.username != null) {
                 Text(
-                    text = "Hi, ${userInfo.username}",
+                    text = stringResource(CoreR.string.home_drawer_header, userInfo.username),
                     style = MaterialTheme.typography.headlineLarge,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1
@@ -102,12 +105,12 @@ fun HomeDrawerSheet(
                 StatsComponent(
                     icon = GlideIcons.Route,
                     value = userInfo.totalDistance,
-                    units = "meters"
+                    units = stringResource(CoreR.string.meters) //TODO: Handle `Quantity strings (plurals)`
                 )
                 StatsComponent(
                     icon = GlideIcons.ElectricScooter,
                     value = userInfo.totalRides,
-                    units = "rides"
+                    units = stringResource(CoreR.string.rides) //TODO: Handle `Quantity strings (plurals)`
                 )
             }
         }
@@ -120,7 +123,7 @@ fun HomeDrawerSheet(
             }
             ListItem(
                 modifier = Modifier.clickable(onClick = item.onClick),
-                headlineContent = { Text(text = item.title) },
+                headlineContent = { Text(text = stringResource(item.titleResId)) },
                 leadingContent = {
                     Icon(imageVector = item.icon, contentDescription = null)
                 }

@@ -11,8 +11,7 @@ data class HomeUiState(
     val isLoadingMapContent: Boolean = false,
     val mapState: MapState = MapState(),
     val selectedVehicle: SelectedVehicleUiModel? = null,
-    val rideState: RideState? = null,
-    val error: HomeUiError? = null
+    val rideState: RideState? = null
 ) {
     val isRideActive: Boolean get() = rideState != null && !rideState.isPaused
 }

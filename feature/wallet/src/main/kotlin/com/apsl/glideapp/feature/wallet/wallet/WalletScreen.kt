@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -96,19 +97,19 @@ fun WalletScreenContent(
             listOf(
                 WalletPagerItem(
                     id = 1,
-                    title = "Redeem voucher",
-                    text = "Have a code? Activate it and enjoy the ride!",
+                    titleResId = CoreR.string.wallet_pager_item_title1,
+                    textResId = CoreR.string.wallet_pager_item_text1,
                     imageResId = CoreR.drawable.img_gift_front,
                     onClick = onRedeemVoucherClick
                 ),
                 WalletPagerItem(
                     id = 2,
-                    title = "Add payment method",
-                    text = "More methods for more convenience",
+                    titleResId = CoreR.string.wallet_pager_item_title2,
+                    textResId = CoreR.string.wallet_pager_item_text2,
                     imageResId = CoreR.drawable.img_card_front,
                     onClick = {}
                 )
-            )
+            ).toWalletPagerItems()
         }
 
         Box(modifier = Modifier.pullRefresh(pullRefreshState)) {
@@ -139,7 +140,7 @@ fun WalletScreenContent(
                 Spacer(Modifier.height(32.dp))
 
                 Separator(
-                    text = "Recent transactions",
+                    text = stringResource(CoreR.string.recent_transactions_header),
                     modifier = Modifier
                         .align(Alignment.Start)
                         .padding(start = 16.dp)
@@ -162,7 +163,7 @@ fun WalletScreenContent(
                         }
                         Spacer(Modifier.height(24.dp))
                         TextButton(onClick = onSeeAllTransactionsClick) {
-                            Text(text = "See all transactions")
+                            Text(text = stringResource(CoreR.string.recent_transactions_footer))
                         }
                         Spacer(Modifier.height(32.dp))
                     }
@@ -187,27 +188,27 @@ private fun WalletScreenPreview() {
                 recentTransactions = listOf(
                     TransactionUiModel(
                         id = "1",
-                        amount = "-3,00 zł",
+                        amount = "-3,00",
                         amountType = AmountType.Negative,
-                        title = "Account top up",
+                        titleResId = CoreR.string.transaction_type_top_up,
                         image = GlideIcons.TopUp,
                         separator = PagingSeparator("Monday, February 25"),
                         dateTime = "26 Feb, 03:13"
                     ),
                     TransactionUiModel(
                         id = "2",
-                        amount = "0,00 zł",
+                        amount = "0,00",
                         amountType = AmountType.Normal,
-                        title = "Account top up",
+                        titleResId = CoreR.string.transaction_type_top_up,
                         image = GlideIcons.Bonus,
                         separator = PagingSeparator("Monday, February 25"),
                         dateTime = "26 Feb, 03:13"
                     ),
                     TransactionUiModel(
                         id = "3",
-                        amount = "+3,00 zł",
+                        amount = "+3,00",
                         amountType = AmountType.Positive,
-                        title = "Account top up",
+                        titleResId = CoreR.string.transaction_type_top_up,
                         image = GlideIcons.Voucher,
                         separator = PagingSeparator("Monday, February 25"),
                         dateTime = "25 Feb, 03:13"

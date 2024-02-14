@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -92,10 +93,13 @@ fun LoginScreenContent(
 
             AuthScreen(snackbarHostState = snackbarHostState, scrollState = scrollState) {
                 Spacer(Modifier.height(16.dp))
-                Text(text = "Welcome!", style = MaterialTheme.typography.headlineMedium)
+                Text(
+                    text = stringResource(CoreR.string.login_title),
+                    style = MaterialTheme.typography.headlineMedium
+                )
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    text = "Sign in to start a ride",
+                    text = stringResource(CoreR.string.login_description),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyLarge
                 )
@@ -112,7 +116,7 @@ fun LoginScreenContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .scrollToCenterOnFocused(scrollState),
-                    label = { Text(text = "Username") },
+                    label = { Text(text = stringResource(CoreR.string.username)) },
                     keyboardOptions = KeyboardOptions(
                         capitalization = KeyboardCapitalization.None,
                         autoCorrect = false,
@@ -125,7 +129,7 @@ fun LoginScreenContent(
 
                 PasswordTextField(
                     value = uiState.passwordTextFieldValue ?: "",
-                    label = "Password",
+                    label = stringResource(CoreR.string.password),
                     modifier = Modifier
                         .fillMaxWidth()
                         .scrollToCenterOnFocused(scrollState),
@@ -146,7 +150,7 @@ fun LoginScreenContent(
                     enabled = uiState.isActionButtonActive
                 ) {
                     Text(
-                        text = "Sign in",
+                        text = stringResource(CoreR.string.login_button),
                         modifier = Modifier.padding(horizontal = 16.dp)
                     )
                 }
@@ -159,10 +163,10 @@ fun LoginScreenContent(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    Text(text = "Don't have an account?")
+                    Text(text = stringResource(CoreR.string.dont_have_an_account))
                     Spacer(Modifier.width(8.dp))
                     Text(
-                        text = "Sign up",
+                        text = stringResource(CoreR.string.sign_up),
                         modifier = Modifier.clickable(onClick = onSignUpClick),
                         color = MaterialTheme.colorScheme.primary
                     )
