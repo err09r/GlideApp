@@ -13,4 +13,5 @@ sealed interface HomeAction {
     data class Toast(val message: String) : HomeAction
     data object OpenLocationSettingsDialog : HomeAction
     data object RequestLocationPermissions : HomeAction
+    data object OpenTopUpScreen : HomeAction
 }

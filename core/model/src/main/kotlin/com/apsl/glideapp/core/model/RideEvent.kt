@@ -14,5 +14,7 @@ sealed interface RideEvent {
     data object Finished : RideEvent
     sealed class Error(val message: String?) : RideEvent {
         class UserInsideNoParkingZone(message: String?) : Error(message)
+        class UserTooFarFromVehicle(message: String?) : Error(message)
+        class NotEnoughFunds(message: String?) : Error(message)
     }
 }

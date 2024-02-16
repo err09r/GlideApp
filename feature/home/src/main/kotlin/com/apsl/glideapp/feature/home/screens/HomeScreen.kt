@@ -56,6 +56,7 @@ fun HomeScreen(
     onNavigateToLogin: () -> Unit,
     onNavigateToAllRides: () -> Unit,
     onNavigateToWallet: () -> Unit,
+    onNavigateToTopUp: () -> Unit,
     onNavigateToLocationPermission: () -> Unit,
     onNavigateToLocationRationale: () -> Unit,
     onNavigateToNotificationPermission: () -> Unit
@@ -72,6 +73,7 @@ fun HomeScreen(
     HomeActionsHandler(
         actions = viewModel.actions,
         onNavigateToLogin = onNavigateToLogin,
+        onNavigateToTopUp = onNavigateToTopUp,
         onStartObservingUserLocation = viewModel::startObservingUserLocation,
         onRequestLocationPermissions = { requestPermissionsState.requestPermissions = true }
     )

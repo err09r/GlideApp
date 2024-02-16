@@ -23,12 +23,9 @@ fun NavGraphBuilder.homeGraph(navController: NavController) {
                         popUpTo(Screen.Home.Root.route) { inclusive = true }
                     }
                 },
-                onNavigateToAllRides = {
-                    navController.navigate(Screen.Rides.Root.route)
-                },
-                onNavigateToWallet = {
-                    navController.navigate(Screen.Wallet.Root.route)
-                },
+                onNavigateToAllRides = { navController.navigate(Screen.Rides.Root.route) },
+                onNavigateToWallet = { navController.navigate(Screen.Wallet.Root.route) },
+                onNavigateToTopUp = { navController.navigate(Screen.Wallet.TopUp.route) },
                 onNavigateToLocationPermission = {
                     navController.navigate(Dialog.Home.LocationPermission.route)
                 },

@@ -301,9 +301,7 @@ class HomeViewModel @Inject constructor(
 
                     is RideEvent.RouteUpdated -> onRideRouteUpdated(rideEvent.currentRoute)
                     is RideEvent.Finished -> onRideFinished()
-                    is RideEvent.Error.UserInsideNoParkingZone -> {
-                        _actions.send(HomeAction.Toast(rideEvent.message.toString()))
-                    }
+                    is RideEvent.Error -> onError(rideEvent)
                 }
             }
             .launchIn(viewModelScope)
@@ -367,6 +365,23 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    private fun onError(error: RideEvent.Error) {
+        Timber.d(error.message)
+        viewModelScope.launch {
+            _actions.send(HomeAction.Toast(error.message.toString()))
+        }
+        when (error) {
+            is RideEvent.Error.NotEnoughFunds -> {
+                viewModelScope.launch {
+                    delay(OPEN_TOPUP_SCREEN_DELAY_MS)
+                    _actions.send(HomeAction.OpenTopUpScreen)
+                }
+            }
+
+            else -> Unit
+        }
+    }
+
     fun startObservingMapContent() {
         if (mapContentJob != null) {
             return
@@ -403,7 +418,7 @@ class HomeViewModel @Inject constructor(
     private suspend fun hideMapLoading() {
         mapLoadingJob?.cancelAndJoin()
         mapLoadingJob = viewModelScope.launch {
-            delay(1000)
+            delay(LOADING_BAR_DELAY_MS)
             _uiState.update { it.copy(isLoadingMapContent = false) }
         }
     }
@@ -464,5 +479,10 @@ class HomeViewModel @Inject constructor(
     fun stopObservingUserLocation() {
         userLocationJob?.cancel()
         userLocationJob = null
+    }
+
+    private companion object {
+        private const val LOADING_BAR_DELAY_MS = 800L
+        private const val OPEN_TOPUP_SCREEN_DELAY_MS = 500L
     }
 }

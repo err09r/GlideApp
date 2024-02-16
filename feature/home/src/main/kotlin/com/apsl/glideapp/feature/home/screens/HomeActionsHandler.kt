@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.Flow
 fun HomeActionsHandler(
     actions: Flow<HomeAction>,
     onNavigateToLogin: () -> Unit,
+    onNavigateToTopUp: () -> Unit,
     onStartObservingUserLocation: () -> Unit,
     onRequestLocationPermissions: () -> Unit
 ) {
@@ -110,6 +111,8 @@ fun HomeActionsHandler(
             }
 
             is HomeAction.RequestLocationPermissions -> onRequestLocationPermissions()
+
+            is HomeAction.OpenTopUpScreen -> onNavigateToTopUp()
         }
     }
 }

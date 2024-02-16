@@ -35,42 +35,53 @@ class RideRepositoryImpl @Inject constructor(
 
     override val rideEvents: Flow<RideEvent> = webSocketClient.rideEvents.mapNotNull { dto ->
         when (dto) {
-            is RideEventDto.Started -> {
+            is RideEventDto.Started, is RideEventDto.Restored -> {
                 appDataStore.saveRideModeActive(value = true)
+            }
+
+            is RideEventDto.Error, is RideEventDto.Finished, is RideEventDto.SessionCancelled -> {
+                appDataStore.saveRideModeActive(value = false)
+            }
+
+            else -> Unit
+        }
+        dto.toDomain()
+    }
+
+    private fun RideEventDto.toDomain(): RideEvent? {
+        return when (this) {
+            is RideEventDto.Started -> {
                 RideEvent.Started(
-                    rideId = dto.rideId,
-                    vehicle = dto.vehicle.toDomain(),
-                    dateTime = dto.dateTime
+                    rideId = this.rideId,
+                    vehicle = this.vehicle.toDomain(),
+                    dateTime = this.dateTime
                 )
             }
 
             is RideEventDto.Restored -> {
-                appDataStore.saveRideModeActive(value = true)
                 RideEvent.Started(
-                    rideId = dto.rideId,
-                    vehicle = dto.vehicle.toDomain(),
-                    dateTime = dto.startDateTime
+                    rideId = this.rideId,
+                    vehicle = this.vehicle.toDomain(),
+                    dateTime = this.startDateTime
                 )
             }
 
-            is RideEventDto.RouteUpdated -> RideEvent.RouteUpdated(dto.currentRoute)
-            is RideEventDto.Finished -> {
-                appDataStore.saveRideModeActive(value = false)
-                RideEvent.Finished
+            is RideEventDto.RouteUpdated -> RideEvent.RouteUpdated(this.currentRoute)
+            is RideEventDto.Finished -> RideEvent.Finished
+
+            is RideEventDto.Error.UserInsideNoParkingZone -> {
+                RideEvent.Error.UserInsideNoParkingZone(this.message)
             }
 
-            is RideEventDto.Error -> {
-                when (dto) {
-                    is RideEventDto.Error.UserInsideNoParkingZone -> {
-                        RideEvent.Error.UserInsideNoParkingZone(dto.message)
-                    }
-                }
+            is RideEventDto.Error.UserTooFarFromVehicle -> {
+                RideEvent.Error.UserTooFarFromVehicle(this.message)
             }
 
-            is RideEventDto.SessionCancelled -> {
-                appDataStore.saveRideModeActive(value = false)
-                null
+            is RideEventDto.Error.NotEnoughFunds -> {
+                RideEvent.Error.NotEnoughFunds(this.message)
             }
+
+            else -> null
         }
     }
 
