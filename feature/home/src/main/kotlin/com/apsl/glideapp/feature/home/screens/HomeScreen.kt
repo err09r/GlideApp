@@ -46,9 +46,9 @@ import com.apsl.glideapp.feature.home.viewmodels.HomeViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLngBounds
+import com.google.maps.android.compose.CameraMoveStartedReason
 import com.google.maps.android.compose.CameraPositionState
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 @Composable
 fun HomeScreen(
@@ -116,7 +116,7 @@ fun HomeScreen(
         onOpenLocationPermissionDialog = onNavigateToLocationPermission,
         onOpenLocationRationaleDialog = onNavigateToLocationRationale,
         onVehicleSelect = viewModel::updateSelectedVehicle,
-        onLoadMapDataWithinBounds = viewModel::loadMapContentWithinBounds,
+        onLoadMapContentWithinBounds = viewModel::loadMapContentWithinBounds,
         onStartRideClick = viewModel::startRide,
         onFinishRideClick = viewModel::finishRide,
         onMyRidesClick = {
@@ -140,7 +140,7 @@ fun HomeScreenContent(
     onOpenLocationPermissionDialog: () -> Unit,
     onOpenLocationRationaleDialog: () -> Unit,
     onVehicleSelect: (String?) -> Unit,
-    onLoadMapDataWithinBounds: (LatLngBounds, Float) -> Unit,
+    onLoadMapContentWithinBounds: (LatLngBounds, Float) -> Unit,
     onStartRideClick: () -> Unit,
     onFinishRideClick: () -> Unit,
     onMyRidesClick: () -> Unit,
@@ -206,26 +206,17 @@ fun HomeScreenContent(
         onPermanentlyDenied = onOpenLocationPermissionDialog
     )
 
-    //TODO to be completely refactored to load data on first display
-    val visibleBounds = cameraPositionState.projection?.visibleRegion?.latLngBounds
+    //TODO: Load data on first open
     LaunchedEffect(cameraPositionState.isMoving) {
-        if (!cameraPositionState.isMoving) {
-            visibleBounds?.let {
-                onLoadMapDataWithinBounds(it, cameraPositionState.position.zoom)
+        if (cameraPositionState.shouldLoadMapContent()) {
+            val visibleBounds = cameraPositionState.projection?.visibleRegion?.latLngBounds
+            if (visibleBounds != null) {
+                onLoadMapContentWithinBounds(visibleBounds, cameraPositionState.position.zoom)
             }
         }
     }
 
-//    LaunchedEffect(cameraPositionState.projection) {
-//        Timber.d("load block")
-//        if (visibleBounds != null && uiState.vehicleClusterItems.isEmpty()) {
-//            Timber.d("onLoad: $visibleBounds")
-//            onLoadMapDataWithinBounds(visibleBounds)
-//        }
-//    }
-
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-
     ModalNavigationDrawer(
         drawerState = drawerState,
         gesturesEnabled = drawerState.isOpen,
@@ -243,7 +234,6 @@ fun HomeScreenContent(
         )
 
         LaunchedEffect(uiState.rideState?.vehicle) {
-            Timber.d("uiState.rideState?.vehicle: ${uiState.rideState?.vehicle}")
             if (uiState.rideState?.vehicle == null) {
                 scaffoldState.bottomSheetState.hide()
             } else {
@@ -252,7 +242,6 @@ fun HomeScreenContent(
         }
 
         LaunchedEffect(uiState.selectedVehicle) {
-            Timber.d("uiState.selectedVehicle: ${uiState.selectedVehicle}")
             if (uiState.selectedVehicle == null && !uiState.isRideActive) {
                 scaffoldState.bottomSheetState.hide()
             } else {
@@ -339,6 +328,13 @@ fun HomeScreenContent(
     }
 }
 
+private fun CameraPositionState.shouldLoadMapContent(): Boolean {
+    val isMoving = this.isMoving
+    val visibleBounds = this.projection?.visibleRegion?.latLngBounds
+    val moveStartedReason = this.cameraMoveStartedReason
+    return !isMoving && visibleBounds != null && moveStartedReason == CameraMoveStartedReason.GESTURE
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun HomeScreenPreview() {
@@ -351,7 +347,7 @@ private fun HomeScreenPreview() {
             onOpenLocationPermissionDialog = {},
             onOpenLocationRationaleDialog = {},
             onVehicleSelect = {},
-            onLoadMapDataWithinBounds = { _, _ -> },
+            onLoadMapContentWithinBounds = { _, _ -> },
             onStartRideClick = {},
             onFinishRideClick = {},
             onMyRidesClick = {},
