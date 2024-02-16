@@ -17,5 +17,5 @@ object Config {
 
     const val testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-    val resourceConfigurations = arrayOf("en", "pl")
+    val resourceConfigurations = listOf("en", "pl")
 }
