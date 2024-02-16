@@ -25,10 +25,10 @@ class ZoneRepositoryImpl @Inject constructor(
 
     override suspend fun updateAllZones() {
         val zones = api.getAllZones()
-        saveZones(zones)
+        refreshZones(zones)
     }
 
-    private suspend fun saveZones(zones: List<ZoneDto>) {
+    private suspend fun refreshZones(zones: List<ZoneDto>) {
         val zoneEntities = zones.map {
             ZoneEntity(
                 id = it.id,
@@ -53,6 +53,8 @@ class ZoneRepositoryImpl @Inject constructor(
         }
 
         database.withTransaction {
+            zoneDao.deleteAllZones()
+            zoneCoordinatesDao.deleteAllZoneCoordinates()
             zoneDao.upsertZones(zoneEntities)
             zoneCoordinatesDao.upsertZoneCoordinates(zoneCoordinatesEntities)
         }

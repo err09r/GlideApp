@@ -15,4 +15,7 @@ interface ZoneDao : BaseDao {
 
     @Upsert
     suspend fun upsertZones(zones: List<ZoneEntity>)
+
+    @Query("DELETE FROM zones")
+    suspend fun deleteAllZones()
 }
