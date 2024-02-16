@@ -6,7 +6,7 @@ plugins {
 
 tasks.named<DependencyUpdatesTask>("dependencyUpdates").configure {
     rejectVersionIf {
-        arrayOf("alpha", "beta", "rc", "dev").any {
+        listOf("alpha", "beta", "rc", "dev").any {
             candidate.version.contains(it, ignoreCase = true)
         }
     }
