@@ -66,110 +66,47 @@ private val nunitoFamily = FontFamily(
 )
 
 private val nunitoSansFamily = FontFamily(
-//    Font(
-//        resId = R.font.nunito_sans_light,
-//        weight = FontWeight.Light,
-//        style = FontStyle.Normal
-//    ),
-//    Font(
-//        resId = R.font.nunito_sans_light_italic,
-//        weight = FontWeight.Light,
-//        style = FontStyle.Italic
-//    ),
     Font(
-        resId = R.font.regular,
+        resId = R.font.nunito_sans_light,
+        weight = FontWeight.Light,
+        style = FontStyle.Normal
+    ),
+    Font(
+        resId = R.font.nunito_sans_light_italic,
+        weight = FontWeight.Light,
+        style = FontStyle.Italic
+    ),
+    Font(
+        resId = R.font.nunito_sans_regular,
         weight = FontWeight.Normal,
         style = FontStyle.Normal
     ),
-//    Font(
-//        resId = R.font.nunito_sans_regular_italic,
-//        weight = FontWeight.Normal,
-//        style = FontStyle.Italic
-//    ),
-//    Font(
-//        resId = R.font.nunito_sans_medium,
-//        weight = FontWeight.Medium,
-//        style = FontStyle.Normal
-//    ),
-//    Font(
-//        resId = R.font.nunito_sans_medium_italic,
-//        weight = FontWeight.Medium,
-//        style = FontStyle.Italic
-//    ),
-//    Font(
-//        resId = R.font.nunito_sans_semibold,
-//        weight = FontWeight.SemiBold,
-//        style = FontStyle.Normal
-//    ),
-//    Font(
-//        resId = R.font.nunito_sans_semibold_italic,
-//        weight = FontWeight.SemiBold,
-//        style = FontStyle.Italic
-//    ),
-//    Font(
-//        resId = R.font.nunito_sans_bold,
-//        weight = FontWeight.Bold,
-//        style = FontStyle.Normal
-//    ),
-//    Font(
-//        resId = R.font.nunito_sans_bold_italic,
-//        weight = FontWeight.Bold,
-//        style = FontStyle.Italic
-//    )
+    Font(
+        resId = R.font.nunito_sans_regular_italic,
+        weight = FontWeight.Normal,
+        style = FontStyle.Italic
+    ),
+    Font(
+        resId = R.font.nunito_sans_semibold,
+        weight = FontWeight.SemiBold,
+        style = FontStyle.Normal
+    ),
+    Font(
+        resId = R.font.nunito_sans_semibold_italic,
+        weight = FontWeight.SemiBold,
+        style = FontStyle.Italic
+    ),
+    Font(
+        resId = R.font.nunito_sans_bold,
+        weight = FontWeight.Bold,
+        style = FontStyle.Normal
+    ),
+    Font(
+        resId = R.font.nunito_sans_bold_italic,
+        weight = FontWeight.Bold,
+        style = FontStyle.Italic
+    )
 )
-
-//private val nunitoSansFamily = FontFamily(
-//    Font(
-//        resId = R.font.nunito_sans_light,
-//        weight = FontWeight.Light,
-//        style = FontStyle.Normal
-//    ),
-//    Font(
-//        resId = R.font.nunito_sans_light_italic,
-//        weight = FontWeight.Light,
-//        style = FontStyle.Italic
-//    ),
-//    Font(
-//        resId = R.font.nunito_sans_regular,
-//        weight = FontWeight.Normal,
-//        style = FontStyle.Normal
-//    ),
-//    Font(
-//        resId = R.font.nunito_sans_regular_italic,
-//        weight = FontWeight.Normal,
-//        style = FontStyle.Italic
-//    ),
-//    Font(
-//        resId = R.font.nunito_sans_medium,
-//        weight = FontWeight.Medium,
-//        style = FontStyle.Normal
-//    ),
-//    Font(
-//        resId = R.font.nunito_sans_medium_italic,
-//        weight = FontWeight.Medium,
-//        style = FontStyle.Italic
-//    ),
-//    Font(
-//        resId = R.font.nunito_sans_semibold,
-//        weight = FontWeight.SemiBold,
-//        style = FontStyle.Normal
-//    ),
-//    Font(
-//        resId = R.font.nunito_sans_semibold_italic,
-//        weight = FontWeight.SemiBold,
-//        style = FontStyle.Italic
-//    ),
-//    Font(
-//        resId = R.font.nunito_sans_bold,
-//        weight = FontWeight.Bold,
-//        style = FontStyle.Normal
-//    ),
-//    Font(
-//        resId = R.font.nunito_sans_bold_italic,
-//        weight = FontWeight.Bold,
-//        style = FontStyle.Italic
-//    )
-//)
 
 private val platformStyle = PlatformTextStyle(includeFontPadding = false)
 
