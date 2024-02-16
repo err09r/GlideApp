@@ -38,7 +38,7 @@ data class RegisterUiState(
 
 @Immutable
 sealed interface RegisterAction {
-    data class ShowError(val error: String?) : RegisterAction
+    data class ShowError(@StringRes val errorResId: Int) : RegisterAction
     data object NavigateToHome : RegisterAction
 }
 
@@ -120,7 +120,9 @@ class RegisterViewModel @Inject constructor(
                         Timber.d(throwable.message)
                         _uiState.update { it.copy(isLoading = false) }
                         resetPasswordFields()
-                        _actions.send(RegisterAction.ShowError(throwable.message))
+                        _actions.send(
+                            RegisterAction.ShowError(errorResId = CoreR.string.error_connection)
+                        )
                     }
             }
         } else {

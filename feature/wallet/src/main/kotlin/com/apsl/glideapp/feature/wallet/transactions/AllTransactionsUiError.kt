@@ -2,8 +2,8 @@ package com.apsl.glideapp.feature.wallet.transactions
 
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Immutable
-import com.apsl.glideapp.core.ui.R
 import java.net.SocketTimeoutException
+import com.apsl.glideapp.core.ui.R as CoreR
 
 @Immutable
 class AllTransactionsUiError(exception: Exception) {
@@ -13,8 +13,8 @@ class AllTransactionsUiError(exception: Exception) {
 
     init {
         textResId = when (exception) {
-            is SocketTimeoutException -> R.string.error_server
-            else -> R.string.error_unknown
+            is SocketTimeoutException -> CoreR.string.error_server
+            else -> CoreR.string.error_unknown
         }
     }
 

@@ -1,6 +1,5 @@
 package com.apsl.glideapp.feature.rides.allrides
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -27,13 +26,14 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.apsl.glideapp.core.ui.GlideImage
 import com.apsl.glideapp.core.ui.icons.GlideIcons
 import com.apsl.glideapp.core.ui.icons.MapPoint
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
@@ -64,13 +64,12 @@ fun RideItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(modifier = Modifier.clip(shape = CardDefaults.shape)) {
-                Image(
-                    painter = painterResource(CoreR.drawable.img_map_bg),
-                    contentDescription = null,
+                GlideImage(
+                    imageResId = CoreR.drawable.img_map_bg,
                     modifier = Modifier
-                        .size(80.dp)
                         .rotate(mapBackgroundDegree)
                         .scale(scaleX = mapBackgroundScaleX, scaleY = 1f),
+                    size = DpSize(80.dp, 80.dp),
                     contentScale = ContentScale.Crop
                 )
                 RideGraph(

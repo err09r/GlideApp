@@ -18,8 +18,7 @@ fun Separator(
 ) {
     Text(
         text = text,
-        modifier =
-        Modifier
+        modifier = Modifier
             .fillMaxWidth()
             .run {
                 if (showBackground) {

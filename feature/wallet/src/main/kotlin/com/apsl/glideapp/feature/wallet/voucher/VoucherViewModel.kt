@@ -48,7 +48,7 @@ class VoucherViewModel @Inject constructor(
                     }
                     .onFailure { throwable ->
                         Timber.d(throwable.message)
-                        var textResId: Int = CoreR.string.error_voucher_default
+                        var textResId: Int = CoreR.string.error_connection
                         if (throwable is TransactionException.InvalidVoucherCodeException) {
                             textResId = CoreR.string.error_voucher_invalid_code
                             updateCodeTextFieldValue(null)

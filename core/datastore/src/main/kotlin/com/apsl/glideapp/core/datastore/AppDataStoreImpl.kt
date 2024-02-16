@@ -1,7 +1,6 @@
 package com.apsl.glideapp.core.datastore
 
 import androidx.datastore.core.DataStore
-import com.apsl.glideapp.common.models.Coordinates
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -28,11 +27,12 @@ class AppDataStoreImpl @Inject constructor(
         return updated.currentUser
     }
 
-    override val lastUserLocation: Flow<Coordinates?> = dataStore.data.map { it.lastUserLocation }
+    override val lastMapCameraPosition: Flow<LastMapCameraPosition?> =
+        dataStore.data.map { it.lastMapCameraPosition }
 
-    override suspend fun saveLastUserLocation(location: Coordinates): Coordinates? {
-        val updated = dataStore.updateData { it.copy(lastUserLocation = location) }
-        return updated.lastUserLocation
+    override suspend fun saveLastMapCameraPosition(position: LastMapCameraPosition): LastMapCameraPosition? {
+        val updated = dataStore.updateData { it.copy(lastMapCameraPosition = position) }
+        return updated.lastMapCameraPosition
     }
 
     override val isRideModeActive: Flow<Boolean?> = dataStore.data.map { it.isRideModeActive }

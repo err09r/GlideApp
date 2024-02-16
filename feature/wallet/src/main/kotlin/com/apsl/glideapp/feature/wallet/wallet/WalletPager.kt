@@ -2,7 +2,6 @@ package com.apsl.glideapp.feature.wallet.wallet
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -25,12 +24,13 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
+import com.apsl.glideapp.core.ui.GlideImage
 import com.apsl.glideapp.core.ui.icons.AltArrow
 import com.apsl.glideapp.core.ui.icons.GlideIcons
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
@@ -107,11 +107,7 @@ fun WalletPager(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Image(
-                        painter = painterResource(item.imageResId),
-                        contentDescription = null,
-                        modifier = Modifier.size(64.dp)
-                    )
+                    GlideImage(imageResId = item.imageResId, size = DpSize(64.dp, 64.dp))
                     Column(
                         modifier = Modifier
                             .weight(1f)

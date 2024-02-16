@@ -103,6 +103,10 @@ fun HomeScreen(
         }
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.getLastMapCameraPosition()
+    }
+
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     HomeScreenContent(
         uiState = uiState,
@@ -136,7 +140,7 @@ fun HomeScreenContent(
     onOpenLocationPermissionDialog: () -> Unit,
     onOpenLocationRationaleDialog: () -> Unit,
     onVehicleSelect: (String?) -> Unit,
-    onLoadMapDataWithinBounds: (LatLngBounds) -> Unit,
+    onLoadMapDataWithinBounds: (LatLngBounds, Float) -> Unit,
     onStartRideClick: () -> Unit,
     onFinishRideClick: () -> Unit,
     onMyRidesClick: () -> Unit,
@@ -154,7 +158,8 @@ fun HomeScreenContent(
     val cameraPositionState = remember(uiState.initialCameraPosition) {
         CameraPositionState().apply {
             if (uiState.initialCameraPosition != null) {
-                position = CameraPosition.fromLatLngZoom(uiState.initialCameraPosition, 13f)
+                val (latLng, zoom) = uiState.initialCameraPosition
+                position = CameraPosition.fromLatLngZoom(latLng, zoom)
             }
         }
     }
@@ -168,9 +173,10 @@ fun HomeScreenContent(
                     .bearing(it.bearingDegrees)
                     .tilt(30f)
                     .build()
+
                 cameraPositionState.animate(
                     CameraUpdateFactory.newCameraPosition(cameraPosition),
-                    500
+                    2000
                 )
             }
         }
@@ -190,7 +196,8 @@ fun HomeScreenContent(
                                 0f,
                                 0f
                             )
-                        ), 1000
+                        ),
+                        1000
                     )
                 }
             }
@@ -203,7 +210,9 @@ fun HomeScreenContent(
     val visibleBounds = cameraPositionState.projection?.visibleRegion?.latLngBounds
     LaunchedEffect(cameraPositionState.isMoving) {
         if (!cameraPositionState.isMoving) {
-            visibleBounds?.let { onLoadMapDataWithinBounds(it) }
+            visibleBounds?.let {
+                onLoadMapDataWithinBounds(it, cameraPositionState.position.zoom)
+            }
         }
     }
 
@@ -342,7 +351,7 @@ private fun HomeScreenPreview() {
             onOpenLocationPermissionDialog = {},
             onOpenLocationRationaleDialog = {},
             onVehicleSelect = {},
-            onLoadMapDataWithinBounds = {},
+            onLoadMapDataWithinBounds = { _, _ -> },
             onStartRideClick = {},
             onFinishRideClick = {},
             onMyRidesClick = {},

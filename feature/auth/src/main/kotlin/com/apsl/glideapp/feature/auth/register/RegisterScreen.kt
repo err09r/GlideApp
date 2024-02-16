@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
@@ -53,12 +54,14 @@ fun RegisterScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
+    val context = LocalContext.current
     ScreenActions(viewModel.actions) { action ->
         when (action) {
             is RegisterAction.NavigateToHome -> onNavigateToHome()
             is RegisterAction.ShowError -> {
                 scope.launch {
-                    snackbarHostState.showSnackbar(action.error.toString())
+                    val error = context.getString(action.errorResId)
+                    snackbarHostState.showSnackbar(error)
                 }
             }
         }

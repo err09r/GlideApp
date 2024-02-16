@@ -1,6 +1,5 @@
 package com.apsl.glideapp.feature.home.screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.FilledTonalButton
@@ -22,11 +20,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import com.apsl.glideapp.core.ui.GlideImage
 import com.apsl.glideapp.core.ui.icons.Battery
 import com.apsl.glideapp.core.ui.icons.BatteryFull
 import com.apsl.glideapp.core.ui.icons.BatteryLow
@@ -155,11 +154,7 @@ fun DefaultSheetLayout(
                     )
                 )
             }
-            Image(
-                painter = painterResource(R.drawable.img_scooter),
-                contentDescription = null,
-                modifier = Modifier.size(88.dp)
-            )
+            GlideImage(imageResId = R.drawable.img_scooter, size = DpSize(88.dp, 88.dp))
         }
         Spacer(Modifier.height(16.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {

@@ -2,7 +2,6 @@
 
 package com.apsl.glideapp.feature.home.screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -30,11 +29,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.datasource.LoremIpsum
 import androidx.compose.ui.unit.dp
+import com.apsl.glideapp.core.ui.GlideImage
 import com.apsl.glideapp.core.ui.icons.ArrowBack
 import com.apsl.glideapp.core.ui.icons.GlideIcons
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
@@ -110,9 +109,8 @@ private fun ZoneThumbnail(modifier: Modifier = Modifier) {
             .border(width = 2.dp, color = Color.Blue, shape = MaterialTheme.shapes.medium)
             .clip(MaterialTheme.shapes.medium)
     ) {
-        Image(
-            painter = painterResource(CoreR.drawable.img_map_bg),
-            contentDescription = null,
+        GlideImage(
+            imageResId = CoreR.drawable.img_map_bg,
             modifier = Modifier.fillMaxWidth(),
             contentScale = ContentScale.Crop
         )

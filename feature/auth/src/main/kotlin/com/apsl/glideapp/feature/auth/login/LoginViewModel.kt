@@ -1,10 +1,12 @@
 package com.apsl.glideapp.feature.auth.login
 
+import androidx.annotation.StringRes
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
 import com.apsl.glideapp.core.domain.auth.LoginUseCase
 import com.apsl.glideapp.core.ui.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,7 +14,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
+import com.apsl.glideapp.core.ui.R as CoreR
 
 @Immutable
 data class LoginUiState(
@@ -28,7 +30,7 @@ data class LoginUiState(
 
 @Immutable
 sealed interface LoginAction {
-    data class ShowError(val error: String?) : LoginAction
+    data class ShowError(@StringRes val errorResId: Int) : LoginAction
     data object NavigateToHome : LoginAction
     data object NavigateToRegister : LoginAction
 }
@@ -66,7 +68,7 @@ class LoginViewModel @Inject constructor(
                                 isPasswordVisible = false
                             )
                         }
-                        _actions.send(LoginAction.ShowError(throwable.message))
+                        _actions.send(LoginAction.ShowError(errorResId = CoreR.string.error_connection))
                     }
             }
         } else {

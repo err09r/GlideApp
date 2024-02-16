@@ -2,9 +2,8 @@ package com.apsl.glideapp.feature.wallet.topup
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -35,12 +33,12 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -237,23 +235,18 @@ fun PaymentMethodItem(
         modifier = modifier.clickable(onClick = onClick, indication = null),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        RadioButton(
-            selected = selected,
-            onClick = onClick
-        )
+        RadioButton(selected = selected, onClick = onClick)
         Spacer(Modifier.width(16.dp))
         Text(
             text = stringResource(titleResId),
             style = MaterialTheme.typography.labelLarge
         )
         Spacer(Modifier.weight(1f))
-        Box(modifier = Modifier.padding(4.dp)) {
-            Image(
-                painter = painterResource(iconResId),
-                contentDescription = null,
-                modifier = Modifier.size(32.dp)
-            )
-        }
+        GlideImage(
+            imageResId = iconResId,
+            size = DpSize(32.dp, 32.dp),
+            contentPadding = PaddingValues(4.dp)
+        )
     }
 }
 

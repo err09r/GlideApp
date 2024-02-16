@@ -7,7 +7,7 @@ import com.google.android.gms.maps.model.LatLng
 @Immutable
 data class HomeUiState(
     val userInfo: UserInfo = UserInfo(),
-    val initialCameraPosition: LatLng? = null,
+    val initialCameraPosition: Pair<LatLng, Float>? = null,
     val isLoadingMapContent: Boolean = false,
     val mapState: MapState = MapState(),
     val selectedVehicle: SelectedVehicleUiModel? = null,

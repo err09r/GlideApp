@@ -66,27 +66,27 @@ fun HomeDrawerSheet(
         listOf(
             DrawerMenuItem(
                 icon = GlideIcons.Wallet,
-                titleResId = CoreR.string.home_drawer_menu_item1,
+                titleResId = CoreR.string.home_drawer_menu_wallet,
                 onClick = onWalletClick
             ),
             DrawerMenuItem(
                 icon = GlideIcons.MyRides,
-                titleResId = CoreR.string.home_drawer_menu_item2,
+                titleResId = CoreR.string.home_drawer_menu_rides,
                 onClick = onMyRidesClick
             ),
             DrawerMenuItem(
                 icon = GlideIcons.Help,
-                titleResId = CoreR.string.home_drawer_menu_item3,
+                titleResId = CoreR.string.home_drawer_menu_help,
                 onClick = {}
             ),
             DrawerMenuItem(
                 icon = GlideIcons.Settings,
-                titleResId = CoreR.string.home_drawer_menu_item4,
+                titleResId = CoreR.string.home_drawer_menu_settings,
                 onClick = context::openAppSettings //TODO: Navigate to SettingsScreen instead of app settings
             ),
             DrawerMenuItem(
                 icon = GlideIcons.Logout,
-                titleResId = CoreR.string.home_drawer_menu_item5,
+                titleResId = CoreR.string.home_drawer_menu_logout,
                 onClick = onLogoutClick
             )
         )

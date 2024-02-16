@@ -1,6 +1,5 @@
 package com.apsl.glideapp.feature.wallet.wallet
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,7 +7,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
@@ -20,10 +18,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import com.apsl.glideapp.core.ui.AnimatedText
+import com.apsl.glideapp.core.ui.GlideImage
 import com.apsl.glideapp.core.ui.icons.CardMoney
 import com.apsl.glideapp.core.ui.icons.File
 import com.apsl.glideapp.core.ui.icons.GlideIcons
@@ -52,15 +52,14 @@ fun BalanceCard(
                         style = MaterialTheme.typography.bodyLarge
                     )
                     Spacer(Modifier.height(4.dp))
-                    Text(
+                    AnimatedText(
                         text = stringResource(CoreR.string.value_zloty, value),
                         style = MaterialTheme.typography.titleLarge
                     )
                 }
-                Image(
-                    painter = painterResource(CoreR.drawable.img_wallet_front),
-                    contentDescription = null,
-                    modifier = Modifier.size(56.dp)
+                GlideImage(
+                    imageResId = CoreR.drawable.img_wallet_front,
+                    size = DpSize(56.dp, 56.dp)
                 )
             }
 

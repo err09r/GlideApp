@@ -28,7 +28,7 @@ fun TransactionItem(transaction: TransactionUiModel, modifier: Modifier = Modifi
                 imageVector = transaction.image,
                 contentDescription = null,
                 modifier = Modifier.size(32.dp),
-                tint = MaterialTheme.colorScheme.secondary
+                tint = MaterialTheme.colorScheme.primary
             )
         },
         trailingContent = {
