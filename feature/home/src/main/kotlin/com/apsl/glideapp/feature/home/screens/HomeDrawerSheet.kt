@@ -1,8 +1,10 @@
 package com.apsl.glideapp.feature.home.screens
 
+import android.os.Build
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
@@ -19,15 +22,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.apsl.glideapp.core.ui.icons.ElectricScooter
 import com.apsl.glideapp.core.ui.icons.GlideIcons
+import com.apsl.glideapp.core.ui.icons.Globe
 import com.apsl.glideapp.core.ui.icons.Help
 import com.apsl.glideapp.core.ui.icons.Logout
 import com.apsl.glideapp.core.ui.icons.MyRides
@@ -35,6 +41,8 @@ import com.apsl.glideapp.core.ui.icons.Route
 import com.apsl.glideapp.core.ui.icons.Settings
 import com.apsl.glideapp.core.ui.icons.Wallet
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
+import com.apsl.glideapp.core.util.android.openAppLanguageSettings
+import com.apsl.glideapp.core.util.android.openAppSettings
 import com.apsl.glideapp.feature.home.viewmodels.UserInfo
 import com.apsl.glideapp.core.ui.R as CoreR
 
@@ -53,6 +61,7 @@ fun HomeDrawerSheet(
     onWalletClick: () -> Unit,
     onLogoutClick: () -> Unit
 ) {
+    val context = LocalContext.current
     val menuItems = remember {
         listOf(
             DrawerMenuItem(
@@ -73,7 +82,7 @@ fun HomeDrawerSheet(
             DrawerMenuItem(
                 icon = GlideIcons.Settings,
                 titleResId = CoreR.string.home_drawer_menu_item4,
-                onClick = {}
+                onClick = context::openAppSettings //TODO: Navigate to SettingsScreen instead of app settings
             ),
             DrawerMenuItem(
                 icon = GlideIcons.Logout,
@@ -128,6 +137,27 @@ fun HomeDrawerSheet(
                     Icon(imageVector = item.icon, contentDescription = null)
                 }
             )
+        }
+
+        Spacer(Modifier.weight(1f))
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                IconButton(
+                    onClick = context::openAppLanguageSettings,
+                    modifier = Modifier.align(Alignment.CenterStart)
+                ) {
+                    Icon(
+                        imageVector = GlideIcons.Globe,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
         }
     }
 }
