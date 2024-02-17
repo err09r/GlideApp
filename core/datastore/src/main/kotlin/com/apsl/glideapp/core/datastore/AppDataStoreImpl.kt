@@ -27,6 +27,13 @@ class AppDataStoreImpl @Inject constructor(
         return updated.currentUser
     }
 
+    override val walletVisited: Flow<Boolean?> = dataStore.data.map { it.walletVisited }
+
+    override suspend fun saveWalletVisited(value: Boolean): Boolean? {
+        val updated = dataStore.updateData { it.copy(walletVisited = value) }
+        return updated.walletVisited
+    }
+
     override val lastMapCameraPosition: Flow<LastMapCameraPosition?> =
         dataStore.data.map { it.lastMapCameraPosition }
 

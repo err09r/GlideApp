@@ -124,7 +124,10 @@ fun HomeScreen(
             onNavigateToAllRides()
         },
         onWalletClick = {
-            viewModel.updateSelectedVehicle(null)
+            with(viewModel) {
+                saveWalletVisited()
+                updateSelectedVehicle(null)
+            }
             onNavigateToWallet()
         },
         onLogoutClick = viewModel::logOut

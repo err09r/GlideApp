@@ -17,6 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -42,7 +43,7 @@ fun LoadingBar(
     val circleRadiusPx = circleRadius.toPx()
     val size = remember { mutableStateOf(IntSize.Zero) }
 
-    val animated = rememberInfiniteTransition(label = "")
+    val animated = rememberInfiniteTransition(label = "InfiniteTransition")
     val offsetY = animated.animateFloat(
         initialValue = 0f,
         targetValue = size.value.width.toFloat() - circleRadiusPx * 2,
@@ -50,7 +51,7 @@ fun LoadingBar(
             animation = tween(durationMillis = 800),
             repeatMode = RepeatMode.Reverse
         ),
-        label = ""
+        label = "OffsetY"
     )
 
     Box(modifier = modifier.onGloballyPositioned { size.value = it.size }) {
@@ -76,6 +77,7 @@ private fun LoadingBarPreview() {
     }
 }
 
+@NonRestartableComposable
 @Composable
 fun LoadingScreen() {
     Box(modifier = Modifier.fillMaxSize()) {
@@ -91,6 +93,7 @@ private fun LoadingScreenPreview() {
     }
 }
 
+@NonRestartableComposable
 @Composable
 fun GlideCircularLoadingIndicator(
     modifier: Modifier = Modifier,

@@ -1,4 +1,4 @@
-@file:Suppress("Unused")
+@file:Suppress("Unused", "ConstPropertyName")
 
 package com.apsl.glideapp.core.ui.navigation
 

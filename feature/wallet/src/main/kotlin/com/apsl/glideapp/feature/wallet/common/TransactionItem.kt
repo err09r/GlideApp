@@ -9,12 +9,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.apsl.glideapp.core.ui.PagingSeparator
 import com.apsl.glideapp.core.ui.icons.GlideIcons
 import com.apsl.glideapp.core.ui.icons.TopUp
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
+import com.apsl.glideapp.core.ui.theme.LocalExtendedColorScheme
 import com.apsl.glideapp.core.ui.R as CoreR
 
 @Composable
@@ -32,7 +34,17 @@ fun TransactionItem(transaction: TransactionUiModel, modifier: Modifier = Modifi
             )
         },
         trailingContent = {
-            TransactionAmount(value = transaction.amount, type = transaction.amountType)
+            val extendedColorScheme = LocalExtendedColorScheme.current
+            val color = when (transaction.amountType) {
+                AmountType.Negative -> extendedColorScheme.moneyRed
+                AmountType.Positive -> extendedColorScheme.moneyGreen
+                else -> MaterialTheme.colorScheme.onSurfaceVariant
+            }
+            Text(
+                text = stringResource(CoreR.string.value_zloty, transaction.amount),
+                color = color,
+                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
+            )
         }
     )
 }

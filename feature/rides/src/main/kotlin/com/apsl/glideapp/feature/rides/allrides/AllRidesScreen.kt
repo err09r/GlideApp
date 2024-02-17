@@ -22,12 +22,15 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -43,9 +46,7 @@ import com.apsl.glideapp.core.ui.icons.ElectricScooter
 import com.apsl.glideapp.core.ui.icons.GlideIcons
 import com.apsl.glideapp.core.ui.icons.NotificationRemove
 import com.apsl.glideapp.core.ui.icons.Route
-import com.apsl.glideapp.core.ui.pullrefresh.PullRefreshIndicator
-import com.apsl.glideapp.core.ui.pullrefresh.pullRefresh
-import com.apsl.glideapp.core.ui.pullrefresh.rememberPullRefreshState
+import com.apsl.glideapp.core.ui.pulltorefresh.Indicator
 import com.apsl.glideapp.core.ui.receiveAsLazyPagingItems
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.core.ui.toComposePagingItems
@@ -69,7 +70,7 @@ fun AllRidesScreen(
         uiState = uiState,
         onBackClick = onNavigateBack,
         onRideClick = onNavigateToRide,
-        onPullRefresh = viewModel::refresh
+        onPullToRefresh = viewModel::refresh
     )
 }
 
@@ -78,7 +79,7 @@ fun AllRidesScreenContent(
     uiState: AllRidesUiState,
     onBackClick: () -> Unit,
     onRideClick: (String) -> Unit,
-    onPullRefresh: () -> Unit
+    onPullToRefresh: () -> Unit
 ) {
     FeatureScreen(
         topBarText = stringResource(CoreR.string.all_rides_screen_title),
@@ -94,16 +95,23 @@ fun AllRidesScreenContent(
             }
 
             else -> {
-                val refreshing = uiState.isRefreshing
-                val pullRefreshState = rememberPullRefreshState(
-                    refreshing = refreshing,
-                    onRefresh = onPullRefresh
-                )
+                val pullToRefreshState = rememberPullToRefreshState()
+                if (pullToRefreshState.isRefreshing) {
+                    LaunchedEffect(Unit) {
+                        onPullToRefresh()
+                    }
+                }
+
+                if (!uiState.isRefreshing) {
+                    LaunchedEffect(Unit) {
+                        pullToRefreshState.endRefresh()
+                    }
+                }
 
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .pullRefresh(pullRefreshState)
+                        .nestedScroll(pullToRefreshState.nestedScrollConnection)
                 ) {
                     val itemCount = uiState.rides?.itemCount ?: 0
 
@@ -121,10 +129,10 @@ fun AllRidesScreenContent(
                         }
                     }
 
-                    PullRefreshIndicator(
-                        refreshing = refreshing,
-                        state = pullRefreshState,
-                        modifier = Modifier.align(Alignment.TopCenter)
+                    PullToRefreshContainer(
+                        state = pullToRefreshState,
+                        modifier = Modifier.align(Alignment.TopCenter),
+                        indicator = { Indicator(state = it) }
                     )
                 }
             }
@@ -298,7 +306,7 @@ private fun AllRidesScreenPreview(@PreviewParameter(RideRoutePreviewParameterPro
             uiState = AllRidesUiState(rides = rides, totalRides = "12", totalDistance = "19,5"),
             onBackClick = {},
             onRideClick = {},
-            onPullRefresh = {}
+            onPullToRefresh = {}
         )
     }
 }
@@ -315,7 +323,7 @@ private fun AllRidesScreenEmptyPreview() {
             uiState = AllRidesUiState(rides = rides),
             onBackClick = {},
             onRideClick = {},
-            onPullRefresh = {}
+            onPullToRefresh = {}
         )
     }
 }

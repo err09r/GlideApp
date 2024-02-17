@@ -110,6 +110,7 @@
 
 
     <!--    Wallet-->
+    <string name="wallet_screen_title">My wallet</string>
     <string name="payment_dialog_description">Processing payment…</string>
     <string name="transaction_type_top_up">Account top up</string>
     <string name="transaction_type_ride">@string/ride</string>
