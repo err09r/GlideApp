@@ -17,7 +17,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -77,7 +76,6 @@ private fun LoadingBarPreview() {
     }
 }
 
-@NonRestartableComposable
 @Composable
 fun LoadingScreen() {
     Box(modifier = Modifier.fillMaxSize()) {
@@ -93,7 +91,6 @@ private fun LoadingScreenPreview() {
     }
 }
 
-@NonRestartableComposable
 @Composable
 fun GlideCircularLoadingIndicator(
     modifier: Modifier = Modifier,
