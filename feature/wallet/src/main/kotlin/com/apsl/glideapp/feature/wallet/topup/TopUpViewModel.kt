@@ -76,8 +76,8 @@ class TopUpViewModel @Inject constructor(
                     _uiState.update { it.copy(amountTextFieldValue = "0,0") }
                     _actions.send(TopUpAction.PaymentProcessingCompleted)
                 }
-                .onFailure {
-                    Timber.d(it.message)
+                .onFailure { throwable ->
+                    Timber.d(throwable.message)
                     _actions.send(TopUpAction.PaymentProcessingFailed)
                 }
         }
