@@ -27,14 +27,13 @@
         android:localeConfig="@xml/locales_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.GlideApp"
+        android:theme="@style/Theme.GlideApp.Starting"
         tools:targetApi="33">
 
         <activity
             android:name="com.apsl.glideapp.app.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.GlideApp"
             android:windowSoftInputMode="adjustResize"
             tools:ignore="DiscouragedApi,LockedOrientationActivity">
             <intent-filter>
