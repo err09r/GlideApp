@@ -120,7 +120,11 @@ fun WalletScreenContent(
             ).toWalletPagerItems()
         }
 
-        Box(modifier = Modifier.nestedScroll(pullToRefreshState.nestedScrollConnection)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .nestedScroll(pullToRefreshState.nestedScrollConnection)
+        ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
