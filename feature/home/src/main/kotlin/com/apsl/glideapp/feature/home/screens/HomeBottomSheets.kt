@@ -67,7 +67,7 @@ fun ActiveRideSheetLayout(
                 )
                 Spacer(Modifier.height(16.dp))
                 ScooterInfoComponent(
-                    imageVector = GlideIcons.Battery,
+                    imageVector = vehicle.batteryState.icon,
                     text = stringResource(
                         CoreR.string.home_bottom_sheet_battery,
                         vehicle.batteryCharge
@@ -137,12 +137,7 @@ fun DefaultSheetLayout(
                 )
                 Spacer(Modifier.height(20.dp))
                 ScooterInfoComponent(
-                    imageVector = when (selectedVehicle.batteryState) {
-                        BatteryState.Low -> GlideIcons.BatteryLow
-                        BatteryState.Medium -> GlideIcons.BatteryMedium
-                        BatteryState.Full -> GlideIcons.BatteryFull
-                        BatteryState.Undefined -> GlideIcons.Battery
-                    },
+                    imageVector = selectedVehicle.batteryState.icon,
                     text = stringResource(
                         CoreR.string.home_bottom_sheet_range,
                         selectedVehicle.rangeKilometers
@@ -182,6 +177,14 @@ fun DefaultSheetLayout(
         }
     }
 }
+
+private val BatteryState.icon: ImageVector
+    get() = when (this) {
+        BatteryState.Low -> GlideIcons.BatteryLow
+        BatteryState.Medium -> GlideIcons.BatteryMedium
+        BatteryState.Full -> GlideIcons.BatteryFull
+        BatteryState.Undefined -> GlideIcons.Battery
+    }
 
 @Composable
 private fun ScooterInfoComponent(
