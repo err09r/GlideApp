@@ -118,6 +118,10 @@
     <string name="transaction_type_voucher">Voucher activation</string>
     <string name="transaction_type_penalty">Penalty</string>
 
+    <string name="top_up_success_dialog_button">Continue</string>
+    <string name="top_up_success_dialog_title">Success!</string>
+    <string name="top_up_success_dialog_text">Your balance has been successfully topped up. Have a nice ride!</string>
+
     <string name="payment_method_google_pay">Google Pay</string>
     <string name="payment_method_blik">BLIK</string>
     <string name="payment_method_debit_card">Debit card</string>
