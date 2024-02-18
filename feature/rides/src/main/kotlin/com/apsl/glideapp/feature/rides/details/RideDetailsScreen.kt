@@ -19,7 +19,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomSheetScaffold
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -201,14 +201,14 @@ fun RideDetailsScreenContent(
 
                             StartPointMarker(
                                 markerState = rememberMarkerState(
-                                    key = "start",
+                                    key = "Start",
                                     position = uiState.ride.route.first()
                                 )
                             )
 
                             FinishPointMarker(
                                 markerState = rememberMarkerState(
-                                    key = "finish",
+                                    key = "Finish",
                                     position = uiState.ride.route.last()
                                 ),
                                 imageVector = GlideIcons.Flag
@@ -292,7 +292,7 @@ fun RideDetailsSheetContent(ride: RideDetailsUiModel, modifier: Modifier = Modif
             Column(modifier = Modifier.padding(start = 16.dp)) {
                 TitleValueText(
                     title = stringResource(CoreR.string.ride_details_sheet_subtitle1),
-                    value = stringResource(CoreR.string.meters, ride.distance)
+                    value = stringResource(CoreR.string.value_meters, ride.distance)
                 )
                 Spacer(Modifier.height(4.dp))
                 TitleValueText(
@@ -314,7 +314,7 @@ fun RideDetailsSheetContent(ride: RideDetailsUiModel, modifier: Modifier = Modif
         }
 
         Spacer(Modifier.height(16.dp))
-        Divider()
+        HorizontalDivider()
         Spacer(Modifier.height(16.dp))
 
         Column {
@@ -408,7 +408,7 @@ private fun RideDetailsSheetContentPreview() {
                 finishTime = "16:56",
                 route = emptyList(),
                 distance = "4154",
-                averageSpeed = "15,3 km/h",
+                averageSpeed = "15,3",
                 timeInMinutes = "32"
             )
         )
@@ -429,7 +429,7 @@ private fun RideDetailsScreenPreview() {
                     finishTime = "16:56",
                     route = emptyList(),
                     distance = "4154",
-                    averageSpeed = "15.3 km/h",
+                    averageSpeed = "15.3",
                     timeInMinutes = "32"
                 )
             ),

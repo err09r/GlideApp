@@ -14,7 +14,6 @@ import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -90,14 +89,16 @@ fun Context.openAppSettings() {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 fun Context.openAppLanguageSettings() {
     try {
+        val action = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Settings.ACTION_APP_LOCALE_SETTINGS
+        } else {
+            Settings.ACTION_LOCALE_SETTINGS
+        }
+
         this.startActivity(
-            Intent(
-                Settings.ACTION_APP_LOCALE_SETTINGS,
-                Uri.fromParts("package", packageName, null)
-            )
+            Intent(action, Uri.fromParts("package", packageName, null))
         )
     } catch (e: ActivityNotFoundException) {
         Timber.w(e)

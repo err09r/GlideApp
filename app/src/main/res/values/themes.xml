@@ -8,4 +8,14 @@
         <item name="android:enforceStatusBarContrast" tools:targetApi="q">false</item>
         <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
     </style>
+
+    <style name="Theme.GlideApp.Starting" parent="Theme.SplashScreen">
+        <item name="postSplashScreenTheme">@style/Theme.GlideApp</item>
+        <item name="windowSplashScreenBackground">@color/splash_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash</item>
+        <item name="android:windowSplashScreenBrandingImage" tools:targetApi="s">
+            @drawable/ic_branded
+        </item>
+    </style>
+
 </resources>

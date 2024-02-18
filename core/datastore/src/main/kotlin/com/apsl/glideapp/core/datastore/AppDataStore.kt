@@ -8,6 +8,8 @@ interface AppDataStore {
     suspend fun deleteAuthToken()
     val currentUser: Flow<CurrentUser?>
     suspend fun saveCurrentUser(user: CurrentUser): CurrentUser?
+    val walletVisited: Flow<Boolean?>
+    suspend fun saveWalletVisited(value: Boolean): Boolean?
     val lastMapCameraPosition: Flow<LastMapCameraPosition?>
     suspend fun saveLastMapCameraPosition(position: LastMapCameraPosition): LastMapCameraPosition?
     val isRideModeActive: Flow<Boolean?>

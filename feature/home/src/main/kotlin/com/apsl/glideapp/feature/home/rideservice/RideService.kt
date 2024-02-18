@@ -8,7 +8,6 @@ import android.os.Binder
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import com.apsl.glideapp.feature.home.R
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
@@ -50,7 +49,7 @@ class RideService : Service() {
         NotificationCompat.Builder(this, getString(CoreR.string.ride_session))
             .setContentTitle(getString(CoreR.string.ride_notification_title))
             .setContentText(getString(CoreR.string.ride_notification_text_default))
-            .setSmallIcon(R.drawable.img_scooter)
+            .setSmallIcon(CoreR.drawable.img_scooter)
             .setOngoing(true)
             .setAutoCancel(false)
             .setOnlyAlertOnce(true)

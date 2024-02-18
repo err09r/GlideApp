@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.LifecycleObserver
 import androidx.navigation.compose.rememberNavController
@@ -26,6 +27,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setUpEdgeToEdge()
+        setUpSplashScreen()
         super.onCreate(savedInstanceState)
         init()
         setContent {
@@ -44,6 +46,10 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    private fun setUpSplashScreen() {
+        val splashScreen = installSplashScreen()
     }
 
     private fun setUpEdgeToEdge() {

@@ -42,7 +42,7 @@ fun LoadingBar(
     val circleRadiusPx = circleRadius.toPx()
     val size = remember { mutableStateOf(IntSize.Zero) }
 
-    val animated = rememberInfiniteTransition(label = "")
+    val animated = rememberInfiniteTransition(label = "InfiniteTransition")
     val offsetY = animated.animateFloat(
         initialValue = 0f,
         targetValue = size.value.width.toFloat() - circleRadiusPx * 2,
@@ -50,7 +50,7 @@ fun LoadingBar(
             animation = tween(durationMillis = 800),
             repeatMode = RepeatMode.Reverse
         ),
-        label = ""
+        label = "OffsetY"
     )
 
     Box(modifier = modifier.onGloballyPositioned { size.value = it.size }) {

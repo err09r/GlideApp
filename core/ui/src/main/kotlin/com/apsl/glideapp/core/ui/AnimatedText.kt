@@ -100,7 +100,7 @@ fun AnimatedText(
             AnimatedContent(
                 targetState = char,
                 transitionSpec = transitionSpec,
-                label = ""
+                label = "AnimatedContent"
             ) {
                 Text(
                     text = it.toString(),

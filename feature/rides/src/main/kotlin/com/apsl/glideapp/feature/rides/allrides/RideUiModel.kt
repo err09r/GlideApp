@@ -10,7 +10,6 @@ import kotlin.math.roundToInt
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toJavaLocalDateTime
-import timber.log.Timber
 
 @Immutable
 data class RideUiModel(
@@ -39,8 +38,6 @@ fun Ride.toRideUiModel(): RideUiModel {
     val separator = PagingSeparator(
         text = finishDateTime.toJavaLocalDateTime().format(separatorFormatter).capitalized()
     )
-
-    Timber.d(route.points.size.toString())
 
     val route = RideRoute(
         route.points

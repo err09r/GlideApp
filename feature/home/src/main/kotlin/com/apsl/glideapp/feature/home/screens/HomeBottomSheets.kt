@@ -36,7 +36,6 @@ import com.apsl.glideapp.core.ui.icons.GlideIcons
 import com.apsl.glideapp.core.ui.icons.Route2
 import com.apsl.glideapp.core.ui.icons.WarningTriangle
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
-import com.apsl.glideapp.feature.home.R
 import com.apsl.glideapp.feature.home.models.SelectedVehicleUiModel
 import com.apsl.glideapp.feature.home.viewmodels.BatteryState
 import com.apsl.glideapp.feature.home.viewmodels.VehicleUiModel
@@ -154,7 +153,7 @@ fun DefaultSheetLayout(
                     )
                 )
             }
-            GlideImage(imageResId = R.drawable.img_scooter, size = DpSize(88.dp, 88.dp))
+            GlideImage(imageResId = CoreR.drawable.img_scooter, size = DpSize(88.dp, 88.dp))
         }
         Spacer(Modifier.height(16.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {

@@ -18,8 +18,8 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.apsl.glideapp.core.ui.theme.Colors
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
+import com.apsl.glideapp.core.ui.theme.LocalExtendedColorScheme
 import com.apsl.glideapp.core.ui.toPx
 
 @Composable
@@ -30,7 +30,7 @@ fun NoParkingMarker(modifier: Modifier = Modifier) {
         fontSize = 11.sp
     )
     val borderWidth = 1.5.dp.toPx()
-    val borderColor = Colors.NoParking
+    val borderColor = LocalExtendedColorScheme.current.noParkingZone
     val textMeasurer = rememberTextMeasurer()
     Spacer(
         modifier = modifier

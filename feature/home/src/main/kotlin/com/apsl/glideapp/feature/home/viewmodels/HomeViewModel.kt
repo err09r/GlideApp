@@ -20,6 +20,7 @@ import com.apsl.glideapp.core.domain.ride.IsRideModeActiveUseCase
 import com.apsl.glideapp.core.domain.ride.ObserveRideEventsUseCase
 import com.apsl.glideapp.core.domain.ride.StartRideUseCase
 import com.apsl.glideapp.core.domain.user.GetUserUseCase
+import com.apsl.glideapp.core.domain.user.SaveWalletVisitedUseCase
 import com.apsl.glideapp.core.model.MapCameraPosition
 import com.apsl.glideapp.core.model.RideEvent
 import com.apsl.glideapp.core.model.UserAuthState
@@ -60,6 +61,7 @@ import com.apsl.glideapp.core.ui.R as CoreR
 class HomeViewModel @Inject constructor(
     private val observeUserAuthenticationStateUseCase: ObserveUserAuthenticationStateUseCase,
     private val getUserUseCase: GetUserUseCase,
+    private val saveWalletVisitedUseCase: SaveWalletVisitedUseCase,
     private val getLastMapCameraPositionUseCase: GetLastMapCameraPositionUseCase,
     private val saveLastMapCameraPositionUseCase: SaveLastMapCameraPositionUseCase,
     private val getMapContentWithinBoundsUseCase: GetMapContentWithinBoundsUseCase,
@@ -166,7 +168,8 @@ class HomeViewModel @Inject constructor(
                             userInfo = state.userInfo.copy(
                                 username = user.username,
                                 totalDistance = user.totalDistance.roundToInt(),
-                                totalRides = user.totalRides
+                                totalRides = user.totalRides,
+                                walletVisited = user.walletVisited,
                             )
                         )
                     }
@@ -193,6 +196,12 @@ class HomeViewModel @Inject constructor(
         if (selectedVehicle != null) {
             _uiState.update { it.copy(selectedVehicle = selectedVehicle.toSelectedVehicleUiModel()) }
             updateVehicleClusterItems(selectedId = id)
+        }
+    }
+
+    fun saveWalletVisited() {
+        viewModelScope.launch {
+            saveWalletVisitedUseCase().onFailure { Timber.d(it.message) }
         }
     }
 

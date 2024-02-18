@@ -20,5 +20,6 @@ data class HomeUiState(
 data class UserInfo(
     val username: String? = null,
     val totalDistance: Int = 0,
-    val totalRides: Int = 0
+    val totalRides: Int = 0,
+    val walletVisited: Boolean = false
 )

@@ -60,10 +60,11 @@ fun WalletPager(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
-    val startIndex = Int.MAX_VALUE / 2
+    val pageCount = items.value.size * 1000 // To prevent ANR https://stackoverflow.com/a/75469260
+    val startIndex = pageCount / 2
     val pagerState = rememberPagerState(
         initialPage = startIndex,
-        pageCount = { Int.MAX_VALUE }
+        pageCount = { pageCount }
     )
 
     HorizontalPager(
@@ -92,7 +93,7 @@ fun WalletPager(
                         stop = 1f,
                         fraction = 1f - pageOffset.coerceIn(0f, 1f)
                     ).also { scale ->
-//                        scaleX = scale
+                        // scaleX = scale
                         scaleY = scale
                     }
 
@@ -101,36 +102,40 @@ fun WalletPager(
                         stop = 1f,
                         fraction = 1f - pageOffset.coerceIn(0f, 1f)
                     )
-                }
-            ) {
-                Row(
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    GlideImage(imageResId = item.imageResId, size = DpSize(64.dp, 64.dp))
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(horizontal = 16.dp)
-                    ) {
-                        Text(text = stringResource(item.titleResId))
-                        Spacer(Modifier.height(4.dp))
-                        Text(
-                            text = stringResource(item.textResId),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.bodyMedium,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
-                    IconButton(onClick = item.onClick) {
-                        Icon(
-                            imageVector = GlideIcons.AltArrow,
-                            contentDescription = null,
-                            modifier = Modifier.size(16.dp)
-                        )
-                    }
-                }
-            }
+                },
+                content = { Page(item = item) }
+            )
+        }
+    }
+}
+
+@Composable
+private fun Page(modifier: Modifier = Modifier, item: WalletPagerItem) {
+    Row(
+        modifier = modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        GlideImage(imageResId = item.imageResId, size = DpSize(64.dp, 64.dp))
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = 16.dp)
+        ) {
+            Text(text = stringResource(item.titleResId))
+            Spacer(Modifier.height(4.dp))
+            Text(
+                text = stringResource(item.textResId),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+        IconButton(onClick = item.onClick) {
+            Icon(
+                imageVector = GlideIcons.AltArrow,
+                contentDescription = null,
+                modifier = Modifier.size(16.dp)
+            )
         }
     }
 }

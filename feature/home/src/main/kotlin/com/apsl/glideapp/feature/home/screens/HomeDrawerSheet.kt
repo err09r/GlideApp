@@ -1,10 +1,8 @@
 package com.apsl.glideapp.feature.home.screens
 
-import android.os.Build
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,9 +10,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Divider
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
@@ -22,7 +21,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -50,6 +48,7 @@ import com.apsl.glideapp.core.ui.R as CoreR
 data class DrawerMenuItem(
     val icon: ImageVector,
     @StringRes val titleResId: Int,
+    val showBadge: Boolean = false,
     val onClick: () -> Unit
 )
 
@@ -62,11 +61,12 @@ fun HomeDrawerSheet(
     onLogoutClick: () -> Unit
 ) {
     val context = LocalContext.current
-    val menuItems = remember {
+    val menuItems = remember(userInfo) {
         listOf(
             DrawerMenuItem(
                 icon = GlideIcons.Wallet,
                 titleResId = CoreR.string.home_drawer_menu_wallet,
+                showBadge = !userInfo.walletVisited,
                 onClick = onWalletClick
             ),
             DrawerMenuItem(
@@ -75,14 +75,19 @@ fun HomeDrawerSheet(
                 onClick = onMyRidesClick
             ),
             DrawerMenuItem(
-                icon = GlideIcons.Help,
-                titleResId = CoreR.string.home_drawer_menu_help,
-                onClick = {}
-            ),
-            DrawerMenuItem(
                 icon = GlideIcons.Settings,
                 titleResId = CoreR.string.home_drawer_menu_settings,
                 onClick = context::openAppSettings //TODO: Navigate to SettingsScreen instead of app settings
+            ),
+            DrawerMenuItem(
+                icon = GlideIcons.Globe,
+                titleResId = CoreR.string.home_drawer_menu_language,
+                onClick = context::openAppLanguageSettings
+            ),
+            DrawerMenuItem(
+                icon = GlideIcons.Help,
+                titleResId = CoreR.string.home_drawer_menu_help,
+                onClick = {}
             ),
             DrawerMenuItem(
                 icon = GlideIcons.Logout,
@@ -128,36 +133,20 @@ fun HomeDrawerSheet(
 
         menuItems.forEachIndexed { index, item ->
             if (index == 0) {
-                Divider()
+                HorizontalDivider()
             }
             ListItem(
                 modifier = Modifier.clickable(onClick = item.onClick),
                 headlineContent = { Text(text = stringResource(item.titleResId)) },
                 leadingContent = {
-                    Icon(imageVector = item.icon, contentDescription = null)
-                }
-            )
-        }
-
-        Spacer(Modifier.weight(1f))
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                IconButton(
-                    onClick = context::openAppLanguageSettings,
-                    modifier = Modifier.align(Alignment.CenterStart)
-                ) {
-                    Icon(
-                        imageVector = GlideIcons.Globe,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    BadgedBox(
+                        badge = { if (item.showBadge) Badge() },
+                        content = {
+                            Icon(imageVector = item.icon, contentDescription = null)
+                        }
                     )
                 }
-            }
+            )
         }
     }
 }

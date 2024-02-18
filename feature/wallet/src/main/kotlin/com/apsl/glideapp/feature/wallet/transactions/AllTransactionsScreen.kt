@@ -2,12 +2,17 @@ package com.apsl.glideapp.feature.wallet.transactions
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -22,9 +27,7 @@ import com.apsl.glideapp.core.ui.icons.Bonus
 import com.apsl.glideapp.core.ui.icons.GlideIcons
 import com.apsl.glideapp.core.ui.icons.TopUp
 import com.apsl.glideapp.core.ui.icons.Voucher
-import com.apsl.glideapp.core.ui.pullrefresh.PullRefreshIndicator
-import com.apsl.glideapp.core.ui.pullrefresh.pullRefresh
-import com.apsl.glideapp.core.ui.pullrefresh.rememberPullRefreshState
+import com.apsl.glideapp.core.ui.pulltorefresh.Indicator
 import com.apsl.glideapp.core.ui.receiveAsLazyPagingItems
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.core.ui.toComposePagingItems
@@ -44,7 +47,7 @@ fun AllTransactionsScreen(
     AllTransactionsScreenContent(
         uiState = uiState,
         onBackClick = onNavigateBack,
-        onPullRefresh = viewModel::refresh
+        onPullToRefresh = viewModel::refresh
     )
 }
 
@@ -52,7 +55,7 @@ fun AllTransactionsScreen(
 fun AllTransactionsScreenContent(
     uiState: AllTransactionsUiState,
     onBackClick: () -> Unit,
-    onPullRefresh: () -> Unit
+    onPullToRefresh: () -> Unit
 ) {
     FeatureScreen(
         topBarText = stringResource(CoreR.string.all_transactions_screen_title),
@@ -68,13 +71,24 @@ fun AllTransactionsScreenContent(
             }
 
             else -> {
-                val refreshing = uiState.isRefreshing
-                val pullRefreshState = rememberPullRefreshState(
-                    refreshing = refreshing,
-                    onRefresh = onPullRefresh
-                )
+                val pullToRefreshState = rememberPullToRefreshState()
+                if (pullToRefreshState.isRefreshing) {
+                    LaunchedEffect(Unit) {
+                        onPullToRefresh()
+                    }
+                }
 
-                Box(modifier = Modifier.pullRefresh(pullRefreshState)) {
+                if (!uiState.isRefreshing) {
+                    LaunchedEffect(Unit) {
+                        pullToRefreshState.endRefresh()
+                    }
+                }
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .nestedScroll(pullToRefreshState.nestedScrollConnection)
+                ) {
                     TransactionList(
                         transactions = uiState.transactions,
                         modifier = Modifier.fillMaxWidth(),
@@ -82,10 +96,10 @@ fun AllTransactionsScreenContent(
                     )
                 }
 
-                PullRefreshIndicator(
-                    refreshing = refreshing,
-                    state = pullRefreshState,
-                    modifier = Modifier.align(Alignment.TopCenter)
+                PullToRefreshContainer(
+                    state = pullToRefreshState,
+                    modifier = Modifier.align(Alignment.TopCenter),
+                    indicator = { Indicator(state = it) }
                 )
             }
         }
@@ -135,7 +149,7 @@ private fun AllTransactionsScreenPreview() {
         AllTransactionsScreenContent(
             uiState = AllTransactionsUiState(transactions = transactions),
             onBackClick = {},
-            onPullRefresh = {}
+            onPullToRefresh = {}
         )
     }
 }
