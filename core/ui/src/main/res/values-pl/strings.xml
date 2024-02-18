@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="value_kilometers">%s km</string>
+    <string name="value_meters">%s m</string>
+    <string name="value_meters_full">%s metrów</string>
+    <string name="value_kmh">%s km/h</string>
+
+    <string name="meters">metry</string>
+    <string name="rides">przejazdy</string>
+
+    <string name="error_server">Błąd serwera</string>
+    <string name="error_unknown">Nieznany błąd</string>
+    <string name="error_connection">Błąd połączenia. Sprawdź swoje połączenie internetowe</string>
+    <string name="error_voucher_invalid_code">Nieprawidłowy kod vouchera. Spróbuj ponownie</string>
+
+    <string name="toast_configuration_not_received">Konfiguracja nie została pobrana z serwera. Ponownie uruchom aplikację</string>
+    <string name="toast_user_too_far">Jesteś zbyt daleko od pojazdu</string>
+    <string name="toast_user_inside_noparking_zone">Użytkownik znajduje się w strefie zakazu parkowania</string>
+    <string name="toast_not_enough_funds">Użytkownik nie ma wystarczających środków, aby rozpocząć przejazd</string>
+
+
+    <!--    Auth-->
+    <string name="username">Nazwa użytkownika</string>
+    <string name="password">Hasło</string>
+    <string name="repeat_password">Powtórz hasło</string>
+    <string name="dont_have_an_account">Nie masz konta?</string>
+    <string name="sign_up">Zarejestruj się</string>
+
+    <string name="login_title">Witaj!</string>
+    <string name="login_description">Zaloguj się, aby rozpocząć podróż</string>
+    <string name="login_button">Zaloguj się</string>
+
+    <string name="register_title">Cześć!</string>
+    <string name="register_description">Utwórz nowe konto i otrzymaj bonus na start</string>
+    <string name="register_button">@string/sign_up</string>
+    <string name="invalid_username_format">Nieprawidłowy format nazwy użytkownika</string>
+    <string name="invalid_password_format">Nieprawidłowy format hasła</string>
+    <string name="passwords_donot_match">Hasła nie pasują do siebie</string>
+    <string name="invalid_username_password_format">Nieprawidłowy format nazwy użytkownika lub hasła</string>
+    <!--    -->
+
+
+    <!--    Home-->
+    <string name="location_permission_dialog_button">Otwórz ustawienia aplikacji</string>
+    <string name="location_permission_dialog_title">Włącz lokalizację</string>
+    <string name="location_permission_dialog_text">Aby rozpocząć przejazd, należy włączyć lokalizację w ustawieniach aplikacji</string>
+
+    <string name="location_rationale_button">@string/location_permission_dialog_button</string>
+    <string name="location_rationale_title">@string/location_permission_dialog_title</string>
+    <string name="location_rationale_text">Zezwolenie na lokalizację musi być udzielone, aby móc korzystać z funkcji przejazdu</string>
+
+    <string name="notification_permission_dialog_button_confirm">Zezwól</string>
+    <string name="notification_permission_dialog_button_dismiss">Odrzuć</string>
+    <string name="notification_permission_dialog_title">Zezwól na powiadomienia</string>
+    <string name="notification_permission_dialog_text">Powiadomienia są wyłączone dla naszej aplikacji. Aby zapewnić najlepsze doświadczenia z jazdy, włącz powiadomienia w ustawieniach aplikacji</string>
+
+    <string name="ride_notification_title">Śledzenie lokalizacji…</string>
+    <string name="ride_notification_text">Poruszanie się po: %s</string>
+    <string name="ride_notification_text_default">Lokalizacja</string>
+
+    <string name="home_bottom_sheet_scooter">Hulajnoga %s</string>
+    <string name="home_bottom_sheet_battery">%s%% bateria</string>
+    <string name="home_bottom_sheet_range">Zasięg %s km</string>
+    <string name="home_bottom_sheet_button">Rozpocznij przejazd</string>
+    <string name="home_bottom_sheet_fare">%1$s na start, następnie %2$s/min</string>
+
+    <string name="ride">Przejazd</string>
+    <string name="route">Trasa</string>
+    <string name="time">Czas</string>
+    <string name="amount">Kwota</string>
+    <string name="voucher">Voucher</string>
+    <string name="pause">Pauza</string>
+    <string name="finish">Koniec</string>
+    <string name="ring">Dzwonek</string>
+    <string name="report_issue">Zgłoś problem</string>
+
+    <string name="home_drawer_menu_wallet">Portfel</string>
+    <string name="home_drawer_menu_rides">Moje przejazdy</string>
+    <string name="home_drawer_menu_settings">Ustawienia</string>
+    <string name="home_drawer_menu_language">Język</string>
+    <string name="home_drawer_menu_help">Pomoc</string>
+    <string name="home_drawer_menu_logout">Wyloguj</string>
+    <string name="home_drawer_header">Cześć, %s</string>
+
+    <string name="ride_layout_header">Aktywny przejazd</string>
+    <!--    -->
+
+    <!--    Rides-->
+    <string name="all_rides_screen_title">Moje przejazdy</string>
+    <string name="all_rides_stats_travelled">Łącznie przebyta odległość</string>
+    <string name="all_rides_stats_rides">Łączna liczba przejazdów</string>
+    <string name="all_rides_empty_title">Brak przejazdów</string>
+    <string name="all_rides_empty_text">Rozpocznij swój pierwszy przejazd, a pojawi się tutaj</string>
+
+    <string name="address_not_defined">Adres niezdefiniowany</string>
+
+    <string name="ride_details_screen_title">Szczegóły przejazdu</string>
+    <string name="ride_details_sheet_title1">@string/route</string>
+    <string name="ride_details_sheet_subtitle1">Całkowita odległość</string>
+    <string name="ride_details_sheet_subtitle2">Średnia prędkość</string>
+    <string name="ride_details_sheet_title2">@string/time</string>
+    <string name="ride_details_sheet_ride_lasted">Przejazd trwał %s minut</string>
+    <string name="ride_details_sheet_date_time">Data i godzina</string>
+    <!--    -->
+
+
+    <!--    Wallet-->
+    <string name="wallet_screen_title">Mój portfel</string>
+    <string name="payment_dialog_description">Przetwarzanie płatności…</string>
+    <string name="transaction_type_top_up">Doładowanie konta</string>
+    <string name="transaction_type_ride">@string/ride</string>
+    <string name="transaction_type_start_bonus">Bonus na start</string>
+    <string name="transaction_type_voucher">Aktywacja vouchera</string>
+    <string name="transaction_type_penalty">Kara</string>
+
+    <string name="top_up_success_dialog_button">Kontynuuj</string>
+    <string name="top_up_success_dialog_title">Sukces!</string>
+    <string name="top_up_success_dialog_text">Twój stan konta został pomyślnie zasilany. Miłej podróży!</string>
+
+    <string name="payment_method_debit_card">Karta debetowa</string>
+
+    <string name="top_up_screen_title">Doładowanie konta</string>
+    <string name="top_up_title1">Doładuj swoje konto</string>
+    <string name="top_up_description1">Wprowadź kwotę, jaką chcesz doładować swoje konto</string>
+    <string name="top_up_title2">Wybierz metodę płatności</string>
+    <string name="top_up_button">Doładuj</string>
+    <string name="invalid_amount_format">Nieprawidłowy format kwoty</string>
+
+    <string name="all_transactions_screen_title">Moje transakcje</string>
+
+    <string name="voucher_activated_dialog_button">Kontynuuj</string>
+    <string name="voucher_activated_dialog_title">Sukces!</string>
+    <string name="voucher_activated_dialog_text">Kod vouchera został aktywowany. Środki zostaną dodane do Twojego konta</string>
+
+    <string name="voucher_screen_title">@string/voucher</string>
+    <string name="voucher_screen_card_title">Wprowadź swój kod</string>
+    <string name="voucher_screen_card_text">Aby aktywować voucher i otrzymać bonus, wprowadź swój kod poniżej</string>
+    <string name="voucher_screen_textfield_hint">np. KOD</string>
+    <string name="voucher_screen_button">Aktywuj</string>
+
+    <string name="balance_card_title">Twój stan konta</string>
+    <string name="balance_card_button">Dodaj środki</string>
+
+    <string name="wallet_pager_item_title1">Zrealizuj voucher</string>
+    <string name="wallet_pager_item_text1">Masz kod? Aktywuj go i ciesz się podróżą!</string>
+    <string name="wallet_pager_item_title2">Dodaj metodę płatności</string>
+    <string name="wallet_pager_item_text2">Więcej metod dla większej wygody</string>
+
+    <string name="recent_transactions_header">Ostatnie transakcje</string>
+    <string name="recent_transactions_footer">Zobacz wszystkie transakcje</string>
+    <!--    -->
+
+</resources>
