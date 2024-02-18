@@ -1,3 +1,5 @@
+@file:Suppress("Unused")
+
 package com.apsl.glideapp.core.ui.theme
 
 import androidx.compose.ui.graphics.Color
@@ -220,10 +222,10 @@ internal val SurfaceContainerHighestDarkHighContrast = Color(0xFF313630)
 
 internal val MoneyGreenLight = Color(0xFF00AE84)
 internal val MoneyRedLight = Color(0xFFE23B4A)
-internal val NoParkingZoneLight = Color(0xFFC93C49)
 internal val NoRidingZoneLight = Color(0xFF2F4496)
+internal val NoParkingZoneLight = Color(0xFFC93C49)
 
 internal val MoneyGreenDark = MoneyGreenLight
 internal val MoneyRedDark = MoneyRedLight
-internal val NoParkingZoneDark = NoParkingZoneLight
-internal val NoRidingZoneDark = NoRidingZoneLight
+internal val NoRidingZoneDark = TertiaryDarkMediumContrast
+internal val NoParkingZoneDark = ErrorDarkMediumContrast
