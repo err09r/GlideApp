@@ -48,12 +48,12 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun setUpSplashScreen() {
-        val splashScreen = installSplashScreen()
-    }
-
     private fun setUpEdgeToEdge() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
+    }
+
+    private fun setUpSplashScreen() {
+        installSplashScreen()
     }
 
     private fun init() {
