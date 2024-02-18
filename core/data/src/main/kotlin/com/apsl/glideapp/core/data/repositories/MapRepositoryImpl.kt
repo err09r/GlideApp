@@ -26,8 +26,8 @@ class MapRepositoryImpl @Inject constructor(
                     status = dto.status,
                     coordinates = dto.coordinates,
                     rangeKilometers = (dto.batteryCharge * 0.4).roundToInt().toString(),
-                    unlockingFee = CurrencyFormatter.format(dto.batteryCharge),
-                    farePerMinute = CurrencyFormatter.format(dto.batteryCharge),
+                    unlockingFee = CurrencyFormatter.format(dto.unlockingFee),
+                    farePerMinute = CurrencyFormatter.format(dto.farePerMinute),
                     batteryCharge = dto.batteryCharge.toString(),
                     batteryState = when (dto.batteryCharge) {
                         in 0..34 -> BatteryState.Low

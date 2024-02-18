@@ -61,10 +61,10 @@
     <string name="ride_notification_text_default">Location</string>
 
     <string name="home_bottom_sheet_scooter">Scooter %s</string>
-    <string name="home_bottom_sheet_battery">%d%% battery</string>
-    <string name="home_bottom_sheet_range">%d km range</string>
+    <string name="home_bottom_sheet_battery">%s%% battery</string>
+    <string name="home_bottom_sheet_range">%s km range</string>
     <string name="home_bottom_sheet_button">Start Ride</string>
-    <string name="home_bottom_sheet_fare">%1$.2f to start, then %2$.2f /min</string>
+    <string name="home_bottom_sheet_fare">%1$s to start, then %2$s/min</string>
 
     <string name="ride">Ride</string>
     <string name="route">Route</string>
