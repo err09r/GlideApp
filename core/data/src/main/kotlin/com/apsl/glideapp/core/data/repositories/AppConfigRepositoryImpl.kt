@@ -14,7 +14,7 @@ class AppConfigRepositoryImpl @Inject constructor(
 
     override suspend fun getAppConfig(): AppConfig? {
         return appDataStore.unlockDistance.firstOrNull()?.let {
-            AppConfig(unlockDistance = it)
+            AppConfig(unlockDistanceMeters = it)
         }
     }
 

@@ -2,10 +2,10 @@ package com.apsl.glideapp.feature.wallet.wallet
 
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
-import com.apsl.glideapp.common.util.format
 import com.apsl.glideapp.core.domain.transaction.GetUserTransactionsUseCase
 import com.apsl.glideapp.core.domain.user.GetUserUseCase
 import com.apsl.glideapp.core.ui.BaseViewModel
+import com.apsl.glideapp.core.util.android.CurrencyFormatter
 import com.apsl.glideapp.feature.wallet.common.TransactionUiModel
 import com.apsl.glideapp.feature.wallet.common.toTransactionUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,7 +20,7 @@ import timber.log.Timber
 data class WalletUiState(
     val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,
-    val userBalance: String = "0,00",
+    val userBalance: String = CurrencyFormatter.default(),
     val isRentalAvailable: Boolean = true,
     val recentTransactions: List<TransactionUiModel> = emptyList(),
     val error: WalletUiError? = null
@@ -46,7 +46,7 @@ class WalletViewModel @Inject constructor(
                     }
                     _uiState.update { state ->
                         state.copy(
-                            userBalance = user.balance.format(2),
+                            userBalance = CurrencyFormatter.format(user.balance),
                             isRentalAvailable = user.balance > 0
                         )
                     }

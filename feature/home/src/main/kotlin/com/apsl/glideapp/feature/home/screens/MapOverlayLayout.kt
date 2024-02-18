@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -52,8 +51,7 @@ fun BoxScope.MapOverlayLayout(
                 ) {
                     FloatingActionButton(
                         onClick = onMenuClick,
-                        containerColor = MaterialTheme.colorScheme.surface,
-                        elevation = FloatingActionButtonDefaults.elevation()
+                        containerColor = MaterialTheme.colorScheme.surface
                     ) {
                         Icon(imageVector = GlideIcons.Menu, contentDescription = null)
                     }

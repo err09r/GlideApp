@@ -3,7 +3,6 @@ package com.apsl.glideapp.feature.home.viewmodels
 import androidx.lifecycle.viewModelScope
 import com.apsl.glideapp.common.models.Route
 import com.apsl.glideapp.common.util.Geometry
-import com.apsl.glideapp.common.util.format
 import com.apsl.glideapp.core.domain.auth.LogOutUseCase
 import com.apsl.glideapp.core.domain.auth.ObserveUserAuthenticationStateUseCase
 import com.apsl.glideapp.core.domain.config.GetAppConfigUseCase
@@ -27,6 +26,8 @@ import com.apsl.glideapp.core.model.UserAuthState
 import com.apsl.glideapp.core.model.UserLocation
 import com.apsl.glideapp.core.model.Vehicle
 import com.apsl.glideapp.core.ui.BaseViewModel
+import com.apsl.glideapp.core.util.android.DistanceFormatter
+import com.apsl.glideapp.core.util.android.NumberFormatter
 import com.apsl.glideapp.core.util.maps.mapToLatLng
 import com.apsl.glideapp.core.util.maps.toCoordinates
 import com.apsl.glideapp.core.util.maps.toCoordinatesBounds
@@ -128,7 +129,7 @@ class HomeViewModel @Inject constructor(
 
     private fun getUnlockDistance() {
         viewModelScope.launch {
-            val distance = getAppConfigUseCase().getOrNull()?.unlockDistance
+            val distance = getAppConfigUseCase().getOrNull()?.unlockDistanceMeters
             this@HomeViewModel.unlockDistance = distance
             updateMapState(selectedVehicleRadius = distance)
         }
@@ -140,7 +141,7 @@ class HomeViewModel @Inject constructor(
         ridingZones: List<List<LatLng>> = uiState.value.mapState.ridingZones,
         noParkingZones: List<ZoneUiModel> = uiState.value.mapState.noParkingZones,
         rideRoute: List<LatLng>? = uiState.value.mapState.rideRoute,
-        selectedVehicleRadius: Double? = uiState.value.mapState.selectedVehicleRadius
+        selectedVehicleRadius: Double? = uiState.value.mapState.selectedVehicleRadiusMeters
     ) {
         _uiState.update { uiState ->
             uiState.copy(
@@ -150,7 +151,7 @@ class HomeViewModel @Inject constructor(
                     ridingZones = ridingZones,
                     noParkingZones = noParkingZones,
                     rideRoute = rideRoute,
-                    selectedVehicleRadius = selectedVehicleRadius
+                    selectedVehicleRadiusMeters = selectedVehicleRadius
                 )
             )
         }
@@ -164,11 +165,13 @@ class HomeViewModel @Inject constructor(
                         return@onSuccess
                     }
                     _uiState.update { state ->
+                        Timber.d(NumberFormatter.format(user.totalDistanceMeters))
+                        Timber.d(NumberFormatter.format(user.totalRides))
                         state.copy(
                             userInfo = state.userInfo.copy(
                                 username = user.username,
-                                totalDistance = user.totalDistance.roundToInt(),
-                                totalRides = user.totalRides,
+                                totalDistanceKilometers = NumberFormatter.format(user.totalDistanceMeters.roundToInt()),
+                                totalRides = NumberFormatter.format(user.totalRides),
                                 walletVisited = user.walletVisited,
                             )
                         )
@@ -254,23 +257,23 @@ class HomeViewModel @Inject constructor(
             val selectedVehicle = vehiclesOnMap.find { it.id == uiState.value.selectedVehicle?.id }
 
             if (currentUserLocation != null && selectedVehicle != null) {
-                val distanceFromVehicle = Geometry.calculateDistance(
+                val distanceFromVehicleMeters = Geometry.calculateDistance(
                     currentUserLocation.toCoordinates().asPair(),
                     selectedVehicle.coordinates.asPair()
                 )
 
-                Timber.d("Distance from vehicle: $distanceFromVehicle")
+                Timber.d("Distance from vehicle: $distanceFromVehicleMeters")
 
-                val unlockDistance = this@HomeViewModel.unlockDistance
-                    ?: getAppConfigUseCase().getOrNull()?.unlockDistance
+                val unlockDistanceMeters = this@HomeViewModel.unlockDistance
+                    ?: getAppConfigUseCase().getOrNull()?.unlockDistanceMeters
 
-                if (unlockDistance != null && distanceFromVehicle <= unlockDistance) {
+                if (unlockDistanceMeters != null && distanceFromVehicleMeters <= unlockDistanceMeters) {
                     startRideUseCase(
                         vehicleId = selectedVehicle.id,
                         userCoordinates = currentUserLocation.toCoordinates()
                     )
                 } else {
-                    val textResId = if (unlockDistance == null) {
+                    val textResId = if (unlockDistanceMeters == null) {
                         CoreR.string.toast_configuration_not_received
                     } else {
                         CoreR.string.toast_user_too_far
@@ -359,16 +362,20 @@ class HomeViewModel @Inject constructor(
     private fun onRideRouteUpdated(currentRoute: Route) {
         Timber.d("Ride route updated")
         updateMapState(rideRoute = currentRoute.points.mapToLatLng())
-        updateRideState(distance = (currentRoute.distance / 1000).format(1).replace('.', ','))
+        updateRideState(distanceKilometers = DistanceFormatter.format(currentRoute.distance / 1000))
     }
 
     private fun updateRideState(
-        distance: String = uiState.value.rideState?.distance ?: "0,0",
+        distanceKilometers: String = uiState.value.rideState?.distanceKilometers
+            ?: DistanceFormatter.default(),
         isPaused: Boolean = uiState.value.rideState?.isPaused ?: false
     ) {
         _uiState.update { uiState ->
             uiState.copy(
-                rideState = uiState.rideState?.copy(distance = distance, isPaused = isPaused)
+                rideState = uiState.rideState?.copy(
+                    distanceKilometers = distanceKilometers,
+                    isPaused = isPaused
+                )
             )
         }
     }

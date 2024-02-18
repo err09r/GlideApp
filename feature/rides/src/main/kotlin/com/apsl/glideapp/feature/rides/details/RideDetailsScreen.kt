@@ -289,15 +289,15 @@ fun RideDetailsSheetContent(ride: RideDetailsUiModel, modifier: Modifier = Modif
                 text = stringResource(CoreR.string.ride_details_sheet_title1)
             )
             Spacer(Modifier.height(8.dp))
-            Column(modifier = Modifier.padding(start = 16.dp)) {
+            Column {
                 TitleValueText(
                     title = stringResource(CoreR.string.ride_details_sheet_subtitle1),
-                    value = stringResource(CoreR.string.value_meters, ride.distance)
+                    value = stringResource(CoreR.string.value_meters, ride.distanceMeters)
                 )
                 Spacer(Modifier.height(4.dp))
                 TitleValueText(
                     title = stringResource(CoreR.string.ride_details_sheet_subtitle2),
-                    value = stringResource(CoreR.string.value_kmh, ride.averageSpeed)
+                    value = stringResource(CoreR.string.value_kmh, ride.averageSpeedKmh)
                 )
                 Spacer(Modifier.height(24.dp))
 
@@ -308,7 +308,7 @@ fun RideDetailsSheetContent(ride: RideDetailsUiModel, modifier: Modifier = Modif
                 }
                 Text(
                     text = addressText,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.secondary
                 )
             }
         }
@@ -323,7 +323,7 @@ fun RideDetailsSheetContent(ride: RideDetailsUiModel, modifier: Modifier = Modif
                 text = stringResource(CoreR.string.ride_details_sheet_title2)
             )
             Spacer(Modifier.height(8.dp))
-            Column(modifier = Modifier.padding(start = 16.dp)) {
+            Column {
                 Text(
                     text = stringResource(
                         CoreR.string.ride_details_sheet_ride_lasted,
@@ -338,13 +338,17 @@ fun RideDetailsSheetContent(ride: RideDetailsUiModel, modifier: Modifier = Modif
                 ) {
                     Text(
                         text = stringResource(CoreR.string.ride_details_sheet_date_time),
+                        modifier = Modifier.alignByBaseline(),
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    Column(horizontalAlignment = Alignment.End) {
+                    Column(
+                        modifier = Modifier.alignByBaseline(),
+                        horizontalAlignment = Alignment.End
+                    ) {
                         Text(
                             text = ride.startDate,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            fontWeight = FontWeight.SemiBold
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold)
                         )
                         Text(
                             text = stringResource(
@@ -353,7 +357,7 @@ fun RideDetailsSheetContent(ride: RideDetailsUiModel, modifier: Modifier = Modif
                                 ride.finishTime
                             ),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            fontWeight = FontWeight.SemiBold
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold)
                         )
                     }
                 }
@@ -372,12 +376,14 @@ fun TitleValueText(title: String, value: String, modifier: Modifier = Modifier) 
     ) {
         Text(
             text = title,
+            modifier = Modifier.alignByBaseline(),
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Text(
             text = value,
+            modifier = Modifier.alignByBaseline(),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontWeight = FontWeight.SemiBold
+            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold)
         )
     }
 }
@@ -407,8 +413,8 @@ private fun RideDetailsSheetContentPreview() {
                 startTime = "16:24",
                 finishTime = "16:56",
                 route = emptyList(),
-                distance = "4154",
-                averageSpeed = "15,3",
+                distanceMeters = "4154",
+                averageSpeedKmh = "15,3",
                 timeInMinutes = "32"
             )
         )
@@ -428,8 +434,8 @@ private fun RideDetailsScreenPreview() {
                     startTime = "16:24",
                     finishTime = "16:56",
                     route = emptyList(),
-                    distance = "4154",
-                    averageSpeed = "15.3",
+                    distanceMeters = "4154",
+                    averageSpeedKmh = "15.3",
                     timeInMinutes = "32"
                 )
             ),

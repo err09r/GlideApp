@@ -17,6 +17,7 @@ import com.apsl.glideapp.core.ui.icons.GlideIcons
 import com.apsl.glideapp.core.ui.icons.TopUp
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.core.ui.theme.LocalExtendedColorScheme
+import com.apsl.glideapp.core.util.android.CurrencyFormatter
 import com.apsl.glideapp.core.ui.R as CoreR
 
 @Composable
@@ -41,7 +42,7 @@ fun TransactionItem(transaction: TransactionUiModel, modifier: Modifier = Modifi
                 else -> MaterialTheme.colorScheme.onSurfaceVariant
             }
             Text(
-                text = stringResource(CoreR.string.value_zloty, transaction.amount),
+                text = transaction.amount,
                 color = color,
                 style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
             )
@@ -56,7 +57,7 @@ private fun TransactionItemPreview() {
         TransactionItem(
             transaction = TransactionUiModel(
                 id = "1",
-                amount = "+3,00",
+                amount = "+" + CurrencyFormatter.format(3.0),
                 amountType = AmountType.Positive,
                 titleResId = CoreR.string.transaction_type_top_up,
                 image = GlideIcons.TopUp,

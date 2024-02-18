@@ -29,9 +29,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -52,6 +54,8 @@ import com.apsl.glideapp.core.ui.icons.GlideIcons
 import com.apsl.glideapp.core.ui.icons.Wallet
 import com.apsl.glideapp.core.ui.imeCollapsible
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
+import com.apsl.glideapp.core.util.android.CurrencyFormatter
+import com.apsl.glideapp.core.util.android.NumberFormatter
 import com.apsl.glideapp.core.ui.R as CoreR
 
 @Composable
@@ -125,27 +129,27 @@ fun TopUpScreenContent(
                     Spacer(Modifier.height(16.dp))
 
                     OutlinedTextField(
-                        value = uiState.amountTextFieldValue ?: "0,0",
+                        value = uiState.amountTextFieldValue ?: NumberFormatter.defaultFractional(),
                         onValueChange = onAmountValueChange,
                         modifier = Modifier
                             .fillMaxWidth()
                             .onFocusChanged { focusState ->
-                                when {
-                                    focusState.isFocused && (uiState.amountTextFieldValue == "0,0" || uiState.amountTextFieldValue == null) -> {
-                                        onAmountValueChange("")
-                                    }
-
-                                    !focusState.isFocused && uiState.amountTextFieldValue.isNullOrBlank() -> {
-                                        onAmountValueChange(null)
-                                    }
-                                }
+                                onFocusChangedLogic(
+                                    focusState = focusState,
+                                    textFieldValue = uiState.amountTextFieldValue,
+                                    onAmountValueChange = onAmountValueChange
+                                )
                             },
                         label = { Text(text = stringResource(CoreR.string.amount)) },
                         trailingIcon = {
                             Text(
-                                text = stringResource(CoreR.string.zloty),
+                                text = CurrencyFormatter.currency,
                                 modifier = Modifier.padding(horizontal = 16.dp)
                             )
+                        },
+                        isError = uiState.invalidAmountErrorResId != null,
+                        supportingText = uiState.invalidAmountErrorResId?.let {
+                            { Text(text = stringResource(it)) }
                         },
                         keyboardOptions = KeyboardOptions(
                             capitalization = KeyboardCapitalization.None,
@@ -173,9 +177,14 @@ fun TopUpScreenContent(
 
                     Spacer(Modifier.height(32.dp))
 
+                    val focusManager = LocalFocusManager.current
                     Button(
-                        onClick = onTopUpClick,
-                        modifier = Modifier.fillMaxWidth()
+                        onClick = {
+                            onTopUpClick()
+                            focusManager.clearFocus(true)
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = uiState.isActionButtonActive
                     ) {
                         Text(text = stringResource(CoreR.string.top_up_button))
                     }
@@ -183,6 +192,22 @@ fun TopUpScreenContent(
                     Spacer(Modifier.height(16.dp))
                 }
             }
+        }
+    }
+}
+
+private fun onFocusChangedLogic(
+    focusState: FocusState,
+    textFieldValue: String?,
+    onAmountValueChange: (String?) -> Unit
+) {
+    when {
+        focusState.isFocused && (textFieldValue == CurrencyFormatter.default() || textFieldValue == null) -> {
+            onAmountValueChange("")
+        }
+
+        !focusState.isFocused && textFieldValue.isNullOrBlank() -> {
+            onAmountValueChange(null)
         }
     }
 }

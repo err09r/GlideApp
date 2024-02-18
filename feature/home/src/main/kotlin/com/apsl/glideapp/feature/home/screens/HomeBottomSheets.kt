@@ -25,6 +25,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import com.apsl.glideapp.core.model.BatteryState
 import com.apsl.glideapp.core.ui.GlideImage
 import com.apsl.glideapp.core.ui.icons.Battery
 import com.apsl.glideapp.core.ui.icons.BatteryFull
@@ -36,8 +37,10 @@ import com.apsl.glideapp.core.ui.icons.GlideIcons
 import com.apsl.glideapp.core.ui.icons.Route2
 import com.apsl.glideapp.core.ui.icons.WarningTriangle
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
+import com.apsl.glideapp.core.util.android.CurrencyFormatter
+import com.apsl.glideapp.core.util.android.DistanceFormatter
+import com.apsl.glideapp.core.util.android.NumberFormatter
 import com.apsl.glideapp.feature.home.models.SelectedVehicleUiModel
-import com.apsl.glideapp.feature.home.viewmodels.BatteryState
 import com.apsl.glideapp.feature.home.viewmodels.VehicleUiModel
 import com.google.android.gms.maps.model.LatLng
 import com.apsl.glideapp.core.ui.R as CoreR
@@ -74,7 +77,10 @@ fun ActiveRideSheetLayout(
                 Spacer(Modifier.height(4.dp))
                 ScooterInfoComponent(
                     imageVector = GlideIcons.Route2,
-                    text = stringResource(CoreR.string.home_bottom_sheet_range, vehicle.range)
+                    text = stringResource(
+                        CoreR.string.home_bottom_sheet_range,
+                        vehicle.rangeKilometers
+                    )
                 )
             }
             Column {
@@ -140,7 +146,7 @@ fun DefaultSheetLayout(
                     },
                     text = stringResource(
                         CoreR.string.home_bottom_sheet_range,
-                        selectedVehicle.range
+                        selectedVehicle.rangeKilometers
                     )
                 )
                 Spacer(Modifier.height(4.dp))
@@ -208,11 +214,11 @@ private fun DefaultSheetLayoutPreview() {
             selectedVehicle = SelectedVehicleUiModel(
                 id = "123",
                 code = "0023",
-                range = 7,
-                unlockingFee = 3.3,
-                farePerMinute = 0.85,
+                rangeKilometers = DistanceFormatter.format(8.3),
+                unlockingFee = CurrencyFormatter.format(3.3),
+                farePerMinute = CurrencyFormatter.format(0.85),
                 coordinates = LatLng(0.0, 0.0),
-                batteryCharge = 30,
+                batteryCharge = NumberFormatter.format(30),
                 batteryState = BatteryState.Medium
             ),
             onStartRideClick = {}
@@ -228,10 +234,10 @@ private fun ActiveRideSheetLayoutPreview() {
             vehicle = VehicleUiModel(
                 id = "123",
                 code = "0023",
-                range = 7,
-                unlockingFee = 3.3,
-                farePerMinute = 0.85,
-                batteryCharge = 30,
+                rangeKilometers = DistanceFormatter.format(8.3),
+                unlockingFee = CurrencyFormatter.format(3.3),
+                farePerMinute = CurrencyFormatter.format(0.85),
+                batteryCharge = NumberFormatter.format(30),
                 batteryState = BatteryState.Medium
             ),
             onFinishRideClick = {}

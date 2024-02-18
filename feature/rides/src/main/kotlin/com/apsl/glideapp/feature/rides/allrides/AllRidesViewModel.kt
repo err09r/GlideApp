@@ -8,14 +8,16 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.map
 import com.apsl.glideapp.common.models.Coordinates
 import com.apsl.glideapp.common.models.Route
-import com.apsl.glideapp.common.util.format
 import com.apsl.glideapp.core.domain.ride.GetAllRideCoordinatesUseCase
 import com.apsl.glideapp.core.domain.ride.GetUserRidesPaginatedUseCase
 import com.apsl.glideapp.core.domain.user.GetUserUseCase
 import com.apsl.glideapp.core.ui.BaseViewModel
 import com.apsl.glideapp.core.ui.ComposePagingItems
 import com.apsl.glideapp.core.ui.toComposePagingItems
+import com.apsl.glideapp.core.util.android.DistanceFormatter
+import com.apsl.glideapp.core.util.android.NumberFormatter
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,15 +28,14 @@ import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
 @Immutable
 data class AllRidesUiState(
     val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,
     val rides: ComposePagingItems<RideUiModel>? = null,
-    val totalRides: String = "0",
-    val totalDistance: String = "0,0",
+    val totalRides: String = NumberFormatter.default(),
+    val totalDistanceMeters: String = DistanceFormatter.default(),
     val error: AllRidesUiError? = null
 )
 
@@ -61,7 +62,7 @@ class AllRidesViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         totalRides = user.totalRides.toString(),
-                        totalDistance = (user.totalDistance / 1000).format(1)
+                        totalDistanceMeters = DistanceFormatter.format(user.totalDistanceMeters / 1000)
                     )
                 }
             }

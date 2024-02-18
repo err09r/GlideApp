@@ -13,12 +13,15 @@ import com.apsl.glideapp.core.database.entities.RideEntity
 import com.apsl.glideapp.core.datastore.AppDataStore
 import com.apsl.glideapp.core.domain.ride.RideCoordinates
 import com.apsl.glideapp.core.domain.ride.RideRepository
+import com.apsl.glideapp.core.model.BatteryState
 import com.apsl.glideapp.core.model.Ride
 import com.apsl.glideapp.core.model.RideEvent
 import com.apsl.glideapp.core.model.Vehicle
 import com.apsl.glideapp.core.network.http.GlideApi
 import com.apsl.glideapp.core.network.websocket.WebSocketClient
+import com.apsl.glideapp.core.util.android.CurrencyFormatter
 import javax.inject.Inject
+import kotlin.math.roundToInt
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
@@ -103,7 +106,7 @@ class RideRepositoryImpl @Inject constructor(
                     startDateTime = entity.startDateTime,
                     finishDateTime = entity.finishDateTime,
                     route = Route(rideCoordinates),
-                    averageSpeed = entity.averageSpeed
+                    averageSpeedKmh = entity.averageSpeed
                 )
             }
         }
@@ -118,7 +121,7 @@ class RideRepositoryImpl @Inject constructor(
             startDateTime = dto.startDateTime,
             finishDateTime = dto.finishDateTime,
             route = dto.route,
-            averageSpeed = dto.averageSpeed
+            averageSpeedKmh = dto.averageSpeed
         )
     }
 
@@ -132,13 +135,20 @@ class RideRepositoryImpl @Inject constructor(
     private fun VehicleDto.toDomain(): Vehicle {
         return Vehicle(
             id = this.id,
-            code = this.code,
-            batteryCharge = this.batteryCharge,
+            code = this.code.toString().padStart(4, '0'),
             type = this.type,
             status = this.status,
             coordinates = this.coordinates,
-            unlockingFee = this.unlockingFee,
-            farePerMinute = this.farePerMinute
+            rangeKilometers = (this.batteryCharge * 0.4).roundToInt().toString(),
+            unlockingFee = CurrencyFormatter.format(this.batteryCharge),
+            farePerMinute = CurrencyFormatter.format(this.batteryCharge),
+            batteryCharge = this.batteryCharge.toString(),
+            batteryState = when (this.batteryCharge) {
+                in 0..34 -> BatteryState.Low
+                in 35..84 -> BatteryState.Medium
+                in 85..100 -> BatteryState.Full
+                else -> BatteryState.Undefined
+            }
         )
     }
 }

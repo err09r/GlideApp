@@ -13,9 +13,9 @@ import com.apsl.glideapp.core.ui.icons.Dollar
 import com.apsl.glideapp.core.ui.icons.GlideIcons
 import com.apsl.glideapp.core.ui.icons.TopUp
 import com.apsl.glideapp.core.ui.icons.Voucher
+import com.apsl.glideapp.core.util.android.CurrencyFormatter
 import java.time.format.DateTimeFormatter
 import kotlin.math.abs
-import kotlinx.datetime.toJavaLocalDateTime
 import com.apsl.glideapp.core.ui.R as CoreR
 
 @Immutable
@@ -38,7 +38,7 @@ private val formatter by lazy { DateTimeFormatter.ofPattern("d MMM, HH:mm") }
 private val separatorFormatter by lazy { DateTimeFormatter.ofPattern("EEEE, d MMMM") }
 
 fun Transaction.toTransactionUiModel(): TransactionUiModel {
-    var amountString = abs(amount).format(2)
+    var amountString = CurrencyFormatter.format(abs(amount))
     val amountType = when {
         amount > 0.0 -> {
             amountString = "+$amountString"
@@ -53,9 +53,7 @@ fun Transaction.toTransactionUiModel(): TransactionUiModel {
         else -> AmountType.Normal
     }
 
-    val separator = PagingSeparator(
-        text = dateTime.toJavaLocalDateTime().format(separatorFormatter).capitalized()
-    )
+    val separator = PagingSeparator(text = dateTime.format(separatorFormatter).capitalized())
 
     return TransactionUiModel(
         id = id,
@@ -63,7 +61,7 @@ fun Transaction.toTransactionUiModel(): TransactionUiModel {
         amountType = amountType,
         titleResId = type.titleResId,
         image = type.image,
-        dateTime = dateTime.toJavaLocalDateTime().format(formatter),
+        dateTime = dateTime.format(formatter),
         separator = separator
     )
 }

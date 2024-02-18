@@ -13,5 +13,5 @@ data class MapState(
     val ridingZones: List<List<LatLng>> = emptyList(), // Designed like this because of 'Polygon' composable implementation
     val noParkingZones: List<ZoneUiModel> = emptyList(),
     val rideRoute: List<LatLng>? = null,
-    val selectedVehicleRadius: Double? = null
+    val selectedVehicleRadiusMeters: Double? = null
 )

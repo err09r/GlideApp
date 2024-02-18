@@ -35,7 +35,7 @@ class UserRepositoryImpl @Inject constructor(
             username = username,
             firstName = firstName,
             lastName = lastName,
-            totalDistance = totalDistance,
+            totalDistanceMeters = totalDistance,
             totalRides = totalRides,
             balance = balance,
             walletVisited = walletVisited
@@ -48,7 +48,7 @@ class UserRepositoryImpl @Inject constructor(
             username = username,
             firstName = firstName,
             lastName = lastName,
-            totalDistance = totalDistance,
+            totalDistanceMeters = totalDistance,
             totalRides = totalRides,
             balance = balance,
             walletVisited = walletVisited
@@ -61,7 +61,7 @@ class UserRepositoryImpl @Inject constructor(
             username = username,
             firstName = firstName,
             lastName = lastName,
-            totalDistance = totalDistance,
+            totalDistance = totalDistanceMeters,
             totalRides = totalRides,
             balance = balance,
             savingDateTime = LocalDateTime.now()

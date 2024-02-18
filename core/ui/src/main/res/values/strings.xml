@@ -5,12 +5,10 @@
     <string name="value_meters">%s m</string>
     <string name="value_meters_full">%s meters</string>
     <string name="value_kmh">%s km/h</string>
-    <string name="value_zloty">%s zł</string>
     <string name="value_range">%1$s - %2$s</string>
 
     <string name="meters">meters</string>
     <string name="rides">rides</string>
-    <string name="zloty">zł</string>
 
     <string name="error_server">Server error</string>
     <string name="error_unknown">Unknown error</string>
@@ -66,7 +64,7 @@
     <string name="home_bottom_sheet_battery">%d%% battery</string>
     <string name="home_bottom_sheet_range">%d km range</string>
     <string name="home_bottom_sheet_button">Start Ride</string>
-    <string name="home_bottom_sheet_fare">%1$.2f zł to start, then %2$.2f zł/min</string>
+    <string name="home_bottom_sheet_fare">%1$.2f to start, then %2$.2f /min</string>
 
     <string name="ride">Ride</string>
     <string name="route">Route</string>
@@ -131,6 +129,7 @@
     <string name="top_up_description1">Enter the amount you want to top up your account</string>
     <string name="top_up_title2">Select payment method</string>
     <string name="top_up_button">Top up</string>
+    <string name="invalid_amount_format">Invalid amount format</string>
 
     <string name="all_transactions_screen_title">My transactions</string>
 

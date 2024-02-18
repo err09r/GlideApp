@@ -37,6 +37,7 @@ import com.apsl.glideapp.core.ui.GlideImage
 import com.apsl.glideapp.core.ui.icons.GlideIcons
 import com.apsl.glideapp.core.ui.icons.MapPoint
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
+import com.apsl.glideapp.core.util.android.CurrencyFormatter
 import com.apsl.glideapp.core.ui.R as CoreR
 
 @Composable
@@ -129,7 +130,7 @@ private fun RideItemPreview(@PreviewParameter(RideRoutePreviewParameterProvider:
             overlineText = "Spacerowa 1A, Słupsk",
             headlineText = "13:48 - 14:15",
             supportingText = "1415 meters",
-            trailingText = "13,50 zł",
+            trailingText = CurrencyFormatter.format(13.50),
             route = route,
             onClick = {}
         )

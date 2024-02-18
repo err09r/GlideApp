@@ -244,7 +244,7 @@ internal class RideRoutePreviewParameterProvider : PreviewParameterProvider<Ride
                     54.45767333333333f to 17.060123333333333f,
                     54.45709f to 17.060119999999998f
                 )
-//                    .compress(25)
+                    // .compress(25)
                     .map { it.second to if (it.first >= 0) 90f - it.first else it.first }
             )
         )

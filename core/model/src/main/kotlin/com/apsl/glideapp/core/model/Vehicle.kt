@@ -6,11 +6,13 @@ import com.apsl.glideapp.common.models.VehicleType
 
 data class Vehicle(
     val id: String,
-    val code: Int,
-    val batteryCharge: Int,
+    val code: String,
     val type: VehicleType,
     val status: VehicleStatus,
     val coordinates: Coordinates,
-    val unlockingFee: Double,
-    val farePerMinute: Double
+    val rangeKilometers: String,
+    val unlockingFee: String,
+    val farePerMinute: String,
+    val batteryCharge: String,
+    val batteryState: BatteryState
 )

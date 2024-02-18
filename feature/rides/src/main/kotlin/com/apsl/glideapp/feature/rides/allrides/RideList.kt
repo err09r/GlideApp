@@ -21,6 +21,7 @@ import com.apsl.glideapp.core.ui.Separator
 import com.apsl.glideapp.core.ui.paddingBeforeSeparator
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.core.ui.toComposePagingItems
+import com.apsl.glideapp.core.util.android.CurrencyFormatter
 import kotlinx.coroutines.flow.MutableStateFlow
 import com.apsl.glideapp.core.ui.R as CoreR
 
@@ -77,9 +78,9 @@ fun RideList(
                             ),
                             supportingText = stringResource(
                                 CoreR.string.value_meters_full,
-                                ride.distance
+                                ride.distanceMeters
                             ),
-                            trailingText = stringResource(CoreR.string.value_zloty, ride.fare),
+                            trailingText = ride.fare,
                             route = ride.route,
                             onClick = { onRideClick(ride.id) }
                         )
@@ -105,8 +106,8 @@ private fun RideListPreview(@PreviewParameter(RideRoutePreviewParameterProvider:
                         finishTime = "16:02",
                         address = "Spacerowa 1A, Słupsk",
                         route = route,
-                        distance = "426",
-                        fare = "3,75",
+                        distanceMeters = "426",
+                        fare = CurrencyFormatter.format(3.75),
                         separator = PagingSeparator("Monday, February 25")
                     ),
                     RideUiModel(
@@ -115,8 +116,8 @@ private fun RideListPreview(@PreviewParameter(RideRoutePreviewParameterProvider:
                         finishTime = "16:02",
                         address = "Spacerowa 1A, Słupsk",
                         route = route,
-                        distance = "426",
-                        fare = "4,05",
+                        distanceMeters = "426",
+                        fare = CurrencyFormatter.format(4.05),
                         separator = PagingSeparator("Monday, February 25")
                     ),
                     RideUiModel(
@@ -125,8 +126,8 @@ private fun RideListPreview(@PreviewParameter(RideRoutePreviewParameterProvider:
                         finishTime = "16:02",
                         address = "Spacerowa 1A, Słupsk",
                         route = route,
-                        distance = "426",
-                        fare = "8,99",
+                        distanceMeters = "426",
+                        fare = CurrencyFormatter.format(8.99),
                         separator = PagingSeparator("Monday, February 26")
                     )
                 )

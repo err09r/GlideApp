@@ -1,6 +1,7 @@
 package com.apsl.glideapp.feature.home.viewmodels
 
 import androidx.compose.runtime.Immutable
+import com.apsl.glideapp.core.util.android.NumberFormatter
 import com.apsl.glideapp.feature.home.models.SelectedVehicleUiModel
 import com.google.android.gms.maps.model.LatLng
 
@@ -19,7 +20,7 @@ data class HomeUiState(
 @Immutable
 data class UserInfo(
     val username: String? = null,
-    val totalDistance: Int = 0,
-    val totalRides: Int = 0,
+    val totalDistanceKilometers: String = NumberFormatter.default(),
+    val totalRides: String = NumberFormatter.default(),
     val walletVisited: Boolean = false
 )

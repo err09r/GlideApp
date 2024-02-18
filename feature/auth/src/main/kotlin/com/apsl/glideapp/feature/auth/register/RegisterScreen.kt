@@ -140,7 +140,7 @@ fun RegisterScreenContent(
                     label = { Text(text = stringResource(CoreR.string.username)) },
                     isError = uiState.usernameErrorResId != null,
                     supportingText = uiState.usernameErrorResId?.let {
-                        { Text(text = stringResource(uiState.usernameErrorResId)) }
+                        { Text(text = stringResource(it)) }
                     },
                     keyboardOptions = KeyboardOptions(
                         capitalization = KeyboardCapitalization.None,

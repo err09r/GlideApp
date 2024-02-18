@@ -5,7 +5,7 @@ data class User(
     val username: String,
     val firstName: String,
     val lastName: String,
-    val totalDistance: Double,
+    val totalDistanceMeters: Double,
     val totalRides: Int,
     val balance: Double,
     val walletVisited: Boolean

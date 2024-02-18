@@ -33,14 +33,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.apsl.glideapp.common.util.toEpochMilliseconds
+import com.apsl.glideapp.core.model.BatteryState
 import com.apsl.glideapp.core.ui.AnimatedStopwatchText
 import com.apsl.glideapp.core.ui.AnimatedText
 import com.apsl.glideapp.core.ui.icons.Clock
 import com.apsl.glideapp.core.ui.icons.GlideIcons
 import com.apsl.glideapp.core.ui.icons.Route
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
+import com.apsl.glideapp.core.util.android.CurrencyFormatter
+import com.apsl.glideapp.core.util.android.DistanceFormatter
 import com.apsl.glideapp.core.util.android.GlideStopwatch
-import com.apsl.glideapp.feature.home.viewmodels.BatteryState
+import com.apsl.glideapp.core.util.android.NumberFormatter
 import com.apsl.glideapp.feature.home.viewmodels.RideState
 import com.apsl.glideapp.feature.home.viewmodels.VehicleUiModel
 import kotlinx.datetime.LocalDateTime
@@ -118,7 +121,10 @@ fun BoxScope.RideLayout(rideState: RideState, modifier: Modifier = Modifier) {
                     val context = LocalContext.current
                     AnimatedText(
                         textProvider = {
-                            context.getString(CoreR.string.value_kilometers, rideState.distance)
+                            context.getString(
+                                CoreR.string.value_kilometers,
+                                rideState.distanceKilometers
+                            )
                         },
                         maxLines = 1,
                         style = MaterialTheme.typography.headlineLarge
@@ -143,8 +149,16 @@ private fun RideLayoutPreview() {
             RideLayout(
                 rideState = RideState(
                     startDateTime = LocalDateTime.parse("2023-11-11T11:11:11"),
-                    vehicle = VehicleUiModel("", "", 1, 0.0, 0.0, 0, BatteryState.Undefined),
-                    distance = "2,9"
+                    vehicle = VehicleUiModel(
+                        id = "1",
+                        code = "0123",
+                        rangeKilometers = DistanceFormatter.format(8.3),
+                        unlockingFee = CurrencyFormatter.format(3.3),
+                        farePerMinute = CurrencyFormatter.format(0.85),
+                        batteryCharge = NumberFormatter.format(30),
+                        batteryState = BatteryState.Medium
+                    ),
+                    distanceKilometers = DistanceFormatter.format(1.3)
                 )
             )
         }

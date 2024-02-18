@@ -115,11 +115,11 @@ fun GlideMap(
             }
         )
 
-        if (selectedVehicle != null && mapState.selectedVehicleRadius != null) {
+        if (selectedVehicle != null && mapState.selectedVehicleRadiusMeters != null) {
             Circle(
                 center = selectedVehicle.coordinates,
                 fillColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
-                radius = mapState.selectedVehicleRadius,
+                radius = mapState.selectedVehicleRadiusMeters,
                 strokeColor = MaterialTheme.colorScheme.primary,
                 strokeWidth = 1.dp.toPx(),
                 visible = cameraPositionState.position.zoom >= MapsConfiguration.VEHICLE_CIRCLE_VISIBILITY_ZOOM_LEVEL

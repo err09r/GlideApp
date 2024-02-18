@@ -29,6 +29,7 @@ import com.apsl.glideapp.core.ui.icons.File
 import com.apsl.glideapp.core.ui.icons.GlideIcons
 import com.apsl.glideapp.core.ui.icons.Question
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
+import com.apsl.glideapp.core.util.android.CurrencyFormatter
 import com.apsl.glideapp.core.ui.R as CoreR
 
 @Composable
@@ -52,10 +53,7 @@ fun BalanceCard(
                         style = MaterialTheme.typography.bodyLarge
                     )
                     Spacer(Modifier.height(4.dp))
-                    AnimatedText(
-                        text = stringResource(CoreR.string.value_zloty, value),
-                        style = MaterialTheme.typography.titleLarge
-                    )
+                    AnimatedText(text = value, style = MaterialTheme.typography.titleLarge)
                 }
                 GlideImage(
                     imageResId = CoreR.drawable.img_wallet_front,
@@ -103,6 +101,6 @@ fun BalanceCard(
 @Composable
 private fun BalanceCardPreview() {
     GlideAppTheme {
-        BalanceCard(value = "1234,56", onAddMoneyClick = {})
+        BalanceCard(value = CurrencyFormatter.format(1234.567), onAddMoneyClick = {})
     }
 }

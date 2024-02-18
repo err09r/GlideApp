@@ -39,6 +39,7 @@ import com.apsl.glideapp.core.ui.icons.Route
 import com.apsl.glideapp.core.ui.icons.Settings
 import com.apsl.glideapp.core.ui.icons.Wallet
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
+import com.apsl.glideapp.core.util.android.NumberFormatter
 import com.apsl.glideapp.core.util.android.openAppLanguageSettings
 import com.apsl.glideapp.core.util.android.openAppSettings
 import com.apsl.glideapp.feature.home.viewmodels.UserInfo
@@ -118,7 +119,7 @@ fun HomeDrawerSheet(
             Row(horizontalArrangement = Arrangement.spacedBy(32.dp)) {
                 StatsComponent(
                     icon = GlideIcons.Route,
-                    value = userInfo.totalDistance,
+                    value = userInfo.totalDistanceKilometers,
                     units = stringResource(CoreR.string.meters) //TODO: Handle `Quantity strings (plurals)`
                 )
                 StatsComponent(
@@ -152,7 +153,7 @@ fun HomeDrawerSheet(
 }
 
 @Composable
-private fun StatsComponent(icon: ImageVector, value: Int, units: String) {
+private fun StatsComponent(icon: ImageVector, value: String, units: String) {
     Column {
         Icon(
             imageVector = icon,
@@ -161,7 +162,7 @@ private fun StatsComponent(icon: ImageVector, value: Int, units: String) {
             tint = MaterialTheme.colorScheme.tertiary
         )
         Spacer(Modifier.height(4.dp))
-        Text(text = value.toString(), style = MaterialTheme.typography.headlineSmall)
+        Text(text = value, style = MaterialTheme.typography.headlineSmall)
         Text(text = units)
     }
 }
@@ -173,8 +174,8 @@ private fun HomeDrawerSheetPreview() {
         HomeDrawerSheet(
             userInfo = UserInfo(
                 username = "f00b4r",
-                totalDistance = 1405,
-                totalRides = 23
+                totalDistanceKilometers = NumberFormatter.format(1405),
+                totalRides = NumberFormatter.format(23)
             ),
             onMyRidesClick = {},
             onWalletClick = {},

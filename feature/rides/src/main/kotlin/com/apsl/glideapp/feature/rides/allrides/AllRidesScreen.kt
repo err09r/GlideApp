@@ -50,6 +50,7 @@ import com.apsl.glideapp.core.ui.pulltorefresh.Indicator
 import com.apsl.glideapp.core.ui.receiveAsLazyPagingItems
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.core.ui.toComposePagingItems
+import com.apsl.glideapp.core.util.android.NumberFormatter
 import kotlinx.coroutines.flow.MutableStateFlow
 import com.apsl.glideapp.core.ui.R as CoreR
 
@@ -119,7 +120,10 @@ fun AllRidesScreenContent(
                         AllRidesEmptyScreen()
                     } else {
                         Column {
-                            RideStats(rides = uiState.totalRides, distance = uiState.totalDistance)
+                            RideStats(
+                                rides = uiState.totalRides,
+                                distance = uiState.totalDistanceMeters
+                            )
                             RideList(
                                 rides = uiState.rides,
                                 modifier = Modifier.fillMaxSize(),
@@ -214,7 +218,10 @@ fun RideStatsItem(
 @Composable
 private fun RideStatsPreview() {
     GlideAppTheme {
-        RideStats(rides = "12", distance = "12,5")
+        RideStats(
+            rides = NumberFormatter.format(12),
+            distance = NumberFormatter.format(12.5)
+        )
     }
 }
 
@@ -272,7 +279,7 @@ private fun AllRidesScreenPreview(@PreviewParameter(RideRoutePreviewParameterPro
                         finishTime = "16:02",
                         address = "Spacerowa 1A, Słupsk",
                         route = route,
-                        distance = "426",
+                        distanceMeters = "426",
                         fare = "3,75",
                         separator = PagingSeparator("Monday, February 25")
                     ),
@@ -282,7 +289,7 @@ private fun AllRidesScreenPreview(@PreviewParameter(RideRoutePreviewParameterPro
                         finishTime = "16:02",
                         address = "Spacerowa 1A, Słupsk",
                         route = route,
-                        distance = "426",
+                        distanceMeters = "426",
                         fare = "4,05",
                         separator = PagingSeparator("Monday, February 25")
                     ),
@@ -292,7 +299,7 @@ private fun AllRidesScreenPreview(@PreviewParameter(RideRoutePreviewParameterPro
                         finishTime = "16:02",
                         address = "Spacerowa 1A, Słupsk",
                         route = route,
-                        distance = "426",
+                        distanceMeters = "426",
                         fare = "8,99",
                         separator = PagingSeparator("Monday, February 26")
                     )
@@ -303,7 +310,11 @@ private fun AllRidesScreenPreview(@PreviewParameter(RideRoutePreviewParameterPro
             .toComposePagingItems()
 
         AllRidesScreenContent(
-            uiState = AllRidesUiState(rides = rides, totalRides = "12", totalDistance = "19,5"),
+            uiState = AllRidesUiState(
+                rides = rides,
+                totalRides = "12",
+                totalDistanceMeters = "19,5"
+            ),
             onBackClick = {},
             onRideClick = {},
             onPullToRefresh = {}
