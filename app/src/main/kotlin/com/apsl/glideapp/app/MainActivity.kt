@@ -10,26 +10,36 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
+import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
 import com.apsl.glideapp.core.ui.None
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.core.util.android.LoggingLifecycleObserver
 import com.apsl.glideapp.core.util.android.addObservers
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private val viewModel: MainActivityViewModel by viewModels()
 
+    private var shouldShowSplashScreen: Boolean = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
         setUpEdgeToEdge()
-        setUpSplashScreen()
+        val splashScreen = installSplashScreen()
+
         super.onCreate(savedInstanceState)
+
+        splashScreen.setUp() // Subscription on viewmodel's flow must happen after super.onCreate()
         init()
+
         setContent {
             GlideAppTheme {
                 val navHostController = rememberNavController()
@@ -52,13 +62,17 @@ class MainActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
     }
 
-    private fun setUpSplashScreen() {
-        installSplashScreen()
+    private fun SplashScreen.setUp() {
+        this.setKeepOnScreenCondition { shouldShowSplashScreen }
+
+        viewModel.uiState
+            .onEach { shouldShowSplashScreen = it.isSyncing }
+            .launchIn(lifecycleScope)
     }
 
     private fun init() {
         registerLifecycleObservers()
-        viewModel.updateAppConfiguration()
+        viewModel.sync()
     }
 
     private fun registerLifecycleObservers() {
