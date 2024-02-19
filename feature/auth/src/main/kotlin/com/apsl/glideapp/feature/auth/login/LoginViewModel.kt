@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
 import com.apsl.glideapp.core.domain.auth.LoginUseCase
+import com.apsl.glideapp.core.domain.auth.ObserveUserAuthenticationStateUseCase
 import com.apsl.glideapp.core.ui.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -20,6 +21,7 @@ import com.apsl.glideapp.core.ui.R as CoreR
 data class LoginUiState(
     val isLoading: Boolean = false,
     val isPasswordVisible: Boolean = false,
+    val isRememberMeChecked: Boolean = true,
     val usernameTextFieldValue: String? = null,
     val passwordTextFieldValue: String? = null,
     val error: String? = null
@@ -37,7 +39,8 @@ sealed interface LoginAction {
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val loginUseCase: LoginUseCase
+    private val loginUseCase: LoginUseCase,
+    private val observeUserAuthenticationStateUseCase: ObserveUserAuthenticationStateUseCase
 ) : BaseViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUiState())
@@ -45,6 +48,22 @@ class LoginViewModel @Inject constructor(
 
     private val _actions = Channel<LoginAction>()
     val actions = _actions.receiveAsFlow()
+
+//    init {
+//        observeUserAuthenticationState()
+//    }
+//
+//    private fun observeUserAuthenticationState() {
+//        observeUserAuthenticationStateUseCase()
+//            .distinctUntilChanged()
+//            .onEach { authState ->
+//                Timber.d("User authentication state: $authState")
+//                if (authState == UserAuthState.Authenticated) {
+//                    _actions.send(LoginAction.NavigateToHome)
+//                }
+//            }
+//            .launchIn(viewModelScope)
+//    }
 
     fun logIn() {
         showLoading()
@@ -90,6 +109,10 @@ class LoginViewModel @Inject constructor(
 
     fun togglePasswordVisibility() {
         _uiState.update { it.copy(isPasswordVisible = !it.isPasswordVisible) }
+    }
+
+    fun toggleRememberMe() {
+        _uiState.update { it.copy(isRememberMeChecked = !it.isRememberMeChecked) }
     }
 
     private fun showLoading() {

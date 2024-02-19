@@ -289,6 +289,19 @@ fun RideDetailsSheetContent(ride: RideDetailsUiModel, modifier: Modifier = Modif
                 text = stringResource(CoreR.string.ride_details_sheet_title1)
             )
             Spacer(Modifier.height(8.dp))
+
+            val addressText = if (ride.startAddress == null || ride.finishAddress == null) {
+                stringResource(CoreR.string.address_not_defined)
+            } else {
+                stringResource(CoreR.string.value_from_to, ride.startAddress, ride.finishAddress)
+            }
+            Text(
+                text = addressText,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            Spacer(Modifier.height(24.dp))
+
             Column {
                 TitleValueText(
                     title = stringResource(CoreR.string.ride_details_sheet_subtitle1),
@@ -298,17 +311,6 @@ fun RideDetailsSheetContent(ride: RideDetailsUiModel, modifier: Modifier = Modif
                 TitleValueText(
                     title = stringResource(CoreR.string.ride_details_sheet_subtitle2),
                     value = stringResource(CoreR.string.value_kmh, ride.averageSpeedKmh)
-                )
-                Spacer(Modifier.height(24.dp))
-
-                val addressText = if (ride.startAddress == null || ride.finishAddress == null) {
-                    stringResource(CoreR.string.address_not_defined)
-                } else {
-                    stringResource(CoreR.string.value_range, ride.startAddress, ride.finishAddress)
-                }
-                Text(
-                    text = addressText,
-                    color = MaterialTheme.colorScheme.secondary
                 )
             }
         }

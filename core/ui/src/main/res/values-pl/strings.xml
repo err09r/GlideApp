@@ -26,6 +26,7 @@
     <string name="repeat_password">Powtórz hasło</string>
     <string name="dont_have_an_account">Nie masz konta?</string>
     <string name="sign_up">Zarejestruj się</string>
+    <string name="remember_me">Zapamiętaj mnie</string>
 
     <string name="login_title">Witaj!</string>
     <string name="login_description">Zaloguj się, aby rozpocząć podróż</string>
@@ -59,7 +60,7 @@
     <string name="ride_notification_text">Poruszanie się po: %s</string>
     <string name="ride_notification_text_default">Lokalizacja</string>
 
-    <string name="home_bottom_sheet_scooter">Hulajnoga %s</string>
+    <string name="home_bottom_sheet_scooter">Scooter %s</string>
     <string name="home_bottom_sheet_battery">%s%% bateria</string>
     <string name="home_bottom_sheet_range">Zasięg %s km</string>
     <string name="home_bottom_sheet_button">Rozpocznij przejazd</string>
@@ -72,7 +73,7 @@
     <string name="voucher">Voucher</string>
     <string name="pause">Pauza</string>
     <string name="finish">Koniec</string>
-    <string name="ring">Dzwonek</string>
+    <string name="ring">Zadzwoń</string>
     <string name="report_issue">Zgłoś problem</string>
 
     <string name="home_drawer_menu_wallet">Portfel</string>
@@ -88,8 +89,8 @@
 
     <!--    Rides-->
     <string name="all_rides_screen_title">Moje przejazdy</string>
-    <string name="all_rides_stats_travelled">Łącznie przebyta odległość</string>
-    <string name="all_rides_stats_rides">Łączna liczba przejazdów</string>
+    <string name="all_rides_stats_travelled">Przejechane</string>
+    <string name="all_rides_stats_rides">Przejazdów</string>
     <string name="all_rides_empty_title">Brak przejazdów</string>
     <string name="all_rides_empty_text">Rozpocznij swój pierwszy przejazd, a pojawi się tutaj</string>
 
@@ -116,13 +117,13 @@
 
     <string name="top_up_success_dialog_button">Kontynuuj</string>
     <string name="top_up_success_dialog_title">Sukces!</string>
-    <string name="top_up_success_dialog_text">Twój stan konta został pomyślnie zasilany. Miłej podróży!</string>
+    <string name="top_up_success_dialog_text">Twóje konto zostało pomyślnie doładowane. Miłej podróży!</string>
 
     <string name="payment_method_debit_card">Karta debetowa</string>
 
     <string name="top_up_screen_title">Doładowanie konta</string>
     <string name="top_up_title1">Doładuj swoje konto</string>
-    <string name="top_up_description1">Wprowadź kwotę, jaką chcesz doładować swoje konto</string>
+    <string name="top_up_description1">Wprowadź kwotę, którą chcesz doładować swoje konto</string>
     <string name="top_up_title2">Wybierz metodę płatności</string>
     <string name="top_up_button">Doładuj</string>
     <string name="invalid_amount_format">Nieprawidłowy format kwoty</string>
@@ -142,7 +143,7 @@
     <string name="balance_card_title">Twój stan konta</string>
     <string name="balance_card_button">Dodaj środki</string>
 
-    <string name="wallet_pager_item_title1">Zrealizuj voucher</string>
+    <string name="wallet_pager_item_title1">Aktywuj voucher</string>
     <string name="wallet_pager_item_text1">Masz kod? Aktywuj go i ciesz się podróżą!</string>
     <string name="wallet_pager_item_title2">Dodaj metodę płatności</string>
     <string name="wallet_pager_item_text2">Więcej metod dla większej wygody</string>

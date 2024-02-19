@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -50,6 +51,7 @@ import com.apsl.glideapp.core.ui.pulltorefresh.Indicator
 import com.apsl.glideapp.core.ui.receiveAsLazyPagingItems
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.core.ui.toComposePagingItems
+import com.apsl.glideapp.core.util.android.CurrencyFormatter
 import com.apsl.glideapp.core.util.android.NumberFormatter
 import kotlinx.coroutines.flow.MutableStateFlow
 import com.apsl.glideapp.core.ui.R as CoreR
@@ -145,7 +147,11 @@ fun AllRidesScreenContent(
 }
 
 @Composable
-fun RideStats(modifier: Modifier = Modifier, rides: String, distance: String) {
+fun RideStats(
+    rides: String,
+    distance: String,
+    modifier: Modifier = Modifier
+) {
     ElevatedCard(
         onClick = {},
         modifier = modifier
@@ -157,6 +163,7 @@ fun RideStats(modifier: Modifier = Modifier, rides: String, distance: String) {
                 .fillMaxWidth()
                 .height(IntrinsicSize.Min)
                 .padding(horizontal = 16.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             RideStatsItem(
@@ -164,7 +171,6 @@ fun RideStats(modifier: Modifier = Modifier, rides: String, distance: String) {
                 text = stringResource(CoreR.string.value_kilometers, distance),
                 imageVector = GlideIcons.Route
             )
-            Spacer(Modifier.weight(1f))
             RideStatsItem(
                 title = stringResource(CoreR.string.all_rides_stats_rides),
                 text = rides,
@@ -174,12 +180,13 @@ fun RideStats(modifier: Modifier = Modifier, rides: String, distance: String) {
     }
 }
 
+//TODO: Make adaptable, fix incorrect stretching when title is long enough
 @Composable
 fun RideStatsItem(
-    modifier: Modifier = Modifier,
     title: String,
     text: String,
-    imageVector: ImageVector
+    imageVector: ImageVector,
+    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier,
@@ -191,25 +198,19 @@ fun RideStatsItem(
                     color = MaterialTheme.colorScheme.surface,
                     shape = CardDefaults.shape
                 )
-                .padding(8.dp)
+                .padding(10.dp)
         ) {
             Icon(
                 imageVector = imageVector,
                 contentDescription = null,
                 modifier = Modifier.size(24.dp),
-                tint = MaterialTheme.colorScheme.primary
+                tint = MaterialTheme.colorScheme.tertiary
             )
         }
-        Spacer(Modifier.width(20.dp))
+        Spacer(Modifier.width(16.dp))
         Column(horizontalAlignment = Alignment.End) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.bodyLarge
-            )
-            Text(
-                text = text,
-                style = MaterialTheme.typography.bodyLarge
-            )
+            Text(text = title, textAlign = TextAlign.End)
+            Text(text = text, textAlign = TextAlign.End)
         }
     }
 }
@@ -280,7 +281,7 @@ private fun AllRidesScreenPreview(@PreviewParameter(RideRoutePreviewParameterPro
                         address = "Spacerowa 1A, Słupsk",
                         route = route,
                         distanceMeters = "426",
-                        fare = "3,75",
+                        fare = CurrencyFormatter.format(8.10),
                         separator = PagingSeparator("Monday, February 25")
                     ),
                     RideUiModel(
@@ -290,7 +291,7 @@ private fun AllRidesScreenPreview(@PreviewParameter(RideRoutePreviewParameterPro
                         address = "Spacerowa 1A, Słupsk",
                         route = route,
                         distanceMeters = "426",
-                        fare = "4,05",
+                        fare = CurrencyFormatter.format(12.803),
                         separator = PagingSeparator("Monday, February 25")
                     ),
                     RideUiModel(
@@ -300,7 +301,7 @@ private fun AllRidesScreenPreview(@PreviewParameter(RideRoutePreviewParameterPro
                         address = "Spacerowa 1A, Słupsk",
                         route = route,
                         distanceMeters = "426",
-                        fare = "8,99",
+                        fare = CurrencyFormatter.format(8.99),
                         separator = PagingSeparator("Monday, February 26")
                     )
                 )
