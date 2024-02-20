@@ -211,11 +211,7 @@ class HomeViewModel @Inject constructor(
     private fun updateVehicleClusterItems(selectedId: String?) {
         updateMapState(
             vehicleClusterItems = uiState.value.mapState.vehicleClusterItems.map { item ->
-                if (item.id == selectedId) {
-                    item.copy(isSelected = true)
-                } else {
-                    item.copy(isSelected = false)
-                }
+                item.copy(isSelected = item.id == selectedId)
             }
         )
     }
