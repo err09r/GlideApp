@@ -58,6 +58,19 @@
     <string name="notification_permission_dialog_title">Allow notifications</string>
     <string name="notification_permission_dialog_text">Notifications are disabled for our app. To provide the best ride experience, enable notifications in app settings.</string>
 
+    <string name="preride_info_title1">Rules</string>
+    <string name="preride_info_title2">Zones</string>
+    <string name="preride_info_rule1">Our scooters have a maximum speed setting for your safety. Ensure you\'re traveling at a safe speed for the environment you\'re in.</string>
+    <string name="preride_info_rule2">Park in designated areas only to avoid inconveniencing pedestrians and other vehicles. Do not block walkways, driveways, or access points.</string>
+    <string name="preride_info_rule3">Stay alert and be aware of your surroundings. Follow traffic signals, use scooter lanes where available. Do not ride under the influence of alcohol or drugs.</string>
+    <string name="preride_info_zone_title1">No-parking zone</string>
+    <string name="preride_info_zone_text1">You may not pause or end the ride here.</string>
+    <string name="preride_info_zone_title2">No-riding zone</string>
+    <string name="preride_info_zone_text2">Glide vehicles don\'t operate here, and you may not end your ride here. You should get back to allowed riding zone.</string>
+    <string name="preride_info_zone_title3">Low-speed zone</string>
+    <string name="preride_info_zone_text3">Glide vehicles run a bit slower here due to busy traffic and pedestrians.</string>
+    <string name="preride_info_button">Agree &amp; ride</string>
+
     <string name="ride_notification_title">Tracking location…</string>
     <string name="ride_notification_text">Driving around: %s</string>
     <string name="ride_notification_text_default">Location</string>
@@ -65,7 +78,7 @@
     <string name="home_bottom_sheet_scooter">Scooter %s</string>
     <string name="home_bottom_sheet_battery">%s%% battery</string>
     <string name="home_bottom_sheet_range">%s km range</string>
-    <string name="home_bottom_sheet_button">Start Ride</string>
+    <string name="home_bottom_sheet_button">Start ride</string>
     <string name="home_bottom_sheet_fare">%1$s to start, then %2$s/min</string>
 
     <string name="ride">Ride</string>

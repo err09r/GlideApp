@@ -33,7 +33,7 @@ class MainActivityViewModel @Inject constructor(
     fun sync() {
         viewModelScope.launch {
             try {
-                withTimeout(SPLASH_SCREEN_DURATION_MS) {
+                withTimeout(SPLASH_SCREEN_MAX_DURATION_MS) {
                     _uiState.update { it.copy(isSyncing = true) }
                     updateAppConfiguration()
                 }
@@ -47,16 +47,19 @@ class MainActivityViewModel @Inject constructor(
 
     private suspend fun updateAppConfiguration() {
         try {
-            appConfigRepository.updateAppConfig()
-            zoneRepository.updateAllZones()
+            val configUpdated = appConfigRepository.updateAppConfig()
+            val zonesUpdated = zoneRepository.updateAllZones()
+            check(configUpdated && zonesUpdated) { "Failed to fetch app configuration" }
         } catch (e: Exception) {
             if (e !is CancellationException) {
                 Timber.d("Failed to fetch app configuration: ${e.message}")
+            } else {
+                throw e
             }
         }
     }
 
     private companion object {
-        private const val SPLASH_SCREEN_DURATION_MS = 1000L
+        private const val SPLASH_SCREEN_MAX_DURATION_MS = 10_000L
     }
 }

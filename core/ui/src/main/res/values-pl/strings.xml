@@ -56,6 +56,19 @@
     <string name="notification_permission_dialog_title">Zezwól na powiadomienia</string>
     <string name="notification_permission_dialog_text">Powiadomienia są wyłączone dla naszej aplikacji. Aby zapewnić najlepsze doświadczenia z jazdy, włącz powiadomienia w ustawieniach aplikacji.</string>
 
+    <string name="preride_info_rule1">Nasze hulajnogi mają ustawienie maksymalnej prędkości dla Twojego bezpieczeństwa. Upewnij się, że poruszasz się z bezpieczną prędkością dostosowaną do otoczenia.</string>
+    <string name="preride_info_rule2">Parkuj tylko w wyznaczonych miejscach, aby nie sprawiać kłopotów pieszym i innym pojazdom. Nie blokuj chodników, wjazdów czy punktów dostępu.</string>
+    <string name="preride_info_rule3">Bądź czujny i świadomy otoczenia. Przestrzegaj sygnalizacji świetlnej, korzystaj z dróg dla hulajnóg, jeśli są dostępne. Nie jeźdź pod wpływem alkoholu lub narkotyków.</string>
+    <string name="preride_info_title1">Zasady podróży</string>
+    <string name="preride_info_title2">Strefy</string>
+    <string name="preride_info_zone_title1">Strefa zakazu parkowania</string>
+    <string name="preride_info_zone_text1">Nie możesz tutaj przerwać ani zakończyć jazdy.</string>
+    <string name="preride_info_zone_title2">Strefa zakazu jazdy</string>
+    <string name="preride_info_zone_text2">Pojazdy Glide nie działają w tej strefie, nie możesz tutaj zakończyć jazdy. Powinieneś wrócić do dozwolonej strefy jazdy.</string>
+    <string name="preride_info_zone_title3">Strefa z ograniczoną prędkością</string>
+    <string name="preride_info_zone_text3">Pojazdy Glide poruszają się tutaj wolniej ze względu na duży ruch i pieszych.</string>
+    <string name="preride_info_button">Akceptuję i jadę</string>
+
     <string name="ride_notification_title">Śledzenie lokalizacji…</string>
     <string name="ride_notification_text">Poruszanie się po: %s</string>
     <string name="ride_notification_text_default">Lokalizacja</string>

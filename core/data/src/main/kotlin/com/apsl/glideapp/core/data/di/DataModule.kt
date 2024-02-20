@@ -4,6 +4,7 @@ import com.apsl.glideapp.core.data.repositories.AppConfigRepositoryImpl
 import com.apsl.glideapp.core.data.repositories.AuthRepositoryImpl
 import com.apsl.glideapp.core.data.repositories.LocationRepositoryImpl
 import com.apsl.glideapp.core.data.repositories.MapRepositoryImpl
+import com.apsl.glideapp.core.data.repositories.PreRideInfoEventRepositoryImpl
 import com.apsl.glideapp.core.data.repositories.RideRepositoryImpl
 import com.apsl.glideapp.core.data.repositories.TransactionRepositoryImpl
 import com.apsl.glideapp.core.data.repositories.UserRepositoryImpl
@@ -12,6 +13,7 @@ import com.apsl.glideapp.core.domain.auth.AuthRepository
 import com.apsl.glideapp.core.domain.config.AppConfigRepository
 import com.apsl.glideapp.core.domain.location.LocationRepository
 import com.apsl.glideapp.core.domain.map.MapRepository
+import com.apsl.glideapp.core.domain.ride.PreRideInfoEventRepository
 import com.apsl.glideapp.core.domain.ride.RideRepository
 import com.apsl.glideapp.core.domain.transaction.TransactionRepository
 import com.apsl.glideapp.core.domain.user.UserRepository
@@ -57,4 +59,8 @@ internal interface DataModule {
     @Singleton
     @Binds
     fun bindAppConfigRepository(repository: AppConfigRepositoryImpl): AppConfigRepository
+
+    @Singleton
+    @Binds
+    fun bindPreRideInfoEventRepository(repository: PreRideInfoEventRepositoryImpl): PreRideInfoEventRepository
 }

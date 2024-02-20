@@ -20,6 +20,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
@@ -49,11 +50,13 @@ import com.google.android.gms.maps.model.LatLngBounds
 import com.google.maps.android.compose.CameraMoveStartedReason
 import com.google.maps.android.compose.CameraPositionState
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     onNavigateToLogin: () -> Unit,
+    onNavigateToPreRide: () -> Unit,
     onNavigateToAllRides: () -> Unit,
     onNavigateToWallet: () -> Unit,
     onNavigateToTopUp: () -> Unit,
@@ -117,7 +120,7 @@ fun HomeScreen(
         onOpenLocationRationaleDialog = onNavigateToLocationRationale,
         onVehicleSelect = viewModel::updateSelectedVehicle,
         onLoadMapContentWithinBounds = viewModel::loadMapContentWithinBounds,
-        onStartRideClick = viewModel::startRide,
+        onStartRideClick = onNavigateToPreRide,
         onFinishRideClick = viewModel::finishRide,
         onMyRidesClick = {
             viewModel.updateSelectedVehicle(null)
@@ -209,7 +212,18 @@ fun HomeScreenContent(
         onPermanentlyDenied = onOpenLocationPermissionDialog
     )
 
-    //TODO: Load data on first open
+    // Load data on first open
+    val visibleBoundsAvailable by rememberUpdatedState(cameraPositionState.projection?.visibleRegion != null)
+    LaunchedEffect(visibleBoundsAvailable) {
+        Timber.d("visibleBoundsAvailable: $visibleBoundsAvailable")
+        if (visibleBoundsAvailable) {
+            val visibleBounds = cameraPositionState.projection?.visibleRegion?.latLngBounds
+            if (visibleBounds != null) {
+                onLoadMapContentWithinBounds(visibleBounds, cameraPositionState.position.zoom)
+            }
+        }
+    }
+
     LaunchedEffect(cameraPositionState.isMoving) {
         if (cameraPositionState.shouldLoadMapContent()) {
             val visibleBounds = cameraPositionState.projection?.visibleRegion?.latLngBounds

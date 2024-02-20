@@ -16,11 +16,13 @@ import com.apsl.glideapp.core.domain.map.GetMapContentWithinBoundsUseCase
 import com.apsl.glideapp.core.domain.map.ObserveMapContentUseCase
 import com.apsl.glideapp.core.domain.ride.FinishRideUseCase
 import com.apsl.glideapp.core.domain.ride.IsRideModeActiveUseCase
+import com.apsl.glideapp.core.domain.ride.ObservePreRideInfoEventsUseCase
 import com.apsl.glideapp.core.domain.ride.ObserveRideEventsUseCase
 import com.apsl.glideapp.core.domain.ride.StartRideUseCase
 import com.apsl.glideapp.core.domain.user.GetUserUseCase
 import com.apsl.glideapp.core.domain.user.SaveWalletVisitedUseCase
 import com.apsl.glideapp.core.model.MapCameraPosition
+import com.apsl.glideapp.core.model.PreRideInfoEvent
 import com.apsl.glideapp.core.model.RideEvent
 import com.apsl.glideapp.core.model.UserAuthState
 import com.apsl.glideapp.core.model.UserLocation
@@ -74,7 +76,8 @@ class HomeViewModel @Inject constructor(
     private val isRideModeActiveUseCase: IsRideModeActiveUseCase,
     private val isGpsEnabledUseCase: IsGpsEnabledUseCase,
     private val getAppConfigUseCase: GetAppConfigUseCase,
-    private val logOutUseCase: LogOutUseCase
+    private val logOutUseCase: LogOutUseCase,
+    private val observePreRideInfoEventsUseCase: ObservePreRideInfoEventsUseCase
 ) : BaseViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -96,6 +99,7 @@ class HomeViewModel @Inject constructor(
     init {
         observeUserAuthenticationState()
         getUnlockDistance()
+        observePreRideInfoEvents()
     }
 
     private fun observeUserAuthenticationState() {
@@ -108,6 +112,17 @@ class HomeViewModel @Inject constructor(
                 }
             }
             .launchIn(viewModelScope)
+    }
+
+    private fun observePreRideInfoEvents() {
+        viewModelScope.launch {
+            observePreRideInfoEventsUseCase().collect { preRideInfoEvent ->
+                when (preRideInfoEvent) {
+                    PreRideInfoEvent.Accepted -> startRide()
+                    else -> Unit // Ignore
+                }
+            }
+        }
     }
 
     fun getLastMapCameraPosition() {
@@ -221,7 +236,7 @@ class HomeViewModel @Inject constructor(
         Timber.d("loadMapContentWithinBounds: $contentBounds")
         viewModelScope.launch {
             if (isRideModeActiveUseCase()) {
-                Timber.d("Ride is active.")
+                Timber.d("Map content can't be loaded, ride is active.")
                 return@launch
             }
             if (activeRideId == null && mapContentJob == null) {
@@ -241,7 +256,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun startRide() {
+    private fun startRide() {
         viewModelScope.launch {
             checkGpsEnabled().onFailure {
                 Timber.d(it)

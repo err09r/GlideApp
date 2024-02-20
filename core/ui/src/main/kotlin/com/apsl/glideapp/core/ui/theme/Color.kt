@@ -224,8 +224,10 @@ internal val MoneyGreenLight = Color(0xFF00AE84)
 internal val MoneyRedLight = Color(0xFFE23B4A)
 internal val NoRidingZoneLight = Color(0xFF2F4496)
 internal val NoParkingZoneLight = Color(0xFFC93C49)
+internal val LowSpeedZoneLight = Color(0xFFFFB300)
 
 internal val MoneyGreenDark = MoneyGreenLight
 internal val MoneyRedDark = MoneyRedLight
 internal val NoRidingZoneDark = TertiaryDarkMediumContrast
 internal val NoParkingZoneDark = ErrorDarkMediumContrast
+internal val LowSpeedZoneDark = LowSpeedZoneLight

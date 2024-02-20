@@ -23,12 +23,13 @@ class ZoneRepositoryImpl @Inject constructor(
     private val zoneDao = database.zoneDao()
     private val zoneCoordinatesDao = database.zoneCoordinatesDao()
 
-    override suspend fun updateAllZones() {
+    override suspend fun updateAllZones(): Boolean {
         val zones = api.getAllZones()
-        refreshZones(zones)
+        val result = refreshZones(zones)
+        return result
     }
 
-    private suspend fun refreshZones(zones: List<ZoneDto>) {
+    private suspend fun refreshZones(zones: List<ZoneDto>): Boolean {
         val zoneEntities = zones.map {
             ZoneEntity(
                 id = it.id,
@@ -58,6 +59,8 @@ class ZoneRepositoryImpl @Inject constructor(
             zoneDao.upsertZones(zoneEntities)
             zoneCoordinatesDao.upsertZoneCoordinates(zoneCoordinatesEntities)
         }
+
+        return (!zoneDao.isTableEmpty() && !zoneCoordinatesDao.isTableEmpty())
     }
 
     override fun getAllZones(): Flow<List<Zone>> = zoneDao.getAllZones()

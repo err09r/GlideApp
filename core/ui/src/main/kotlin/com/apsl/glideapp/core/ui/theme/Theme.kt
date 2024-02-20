@@ -104,21 +104,24 @@ data class ExtendedColorScheme(
     val moneyGreen: Color = Color.Unspecified,
     val moneyRed: Color = Color.Unspecified,
     val noParkingZone: Color = Color.Unspecified,
-    val noRidingZone: Color = Color.Unspecified
+    val noRidingZone: Color = Color.Unspecified,
+    val lowSpeedZone: Color = Color.Unspecified
 )
 
 private val LightExtendedColorScheme = ExtendedColorScheme(
     moneyGreen = MoneyGreenLight,
     moneyRed = MoneyRedLight,
     noRidingZone = NoRidingZoneLight,
-    noParkingZone = NoParkingZoneLight
+    noParkingZone = NoParkingZoneLight,
+    lowSpeedZone = LowSpeedZoneLight
 )
 
 private val DarkExtendedColorScheme = ExtendedColorScheme(
     moneyGreen = MoneyGreenDark,
     moneyRed = MoneyRedDark,
     noRidingZone = NoRidingZoneDark,
-    noParkingZone = NoParkingZoneDark
+    noParkingZone = NoParkingZoneDark,
+    lowSpeedZone = LowSpeedZoneDark
 )
 
 val LocalExtendedColorScheme = staticCompositionLocalOf { ExtendedColorScheme() }

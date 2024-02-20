@@ -17,14 +17,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.apsl.glideapp.core.ui.icons.ArrowBack
+import com.apsl.glideapp.core.ui.icons.Cross
 import com.apsl.glideapp.core.ui.icons.GlideIcons
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 
 @Composable
-fun FeatureScreen(
-    topBarText: String,
-    onBackClick: () -> Unit,
+fun DismissibleScreen(
+    onDismissClick: () -> Unit,
+    topBarText: String? = null,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     contentWindowInsets: WindowInsets = WindowInsets.navigationBars,
     content: @Composable BoxScope.() -> Unit
@@ -34,7 +34,7 @@ fun FeatureScreen(
             .fillMaxSize()
             .onContentClickResettable(),
         topBar = {
-            FeatureTopBar(text = topBarText, onBackClick = onBackClick)
+            DismissibleTopBar(onDismissClick = onDismissClick, topBarText = topBarText)
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
         contentWindowInsets = contentWindowInsets
@@ -50,13 +50,21 @@ fun FeatureScreen(
 }
 
 @Composable
-fun FeatureTopBar(text: String, onBackClick: () -> Unit, modifier: Modifier = Modifier) {
+fun DismissibleTopBar(
+    onDismissClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    topBarText: String? = null
+) {
     TopAppBar(
-        title = { Text(text = text) },
+        title = {
+            if (topBarText != null) {
+                Text(text = topBarText)
+            }
+        },
         modifier = modifier,
         navigationIcon = {
-            IconButton(onClick = onBackClick) {
-                Icon(imageVector = GlideIcons.ArrowBack, contentDescription = null)
+            IconButton(onClick = onDismissClick) {
+                Icon(imageVector = GlideIcons.Cross, contentDescription = null)
             }
         }
     )
@@ -64,17 +72,17 @@ fun FeatureTopBar(text: String, onBackClick: () -> Unit, modifier: Modifier = Mo
 
 @Preview(showBackground = true)
 @Composable
-private fun FeatureScreenPreview() {
+private fun DismissibleScreenPreview() {
     GlideAppTheme {
-        FeatureScreen(topBarText = "My wallet", onBackClick = {}) {
+        DismissibleScreen(onDismissClick = {}) {
         }
     }
 }
 
 @Preview
 @Composable
-private fun FeatureTopBarPreview() {
+private fun DismissibleTopBarPreview() {
     GlideAppTheme {
-        FeatureTopBar(text = "My rides", onBackClick = {})
+        DismissibleTopBar(onDismissClick = {})
     }
 }

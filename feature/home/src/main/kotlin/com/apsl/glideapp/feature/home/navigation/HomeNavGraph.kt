@@ -12,6 +12,7 @@ import com.apsl.glideapp.feature.home.dialogs.LocationPermissionDialog
 import com.apsl.glideapp.feature.home.dialogs.LocationRationaleDialog
 import com.apsl.glideapp.feature.home.dialogs.NotificationPermissionDialog
 import com.apsl.glideapp.feature.home.screens.HomeScreen
+import com.apsl.glideapp.feature.home.screens.PreRideInfoScreen
 
 fun NavGraphBuilder.homeGraph(navController: NavController) {
     navigation(startDestination = Screen.Home.Root.route, route = AppNavGraph.Home.route) {
@@ -23,6 +24,7 @@ fun NavGraphBuilder.homeGraph(navController: NavController) {
                         popUpTo(Screen.Home.Root.route) { inclusive = true }
                     }
                 },
+                onNavigateToPreRide = { navController.navigate(Screen.Home.PreRideInfo.route) },
                 onNavigateToAllRides = { navController.navigate(Screen.Rides.Root.route) },
                 onNavigateToWallet = { navController.navigate(Screen.Wallet.Root.route) },
                 onNavigateToTopUp = { navController.navigate(Screen.Wallet.TopUp.route) },
@@ -38,6 +40,10 @@ fun NavGraphBuilder.homeGraph(navController: NavController) {
                     }
                 }
             )
+        }
+
+        composable(route = Screen.Home.PreRideInfo.route) {
+            PreRideInfoScreen(onNavigateBack = { navController.popBackStack() })
         }
 
         dialog(route = Dialog.Home.LocationPermission.route) {
