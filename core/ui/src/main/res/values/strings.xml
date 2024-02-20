@@ -6,7 +6,7 @@
     <string name="value_meters_full">%s meters</string>
     <string name="value_kmh">%s km/h</string>
     <string name="value_range" translatable="false">%1$s - %2$s</string>
-    <string name="value_from_to" translatable="false">%1$s \u279E %2$s</string>
+    <string name="route_from_to" translatable="false">%1$s \u279E %2$s</string>
 
     <string name="meters">meters</string>
     <string name="rides">rides</string>
