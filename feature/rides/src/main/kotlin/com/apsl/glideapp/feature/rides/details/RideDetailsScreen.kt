@@ -293,7 +293,7 @@ fun RideDetailsSheetContent(ride: RideDetailsUiModel, modifier: Modifier = Modif
             val addressText = if (ride.startAddress == null || ride.finishAddress == null) {
                 stringResource(CoreR.string.address_not_defined)
             } else {
-                stringResource(CoreR.string.value_from_to, ride.startAddress, ride.finishAddress)
+                stringResource(CoreR.string.route_from_to, ride.startAddress, ride.finishAddress)
             }
             Text(
                 text = addressText,
