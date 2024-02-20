@@ -45,16 +45,16 @@
     <!--    Home-->
     <string name="location_permission_dialog_button">Otwórz ustawienia aplikacji</string>
     <string name="location_permission_dialog_title">Włącz lokalizację</string>
-    <string name="location_permission_dialog_text">Aby rozpocząć przejazd, należy włączyć lokalizację w ustawieniach aplikacji</string>
+    <string name="location_permission_dialog_text">Aby rozpocząć przejazd, należy włączyć lokalizację w ustawieniach aplikacji.</string>
 
     <string name="location_rationale_button">@string/location_permission_dialog_button</string>
-    <string name="location_rationale_title">@string/location_permission_dialog_title</string>
-    <string name="location_rationale_text">Zezwolenie na lokalizację musi być udzielone, aby móc korzystać z funkcji przejazdu</string>
+    <string name="location_rationale_title">Zezwolenie na lokalizację</string>
+    <string name="location_rationale_text">Zezwolenie na lokalizację musi być udzielone, aby móc korzystać z funkcji przejazdu.</string>
 
     <string name="notification_permission_dialog_button_confirm">Zezwól</string>
     <string name="notification_permission_dialog_button_dismiss">Odrzuć</string>
     <string name="notification_permission_dialog_title">Zezwól na powiadomienia</string>
-    <string name="notification_permission_dialog_text">Powiadomienia są wyłączone dla naszej aplikacji. Aby zapewnić najlepsze doświadczenia z jazdy, włącz powiadomienia w ustawieniach aplikacji</string>
+    <string name="notification_permission_dialog_text">Powiadomienia są wyłączone dla naszej aplikacji. Aby zapewnić najlepsze doświadczenia z jazdy, włącz powiadomienia w ustawieniach aplikacji.</string>
 
     <string name="ride_notification_title">Śledzenie lokalizacji…</string>
     <string name="ride_notification_text">Poruszanie się po: %s</string>
@@ -132,7 +132,7 @@
 
     <string name="voucher_activated_dialog_button">Kontynuuj</string>
     <string name="voucher_activated_dialog_title">Sukces!</string>
-    <string name="voucher_activated_dialog_text">Kod vouchera został aktywowany. Środki zostaną dodane do Twojego konta</string>
+    <string name="voucher_activated_dialog_text">Kod vouchera został aktywowany. Środki zostaną dodane do Twojego konta.</string>
 
     <string name="voucher_screen_title">@string/voucher</string>
     <string name="voucher_screen_card_title">Wprowadź swój kod</string>

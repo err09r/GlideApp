@@ -47,16 +47,16 @@
     <!--    Home-->
     <string name="location_permission_dialog_button">Open app settings</string>
     <string name="location_permission_dialog_title">Enable location</string>
-    <string name="location_permission_dialog_text">To start a ride you should enable location in app settings</string>
+    <string name="location_permission_dialog_text">To start a ride you should enable location in app settings.</string>
 
     <string name="location_rationale_button">@string/location_permission_dialog_button</string>
-    <string name="location_rationale_title">@string/location_permission_dialog_title</string>
-    <string name="location_rationale_text">Location permission has to be granted to be able to use ride functionality</string>
+    <string name="location_rationale_title">Location permission</string>
+    <string name="location_rationale_text">Location permission has to be granted to be able to use ride functionality.</string>
 
     <string name="notification_permission_dialog_button_confirm">Allow</string>
     <string name="notification_permission_dialog_button_dismiss">Dismiss</string>
     <string name="notification_permission_dialog_title">Allow notifications</string>
-    <string name="notification_permission_dialog_text">Notifications are disabled for our app. To provide the best ride experience, enable notifications in app settings</string>
+    <string name="notification_permission_dialog_text">Notifications are disabled for our app. To provide the best ride experience, enable notifications in app settings.</string>
 
     <string name="ride_notification_title">Tracking location…</string>
     <string name="ride_notification_text">Driving around: %s</string>
@@ -137,7 +137,7 @@
 
     <string name="voucher_activated_dialog_button">Continue</string>
     <string name="voucher_activated_dialog_title">Success!</string>
-    <string name="voucher_activated_dialog_text">Voucher code has been activated. Funds will be added to your account</string>
+    <string name="voucher_activated_dialog_text">Voucher code has been activated. Funds will be added to your account.</string>
 
     <string name="voucher_screen_title">@string/voucher</string>
     <string name="voucher_screen_card_title">Enter your code</string>

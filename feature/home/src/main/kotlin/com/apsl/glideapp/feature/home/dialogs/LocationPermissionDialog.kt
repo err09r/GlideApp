@@ -30,7 +30,7 @@ fun LocationPermissionDialog(onDismiss: () -> Unit, modifier: Modifier = Modifie
             }
         },
         modifier = modifier,
-        icon = { GlideImage(CoreR.drawable.img_location) },
+        icon = { GlideImage(CoreR.drawable.img_toggle) },
         title = { Text(text = stringResource(CoreR.string.location_permission_dialog_title)) },
         text = { Text(text = stringResource(CoreR.string.location_permission_dialog_text)) }
     )
