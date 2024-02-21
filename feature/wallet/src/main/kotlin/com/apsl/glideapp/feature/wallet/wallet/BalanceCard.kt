@@ -13,7 +13,6 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -67,30 +66,15 @@ fun BalanceCard(
 
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Button(onClick = onAddMoneyClick) {
-                    Icon(
-                        imageVector = GlideIcons.CardMoney,
-                        contentDescription = null
-                    )
+                    Icon(imageVector = GlideIcons.CardMoney, contentDescription = null)
                     Spacer(Modifier.width(8.dp))
                     Text(text = stringResource(CoreR.string.balance_card_button))
                 }
-                FilledTonalIconButton(
-                    onClick = {},
-                    colors = IconButtonDefaults.filledTonalIconButtonColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
-                ) {
-                    Icon(
-                        imageVector = GlideIcons.File,
-                        contentDescription = null
-                    )
+                FilledTonalIconButton(onClick = {}) {
+                    Icon(imageVector = GlideIcons.File, contentDescription = null)
                 }
-                FilledTonalIconButton(
-                    onClick = {},
-                    colors = IconButtonDefaults.filledTonalIconButtonColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
-                ) {
-                    Icon(
-                        imageVector = GlideIcons.Question,
-                        contentDescription = null
-                    )
+                FilledTonalIconButton(onClick = {}) {
+                    Icon(imageVector = GlideIcons.Question, contentDescription = null)
                 }
             }
         }
