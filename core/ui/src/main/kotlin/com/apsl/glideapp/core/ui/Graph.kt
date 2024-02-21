@@ -95,36 +95,3 @@ fun Graph(
         )
     }
 }
-
-//@Preview
-//@Composable
-//private fun GraphPreview() {
-//    GlideAppTheme {
-//        Graph(
-//            modifier = Modifier.size(120.dp),
-//            contentPadding = PaddingValues(4.dp),
-//            thickness = 2.dp,
-//            points = listOf(
-//                1f to 150f,
-//                2f to 100f,
-//                3f to 150f,
-//                4f to 25f,
-//                5f to 325f,
-//                6f to 275f
-//            )
-//        )
-//    }
-//}
-//
-//@Preview
-//@Composable
-//private fun GraphEmptyPreview() {
-//    GlideAppTheme {
-//        Graph(
-//            modifier = Modifier.size(120.dp),
-//            contentPadding = PaddingValues(4.dp),
-//            thickness = 2.dp,
-//            points = emptyList()
-//        )
-//    }
-//}
