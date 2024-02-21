@@ -54,7 +54,7 @@ fun ActiveRideSheetLayout(
         modifier = modifier
             .navigationBarsPadding()
             // Top padding is 32.dp because of RectangleShape
-            .padding(start = 16.dp, top = 32.dp, end = 16.dp, bottom = 24.dp)
+            .padding(start = 16.dp, top = 32.dp, end = 16.dp, bottom = 16.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -120,7 +120,7 @@ fun DefaultSheetLayout(
     Column(
         modifier = modifier
             .navigationBarsPadding()
-            .padding(start = 16.dp, top = 0.dp, end = 16.dp, bottom = 24.dp)
+            .padding(start = 16.dp, top = 0.dp, end = 16.dp, bottom = 16.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
