@@ -47,9 +47,8 @@ class MainActivityViewModel @Inject constructor(
 
     private suspend fun updateAppConfiguration() {
         try {
-            val configUpdated = appConfigRepository.updateAppConfig()
-            val zonesUpdated = zoneRepository.updateAllZones()
-            check(configUpdated && zonesUpdated) { "Failed to fetch app configuration" }
+            appConfigRepository.updateAppConfig()
+            zoneRepository.updateAllZones()
         } catch (e: Exception) {
             if (e !is CancellationException) {
                 Timber.d("Failed to fetch app configuration: ${e.message}")
