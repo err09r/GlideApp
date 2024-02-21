@@ -1,6 +1,6 @@
 @file:Suppress("UnusedReceiverParameter")
 
-package com.apsl.glideapp.feature.home.screens
+package com.apsl.glideapp.feature.home.preride
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image

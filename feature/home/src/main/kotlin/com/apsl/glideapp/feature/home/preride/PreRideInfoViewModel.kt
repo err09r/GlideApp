@@ -1,4 +1,4 @@
-package com.apsl.glideapp.feature.home.screens
+package com.apsl.glideapp.feature.home.preride
 
 import androidx.lifecycle.viewModelScope
 import com.apsl.glideapp.core.domain.ride.SendPreRideInfoEventUseCase
