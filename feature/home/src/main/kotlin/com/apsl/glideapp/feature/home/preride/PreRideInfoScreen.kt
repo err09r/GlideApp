@@ -69,8 +69,8 @@ fun PreRideInfoScreenContent(onAccept: () -> Unit, onReject: () -> Unit) {
 
         Column(
             modifier = Modifier
-                .padding(horizontal = 16.dp)
                 .verticalScroll(scrollState)
+                .padding(horizontal = 16.dp)
         ) {
             Spacer(Modifier.height(16.dp))
             Text(

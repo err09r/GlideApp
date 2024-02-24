@@ -2,17 +2,20 @@ package com.apsl.glideapp.feature.home.navigation
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
 import androidx.navigation.compose.navigation
+import androidx.navigation.navArgument
 import com.apsl.glideapp.core.ui.navigation.AppNavGraph
 import com.apsl.glideapp.core.ui.navigation.Dialog
 import com.apsl.glideapp.core.ui.navigation.Screen
 import com.apsl.glideapp.feature.home.dialogs.LocationPermissionDialog
 import com.apsl.glideapp.feature.home.dialogs.LocationRationaleDialog
 import com.apsl.glideapp.feature.home.dialogs.NotificationPermissionDialog
+import com.apsl.glideapp.feature.home.preride.PreRideInfoScreen
+import com.apsl.glideapp.feature.home.ridesummary.RideSummaryScreen
 import com.apsl.glideapp.feature.home.screens.HomeScreen
-import com.apsl.glideapp.feature.home.screens.PreRideInfoScreen
 
 fun NavGraphBuilder.homeGraph(navController: NavController) {
     navigation(startDestination = Screen.Home.Root.route, route = AppNavGraph.Home.route) {
@@ -24,7 +27,10 @@ fun NavGraphBuilder.homeGraph(navController: NavController) {
                         popUpTo(Screen.Home.Root.route) { inclusive = true }
                     }
                 },
-                onNavigateToPreRide = { navController.navigate(Screen.Home.PreRideInfo.route) },
+                onNavigateToPreRideInfo = { navController.navigate(Screen.Home.PreRideInfo.route) },
+                onNavigateToRideSummary = { averageSpeed, distance ->
+                    navController.navigate(Screen.Home.RideSummary(averageSpeed, distance).route)
+                },
                 onNavigateToAllRides = { navController.navigate(Screen.Rides.Root.route) },
                 onNavigateToWallet = { navController.navigate(Screen.Wallet.Root.route) },
                 onNavigateToTopUp = { navController.navigate(Screen.Wallet.TopUp.route) },
@@ -44,6 +50,22 @@ fun NavGraphBuilder.homeGraph(navController: NavController) {
 
         composable(route = Screen.Home.PreRideInfo.route) {
             PreRideInfoScreen(onNavigateBack = { navController.popBackStack() })
+        }
+
+        composable(
+            route = Screen.Home.RideSummary.route,
+            arguments = listOf(
+                navArgument("averageSpeed") { type = NavType.FloatType },
+                navArgument("distance") { type = NavType.FloatType }
+            )
+        ) { backStackEntry ->
+            val averageSpeed = backStackEntry.arguments?.getFloat("averageSpeed")
+            val distance = backStackEntry.arguments?.getFloat("distance")
+            RideSummaryScreen(
+                averageSpeed = requireNotNull(averageSpeed),
+                distance = requireNotNull(distance),
+                onNavigateBack = { navController.popBackStack() }
+            )
         }
 
         dialog(route = Dialog.Home.LocationPermission.route) {

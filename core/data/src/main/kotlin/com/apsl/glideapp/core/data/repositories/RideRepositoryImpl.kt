@@ -53,24 +53,23 @@ class RideRepositoryImpl @Inject constructor(
 
     private fun RideEventDto.toDomain(): RideEvent? {
         return when (this) {
-            is RideEventDto.Started -> {
-                RideEvent.Started(
-                    rideId = this.rideId,
-                    vehicle = this.vehicle.toDomain(),
-                    dateTime = this.dateTime
-                )
-            }
+            is RideEventDto.Started -> RideEvent.Started(
+                rideId = this.rideId,
+                vehicle = this.vehicle.toDomain(),
+                dateTime = this.dateTime
+            )
 
-            is RideEventDto.Restored -> {
-                RideEvent.Started(
-                    rideId = this.rideId,
-                    vehicle = this.vehicle.toDomain(),
-                    dateTime = this.startDateTime
-                )
-            }
+            is RideEventDto.Restored -> RideEvent.Started(
+                rideId = this.rideId,
+                vehicle = this.vehicle.toDomain(),
+                dateTime = this.startDateTime
+            )
 
             is RideEventDto.RouteUpdated -> RideEvent.RouteUpdated(this.currentRoute)
-            is RideEventDto.Finished -> RideEvent.Finished
+            is RideEventDto.Finished -> RideEvent.Finished(
+                distance = this.distance,
+                averageSpeed = this.averageSpeed
+            )
 
             is RideEventDto.Error.UserInsideNoParkingZone -> {
                 RideEvent.Error.UserInsideNoParkingZone(this.message)

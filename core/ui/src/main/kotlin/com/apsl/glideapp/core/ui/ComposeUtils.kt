@@ -52,7 +52,7 @@ val screenWidth: Dp
     @Composable
     get() = LocalConfiguration.current.screenWidthDp.dp
 
-val WindowInsets.Companion.None: WindowInsets get() = WindowInsets(0, 0, 0, 0)
+val WindowInsets.Companion.none: WindowInsets get() = WindowInsets(0, 0, 0, 0)
 
 val WindowInsets.Companion.statusBarHeight: Dp
     @Composable

@@ -69,6 +69,16 @@
     <string name="preride_info_zone_text3">Pojazdy Glide poruszają się tutaj wolniej ze względu na duży ruch i pieszych.</string>
     <string name="preride_info_button">Akceptuję i jadę</string>
 
+    <string name="ride_summary_headline">Oto najważniejsze momenty Twojej podróży!</string>
+    <string name="ride_summary_highlight_title1">Tempo Twojej jazdy</string>
+    <string name="ride_summary_highlight_text1">Podróżowałeś ze średnią prędkością <b>%1$s km/h</b> i pokonałeś imponującą odległość <b>%2$s km</b>. Świetna robota, utrzymując stałe tempo!</string>
+    <string name="ride_summary_highlight_title2">Ekologiczny wybór</string>
+    <string name="ride_summary_highlight_text2">Dzisiaj potencjalnie zmniejszyłeś emisję CO₂ o około <b>2 kg</b>, co jest porównywalne z ilością absorbowaną przez młode drzewo w ciągu dnia. Przyszłość Ci dziękuje!</string>
+    <string name="ride_summary_highlight_title3">Efektywność w najlepszym wydaniu</string>
+    <string name="ride_summary_highlight_text3">Dzięki zwinności hulajnogi dotarłeś do celu o <b>30%</b> szybciej niż gdybyś pokonał tę samą odległość w miejskim ruchu samochodowym.</string>
+    <string name="ride_summary_textfield_hint">Dodaj komentarz</string>
+    <string name="ride_summary_button">Gotowe</string>
+
     <string name="ride_notification_title">Śledzenie lokalizacji…</string>
     <string name="ride_notification_text">Poruszanie się po: %s</string>
     <string name="ride_notification_text_default">Lokalizacja</string>

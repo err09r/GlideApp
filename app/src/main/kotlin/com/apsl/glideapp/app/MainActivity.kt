@@ -16,7 +16,7 @@ import androidx.core.view.WindowCompat
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
-import com.apsl.glideapp.core.ui.None
+import com.apsl.glideapp.core.ui.none
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.core.util.android.LoggingLifecycleObserver
 import com.apsl.glideapp.core.util.android.addObservers
@@ -44,7 +44,7 @@ class MainActivity : ComponentActivity() {
             GlideAppTheme {
                 val navHostController = rememberNavController()
                 Scaffold(
-                    contentWindowInsets = WindowInsets.None,
+                    contentWindowInsets = WindowInsets.none,
                     containerColor = MaterialTheme.colorScheme.background
                 ) { padding ->
                     Navigation(

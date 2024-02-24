@@ -6,6 +6,14 @@ sealed class Screen(val route: String) {
     object Home {
         data object Root : Screen("home")
         data object PreRideInfo : Screen("preRideInfo")
+        data class RideSummary(
+            val averageSpeed: Float,
+            val distance: Float
+        ) : Screen("rideSummary/$averageSpeed/$distance") {
+            companion object {
+                const val route = "rideSummary/{averageSpeed}/{distance}"
+            }
+        }
     }
 
     object Rides {

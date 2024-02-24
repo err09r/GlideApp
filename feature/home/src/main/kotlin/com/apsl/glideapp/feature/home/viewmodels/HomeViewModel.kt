@@ -337,7 +337,11 @@ class HomeViewModel @Inject constructor(
                     )
 
                     is RideEvent.RouteUpdated -> onRideRouteUpdated(rideEvent.currentRoute)
-                    is RideEvent.Finished -> onRideFinished()
+                    is RideEvent.Finished -> onRideFinished(
+                        distance = rideEvent.distance,
+                        averageSpeed = rideEvent.averageSpeed
+                    )
+
                     is RideEvent.Error -> onError(rideEvent)
                 }
             }
@@ -391,7 +395,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun onRideFinished() {
+    private fun onRideFinished(distance: Double, averageSpeed: Double) {
         Timber.d("Ride finished")
 
         activeRideId = null
@@ -402,7 +406,7 @@ class HomeViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            _actions.send(HomeAction.FinishRide)
+            _actions.send(HomeAction.FinishRide(distance = distance, averageSpeed = averageSpeed))
         }
     }
 

@@ -56,7 +56,8 @@ import timber.log.Timber
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     onNavigateToLogin: () -> Unit,
-    onNavigateToPreRide: () -> Unit,
+    onNavigateToPreRideInfo: () -> Unit,
+    onNavigateToRideSummary: (Float, Float) -> Unit,
     onNavigateToAllRides: () -> Unit,
     onNavigateToWallet: () -> Unit,
     onNavigateToTopUp: () -> Unit,
@@ -77,6 +78,7 @@ fun HomeScreen(
         actions = viewModel.actions,
         onNavigateToLogin = onNavigateToLogin,
         onNavigateToTopUp = onNavigateToTopUp,
+        onNavigateToRideSummary = onNavigateToRideSummary,
         onStartObservingUserLocation = viewModel::startObservingUserLocation,
         onRequestLocationPermissions = { requestPermissionsState.requestPermissions = true }
     )
@@ -108,6 +110,7 @@ fun HomeScreen(
 
     LaunchedEffect(Unit) {
         viewModel.getLastMapCameraPosition()
+        onNavigateToRideSummary(15.9f, 4.8f)
     }
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -120,7 +123,7 @@ fun HomeScreen(
         onOpenLocationRationaleDialog = onNavigateToLocationRationale,
         onVehicleSelect = viewModel::updateSelectedVehicle,
         onLoadMapContentWithinBounds = viewModel::loadMapContentWithinBounds,
-        onStartRideClick = onNavigateToPreRide,
+        onStartRideClick = onNavigateToPreRideInfo,
         onFinishRideClick = viewModel::finishRide,
         onMyRidesClick = {
             viewModel.updateSelectedVehicle(null)

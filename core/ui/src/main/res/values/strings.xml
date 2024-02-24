@@ -71,6 +71,16 @@
     <string name="preride_info_zone_text3">Glide vehicles run a bit slower here due to busy traffic and pedestrians.</string>
     <string name="preride_info_button">Agree &amp; ride</string>
 
+    <string name="ride_summary_headline">Let\'s see ride highlights!</string>
+    <string name="ride_summary_highlight_title1">Pace of your ride</string>
+    <string name="ride_summary_highlight_text1">You traveled at an average speed of <b>%1$s km/h</b> and covered an impressive distance of <b>%2$s km</b>. Great work keeping up a consistent pace!</string>
+    <string name="ride_summary_highlight_title2">Eco-friendly choice</string>
+    <string name="ride_summary_highlight_text2">Today, you\'ve potentially reduced CO₂ emissions by approximately <b>2 kg</b>, which is comparable to what a young tree absorbs in a day. The future thanks you!</string>
+    <string name="ride_summary_highlight_title3">Efficiency at its best</string>
+    <string name="ride_summary_highlight_text3">Thanks to the scooter\'s agility, you reached your destination <b>30%</b> quicker than if you\'d driven the same distance in city traffic.</string>
+    <string name="ride_summary_textfield_hint">Add a comment</string>
+    <string name="ride_summary_button">Done</string>
+
     <string name="ride_notification_title">Tracking location…</string>
     <string name="ride_notification_text">Driving around: %s</string>
     <string name="ride_notification_text_default">Location</string>

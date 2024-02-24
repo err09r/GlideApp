@@ -11,7 +11,7 @@ sealed interface RideEvent {
     ) : RideEvent
 
     data class RouteUpdated(val currentRoute: Route) : RideEvent
-    data object Finished : RideEvent
+    data class Finished(val distance: Double, val averageSpeed: Double) : RideEvent
     sealed class Error(val message: String?) : RideEvent {
         class UserInsideNoParkingZone(message: String?) : Error(message)
         class UserTooFarFromVehicle(message: String?) : Error(message)
