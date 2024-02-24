@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,12 +23,15 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,11 +42,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.apsl.glideapp.core.ui.FeatureScreen
+import com.apsl.glideapp.core.ui.LoadingScreen
 import com.apsl.glideapp.core.ui.PagingSeparator
 import com.apsl.glideapp.core.ui.icons.ElectricScooter
 import com.apsl.glideapp.core.ui.icons.GlideIcons
 import com.apsl.glideapp.core.ui.icons.NotificationRemove
 import com.apsl.glideapp.core.ui.icons.Route
+import com.apsl.glideapp.core.ui.pulltorefresh.Indicator
 import com.apsl.glideapp.core.ui.receiveAsLazyPagingItems
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.core.ui.toComposePagingItems
@@ -83,63 +89,61 @@ fun AllRidesScreenContent(
         topBarText = stringResource(CoreR.string.all_rides_screen_title),
         onBackClick = onBackClick
     ) {
-        AllRidesEmptyScreen()
+        when {
+            uiState.isLoading -> LoadingScreen()
+            uiState.error != null -> {
+                Text(
+                    text = stringResource(uiState.error.textResId),
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
 
-//        when {
-//            uiState.isLoading -> LoadingScreen()
-//            uiState.error != null -> {
-//                Text(
-//                    text = stringResource(uiState.error.textResId),
-//                    modifier = Modifier.align(Alignment.Center)
-//                )
-//            }
-//
-//            else -> {
-//                val pullToRefreshState = rememberPullToRefreshState()
-//                if (pullToRefreshState.isRefreshing) {
-//                    LaunchedEffect(Unit) {
-//                        onPullToRefresh()
-//                    }
-//                }
-//
-//                if (!uiState.isRefreshing) {
-//                    LaunchedEffect(Unit) {
-//                        pullToRefreshState.endRefresh()
-//                    }
-//                }
-//
-//                Box(
-//                    modifier = Modifier
-//                        .fillMaxSize()
-//                        .nestedScroll(pullToRefreshState.nestedScrollConnection)
-//                ) {
-//                    val itemCount = uiState.rides?.itemCount ?: 0
-//
-//                    if (itemCount == 0) {
-//                        AllRidesEmptyScreen()
-//                    } else {
-//                        Column {
-//                            RideStats(
-//                                rides = uiState.totalRides,
-//                                distance = uiState.totalDistanceMeters
-//                            )
-//                            RideList(
-//                                rides = uiState.rides,
-//                                modifier = Modifier.fillMaxSize(),
-//                                contentPadding = PaddingValues(bottom = 32.dp),
-//                                onRideClick = onRideClick
-//                            )
-//                        }
-//                    }
-//
-//                    PullToRefreshContainer(
-//                        state = pullToRefreshState,
-//                        modifier = Modifier.align(Alignment.TopCenter),
-//                        indicator = { Indicator(state = it) }
-//                    )
-//                }
-//            }
-//        }
+            else -> {
+                val pullToRefreshState = rememberPullToRefreshState()
+                if (pullToRefreshState.isRefreshing) {
+                    LaunchedEffect(Unit) {
+                        onPullToRefresh()
+                    }
+                }
+
+                if (!uiState.isRefreshing) {
+                    LaunchedEffect(Unit) {
+                        pullToRefreshState.endRefresh()
+                    }
+                }
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .nestedScroll(pullToRefreshState.nestedScrollConnection)
+                ) {
+                    val itemCount = uiState.rides?.itemCount ?: 0
+
+                    if (itemCount == 0) {
+                        AllRidesEmptyScreen()
+                    } else {
+                        Column {
+                            RideStats(
+                                rides = uiState.totalRides,
+                                distance = uiState.totalDistanceMeters
+                            )
+                            RideList(
+                                rides = uiState.rides,
+                                modifier = Modifier.fillMaxSize(),
+                                contentPadding = PaddingValues(bottom = 32.dp),
+                                onRideClick = onRideClick
+                            )
+                        }
+                    }
+
+                    PullToRefreshContainer(
+                        state = pullToRefreshState,
+                        modifier = Modifier.align(Alignment.TopCenter),
+                        indicator = { Indicator(state = it) }
+                    )
+                }
+            }
+        }
     }
 }
 
