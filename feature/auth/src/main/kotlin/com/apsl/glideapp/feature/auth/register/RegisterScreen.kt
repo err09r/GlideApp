@@ -47,9 +47,8 @@ import com.apsl.glideapp.core.ui.R as CoreR
 
 @Composable
 fun RegisterScreen(
-    viewModel: RegisterViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit,
-    onNavigateToHome: () -> Unit
+    viewModel: RegisterViewModel = hiltViewModel()
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -57,7 +56,6 @@ fun RegisterScreen(
     val context = LocalContext.current
     ScreenActions(viewModel.actions) { action ->
         when (action) {
-            is RegisterAction.NavigateToHome -> onNavigateToHome()
             is RegisterAction.ShowError -> {
                 scope.launch {
                     val error = context.getString(action.errorResId)

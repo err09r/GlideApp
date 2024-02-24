@@ -46,9 +46,8 @@ import com.apsl.glideapp.core.ui.R as CoreR
 
 @Composable
 fun LoginScreen(
-    viewModel: LoginViewModel = hiltViewModel(),
-    onNavigateToHome: () -> Unit,
-    onNavigateToRegister: () -> Unit
+    onNavigateToRegister: () -> Unit,
+    viewModel: LoginViewModel = hiltViewModel()
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -56,7 +55,6 @@ fun LoginScreen(
     val context = LocalContext.current
     ScreenActions(viewModel.actions) { action ->
         when (action) {
-            is LoginAction.NavigateToHome -> onNavigateToHome()
             is LoginAction.NavigateToRegister -> onNavigateToRegister()
             is LoginAction.ShowError -> {
                 scope.launch {

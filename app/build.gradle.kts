@@ -25,6 +25,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.core.splashscreen)
+    implementation(libs.androidx.hilt.navigationCompose)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.startup.runtime)
 

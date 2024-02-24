@@ -3,6 +3,9 @@
 package com.apsl.glideapp.core.ui.navigation
 
 sealed class Screen(val route: String) {
+
+    data object Loading : Screen("loading")
+
     object Home {
         data object Root : Screen("home")
         data object PreRideInfo : Screen("preRideInfo")

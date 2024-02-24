@@ -3,6 +3,7 @@
 package com.apsl.glideapp.core.ui.navigation
 
 sealed class Dialog(val route: String) {
+
     object Home {
         data object LocationPermission : Screen("locationPermission")
         data object LocationRationale : Screen("locationRationale")

@@ -4,7 +4,6 @@ import androidx.annotation.StringRes
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
 import com.apsl.glideapp.core.domain.auth.LoginUseCase
-import com.apsl.glideapp.core.domain.auth.ObserveUserAuthenticationStateUseCase
 import com.apsl.glideapp.core.ui.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -33,37 +32,17 @@ data class LoginUiState(
 @Immutable
 sealed interface LoginAction {
     data class ShowError(@StringRes val errorResId: Int) : LoginAction
-    data object NavigateToHome : LoginAction
     data object NavigateToRegister : LoginAction
 }
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(
-    private val loginUseCase: LoginUseCase,
-    private val observeUserAuthenticationStateUseCase: ObserveUserAuthenticationStateUseCase
-) : BaseViewModel() {
+class LoginViewModel @Inject constructor(private val loginUseCase: LoginUseCase) : BaseViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState = _uiState.asStateFlow()
 
     private val _actions = Channel<LoginAction>()
     val actions = _actions.receiveAsFlow()
-
-//    init {
-//        observeUserAuthenticationState()
-//    }
-//
-//    private fun observeUserAuthenticationState() {
-//        observeUserAuthenticationStateUseCase()
-//            .distinctUntilChanged()
-//            .onEach { authState ->
-//                Timber.d("User authentication state: $authState")
-//                if (authState == UserAuthState.Authenticated) {
-//                    _actions.send(LoginAction.NavigateToHome)
-//                }
-//            }
-//            .launchIn(viewModelScope)
-//    }
 
     fun logIn() {
         showLoading()
@@ -76,7 +55,6 @@ class LoginViewModel @Inject constructor(
                 loginUseCase(username = username, password = password)
                     .onSuccess {
                         _uiState.update { it.copy(isLoading = false) }
-                        _actions.send(LoginAction.NavigateToHome)
                     }
                     .onFailure { throwable ->
                         Timber.d(throwable.message)

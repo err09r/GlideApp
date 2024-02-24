@@ -59,9 +59,9 @@ import com.apsl.glideapp.core.ui.R as CoreR
 
 @Composable
 fun AllRidesScreen(
-    viewModel: AllRidesViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit,
-    onNavigateToRide: (String) -> Unit
+    onNavigateToRide: (String) -> Unit,
+    viewModel: AllRidesViewModel = hiltViewModel()
 ) {
     LaunchedEffect(Unit) {
         viewModel.refreshRidesSummary()

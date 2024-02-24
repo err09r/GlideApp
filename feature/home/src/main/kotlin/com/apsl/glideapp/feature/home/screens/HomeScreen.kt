@@ -54,8 +54,6 @@ import timber.log.Timber
 
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = hiltViewModel(),
-    onNavigateToLogin: () -> Unit,
     onNavigateToPreRideInfo: () -> Unit,
     onNavigateToRideSummary: (Float, Float) -> Unit,
     onNavigateToAllRides: () -> Unit,
@@ -63,7 +61,8 @@ fun HomeScreen(
     onNavigateToTopUp: () -> Unit,
     onNavigateToLocationPermission: () -> Unit,
     onNavigateToLocationRationale: () -> Unit,
-    onNavigateToNotificationPermission: () -> Unit
+    onNavigateToNotificationPermission: () -> Unit,
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
 
@@ -76,7 +75,6 @@ fun HomeScreen(
 
     HomeActionsHandler(
         actions = viewModel.actions,
-        onNavigateToLogin = onNavigateToLogin,
         onNavigateToTopUp = onNavigateToTopUp,
         onNavigateToRideSummary = onNavigateToRideSummary,
         onStartObservingUserLocation = viewModel::startObservingUserLocation,

@@ -60,10 +60,10 @@ import com.apsl.glideapp.core.ui.R as CoreR
 
 @Composable
 fun TopUpScreen(
-    viewModel: TopUpViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit,
     onNavigateToPayment: () -> Unit,
-    onNavigateToTopUpSuccess: () -> Unit
+    onNavigateToTopUpSuccess: () -> Unit,
+    viewModel: TopUpViewModel = hiltViewModel()
 ) {
     ScreenActions(viewModel.actions) { action ->
         when (action) {

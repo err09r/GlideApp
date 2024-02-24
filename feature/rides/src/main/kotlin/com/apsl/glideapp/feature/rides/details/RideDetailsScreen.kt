@@ -78,8 +78,8 @@ import com.apsl.glideapp.core.ui.R as CoreR
 @Composable
 fun RideDetailsScreen(
     rideId: String,
-    viewModel: RideDetailsViewModel = hiltViewModel(),
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    viewModel: RideDetailsViewModel = hiltViewModel()
 ) {
     LaunchedEffect(Unit) {
         viewModel.getRideById(rideId)

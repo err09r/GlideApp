@@ -15,3 +15,10 @@ fun <T> NavController.popBackStackWithArgument(key: String, value: T?) {
 fun <T> NavController.popBackStackWithArgument(pair: Pair<String, T?>) {
     this.popBackStackWithArgument(key = pair.first, value = pair.second)
 }
+
+@MainThread
+fun NavController.safePopBackStack() {
+    if (this.currentBackStackEntry?.destination?.route != Screen.Loading.route) {
+        this.popBackStack()
+    }
+}

@@ -27,7 +27,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun HomeActionsHandler(
     actions: Flow<HomeAction>,
-    onNavigateToLogin: () -> Unit,
     onNavigateToTopUp: () -> Unit,
     onNavigateToRideSummary: (Float, Float) -> Unit,
     onStartObservingUserLocation: () -> Unit,
@@ -77,8 +76,6 @@ fun HomeActionsHandler(
     val scope = rememberCoroutineScope()
     ScreenActions(actions) { action ->
         when (action) {
-            is HomeAction.LogOut -> onNavigateToLogin()
-
             is HomeAction.StartRide -> {
                 val intent = Intent(context, RideService::class.java).apply {
                     this.action = RideService.ACTION_START

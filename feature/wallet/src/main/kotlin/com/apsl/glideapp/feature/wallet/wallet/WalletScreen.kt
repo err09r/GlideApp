@@ -45,11 +45,11 @@ import com.apsl.glideapp.core.ui.R as CoreR
 
 @Composable
 fun WalletScreen(
-    viewModel: WalletViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit,
     onNavigateToTransactions: () -> Unit,
     onNavigateToTopUp: () -> Unit,
-    onNavigateToRedeemVoucher: () -> Unit
+    onNavigateToRedeemVoucher: () -> Unit,
+    viewModel: WalletViewModel = hiltViewModel()
 ) {
     ComposableLifecycle { event ->
         when (event) {

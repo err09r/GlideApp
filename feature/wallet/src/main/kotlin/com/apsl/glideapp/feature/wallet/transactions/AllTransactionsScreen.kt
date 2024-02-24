@@ -39,8 +39,8 @@ import com.apsl.glideapp.core.ui.R as CoreR
 
 @Composable
 fun AllTransactionsScreen(
-    viewModel: AllTransactionsViewModel = hiltViewModel(),
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    viewModel: AllTransactionsViewModel = hiltViewModel()
 ) {
     viewModel.pagingData.receiveAsLazyPagingItems(action = viewModel::onNewPagerLoadState)
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()

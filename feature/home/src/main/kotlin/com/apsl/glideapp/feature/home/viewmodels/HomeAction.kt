@@ -7,7 +7,6 @@ import androidx.compose.runtime.Immutable
 
 @Immutable
 sealed interface HomeAction {
-    data object LogOut : HomeAction
     data class StartRide(val rideId: String, val startDateTime: String) : HomeAction
     data class RestartUserLocation(val rideId: String, val startDateTime: String) : HomeAction
     data class FinishRide(val distance: Double, val averageSpeed: Double) : HomeAction

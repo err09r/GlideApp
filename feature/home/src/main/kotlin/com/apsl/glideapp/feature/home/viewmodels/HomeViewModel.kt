@@ -4,7 +4,6 @@ import androidx.lifecycle.viewModelScope
 import com.apsl.glideapp.common.models.Route
 import com.apsl.glideapp.common.util.Geometry
 import com.apsl.glideapp.core.domain.auth.LogOutUseCase
-import com.apsl.glideapp.core.domain.auth.ObserveUserAuthenticationStateUseCase
 import com.apsl.glideapp.core.domain.config.GetAppConfigUseCase
 import com.apsl.glideapp.core.domain.location.GetLastMapCameraPositionUseCase
 import com.apsl.glideapp.core.domain.location.GpsDisabledException
@@ -24,7 +23,6 @@ import com.apsl.glideapp.core.domain.user.SaveWalletVisitedUseCase
 import com.apsl.glideapp.core.model.MapCameraPosition
 import com.apsl.glideapp.core.model.PreRideInfoEvent
 import com.apsl.glideapp.core.model.RideEvent
-import com.apsl.glideapp.core.model.UserAuthState
 import com.apsl.glideapp.core.model.UserLocation
 import com.apsl.glideapp.core.model.Vehicle
 import com.apsl.glideapp.core.ui.BaseViewModel
@@ -48,7 +46,6 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
@@ -61,7 +58,6 @@ import com.apsl.glideapp.core.ui.R as CoreR
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val observeUserAuthenticationStateUseCase: ObserveUserAuthenticationStateUseCase,
     private val getUserUseCase: GetUserUseCase,
     private val saveWalletVisitedUseCase: SaveWalletVisitedUseCase,
     private val getLastMapCameraPositionUseCase: GetLastMapCameraPositionUseCase,
@@ -96,21 +92,8 @@ class HomeViewModel @Inject constructor(
     private var mapLoadingJob: Job? = null
 
     init {
-        observeUserAuthenticationState()
         getUnlockDistance()
         observePreRideInfoEvents()
-    }
-
-    private fun observeUserAuthenticationState() {
-        observeUserAuthenticationStateUseCase()
-            .distinctUntilChanged()
-            .onEach { authState ->
-                Timber.d("User authentication state: $authState")
-                if (authState == UserAuthState.NotAuthenticated) {
-                    _actions.send(HomeAction.LogOut)
-                }
-            }
-            .launchIn(viewModelScope)
     }
 
     private fun observePreRideInfoEvents() {

@@ -46,10 +46,10 @@ import com.apsl.glideapp.core.ui.R as CoreR
 
 @Composable
 fun VoucherScreen(
-    viewModel: VoucherViewModel = hiltViewModel(),
     onNavigateToPayment: () -> Unit,
     onNavigateBack: () -> Unit,
-    onNavigateToVoucherActivated: () -> Unit
+    onNavigateToVoucherActivated: () -> Unit,
+    viewModel: VoucherViewModel = hiltViewModel()
 ) {
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }

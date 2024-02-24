@@ -18,15 +18,12 @@ import com.apsl.glideapp.feature.home.ridesummary.RideSummaryScreen
 import com.apsl.glideapp.feature.home.screens.HomeScreen
 
 fun NavGraphBuilder.homeGraph(navController: NavController) {
-    navigation(startDestination = Screen.Home.Root.route, route = AppNavGraph.Home.route) {
-
+    navigation(
+        startDestination = AppNavGraph.Home.startDestination,
+        route = AppNavGraph.Home.route
+    ) {
         composable(route = Screen.Home.Root.route) {
             HomeScreen(
-                onNavigateToLogin = {
-                    navController.navigate(Screen.Auth.Login.route) {
-                        popUpTo(Screen.Home.Root.route) { inclusive = true }
-                    }
-                },
                 onNavigateToPreRideInfo = { navController.navigate(Screen.Home.PreRideInfo.route) },
                 onNavigateToRideSummary = { distance, averageSpeed ->
                     navController.navigate(Screen.Home.RideSummary(distance, averageSpeed).route)
@@ -49,7 +46,7 @@ fun NavGraphBuilder.homeGraph(navController: NavController) {
         }
 
         composable(route = Screen.Home.PreRideInfo.route) {
-            PreRideInfoScreen(onNavigateBack = { navController.popBackStack() })
+            PreRideInfoScreen(onNavigateBack = { navController.navigateUp() })
         }
 
         composable(
@@ -64,20 +61,20 @@ fun NavGraphBuilder.homeGraph(navController: NavController) {
             RideSummaryScreen(
                 distance = requireNotNull(distance),
                 averageSpeed = requireNotNull(averageSpeed),
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = { navController.navigateUp() }
             )
         }
 
         dialog(route = Dialog.Home.LocationPermission.route) {
-            LocationPermissionDialog(onDismiss = { navController.popBackStack() })
+            LocationPermissionDialog(onDismiss = { navController.navigateUp() })
         }
 
         dialog(route = Dialog.Home.LocationRationale.route) {
-            LocationRationaleDialog(onDismiss = { navController.popBackStack() })
+            LocationRationaleDialog(onDismiss = { navController.navigateUp() })
         }
 
         dialog(route = Dialog.Home.NotificationPermission.route) {
-            NotificationPermissionDialog(onDismiss = { navController.popBackStack() })
+            NotificationPermissionDialog(onDismiss = { navController.navigateUp() })
         }
     }
 }

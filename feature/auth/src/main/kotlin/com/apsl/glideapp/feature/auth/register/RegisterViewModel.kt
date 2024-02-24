@@ -39,7 +39,6 @@ data class RegisterUiState(
 @Immutable
 sealed interface RegisterAction {
     data class ShowError(@StringRes val errorResId: Int) : RegisterAction
-    data object NavigateToHome : RegisterAction
 }
 
 @HiltViewModel
@@ -114,7 +113,6 @@ class RegisterViewModel @Inject constructor(
                             it.copy(isLoading = false, usernameErrorResId = null)
                         }
                         resetPasswordFields()
-                        _actions.send(RegisterAction.NavigateToHome)
                     }
                     .onFailure { throwable ->
                         Timber.d(throwable.message)
