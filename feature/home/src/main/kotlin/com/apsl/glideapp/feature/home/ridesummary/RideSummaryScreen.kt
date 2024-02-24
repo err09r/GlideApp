@@ -46,11 +46,10 @@ import com.apsl.glideapp.core.ui.icons.Share
 import com.apsl.glideapp.core.ui.none
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.core.util.android.DistanceFormatter
-import com.apsl.glideapp.core.util.android.NumberFormatter
 import com.apsl.glideapp.core.ui.R as CoreR
 
 @Composable
-fun RideSummaryScreen(averageSpeed: Float, distance: Float, onNavigateBack: () -> Unit) {
+fun RideSummaryScreen(distance: Float, averageSpeed: Float, onNavigateBack: () -> Unit) {
     DismissibleScreen(onDismissClick = onNavigateBack, contentWindowInsets = WindowInsets.none) {
         Column(
             modifier = Modifier
@@ -86,7 +85,7 @@ fun RideSummaryScreen(averageSpeed: Float, distance: Float, onNavigateBack: () -
                     title = stringResource(CoreR.string.ride_summary_highlight_title1),
                     text = annotatedStringResource(
                         id = CoreR.string.ride_summary_highlight_text1,
-                        NumberFormatter.format(averageSpeed),
+                        DistanceFormatter.format(averageSpeed),
                         DistanceFormatter.format(distance)
                     ),
                     modifier = Modifier.align(Alignment.Start)

@@ -98,14 +98,14 @@ fun ActiveRideSheetLayout(
                 onClick = {},
                 modifier = Modifier.weight(1f)
             ) {
-                Text(text = stringResource(CoreR.string.pause))
+                Text(text = stringResource(CoreR.string.pause_button))
             }
             Spacer(Modifier.width(16.dp))
             Button(
                 onClick = onFinishRideClick,
                 modifier = Modifier.weight(1f)
             ) {
-                Text(text = stringResource(CoreR.string.finish))
+                Text(text = stringResource(CoreR.string.finish_button))
             }
         }
     }
@@ -160,12 +160,12 @@ fun DefaultSheetLayout(
             FilledTonalButton(onClick = {}) {
                 Icon(imageVector = GlideIcons.Bell, contentDescription = null)
                 Spacer(Modifier.width(8.dp))
-                Text(text = stringResource(CoreR.string.ring))
+                Text(text = stringResource(CoreR.string.ring_button))
             }
             FilledTonalButton(onClick = {}) {
                 Icon(imageVector = GlideIcons.WarningTriangle, contentDescription = null)
                 Spacer(Modifier.width(8.dp))
-                Text(text = stringResource(CoreR.string.report_issue))
+                Text(text = stringResource(CoreR.string.report_issue_button))
             }
         }
         Spacer(Modifier.height(48.dp))

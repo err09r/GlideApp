@@ -8,6 +8,7 @@
     <string name="value_range" translatable="false">%1$s - %2$s</string>
     <string name="route_from_to" translatable="false">%1$s \u279E %2$s</string>
 
+    <string name="kilometers">kilometers</string>
     <string name="meters">meters</string>
     <string name="rides">rides</string>
 
@@ -96,10 +97,10 @@
     <string name="time">Time</string>
     <string name="amount">Amount</string>
     <string name="voucher">Voucher</string>
-    <string name="pause">Pause</string>
-    <string name="finish">Finish</string>
-    <string name="ring">Ring</string>
-    <string name="report_issue">Report issue</string>
+    <string name="pause_button">Pause</string>
+    <string name="finish_button">Finish</string>
+    <string name="ring_button">Ring</string>
+    <string name="report_issue_button">Report issue</string>
 
     <string name="home_drawer_menu_wallet">Wallet</string>
     <string name="home_drawer_menu_rides">My rides</string>

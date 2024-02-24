@@ -7,11 +7,11 @@ sealed class Screen(val route: String) {
         data object Root : Screen("home")
         data object PreRideInfo : Screen("preRideInfo")
         data class RideSummary(
-            val averageSpeed: Float,
-            val distance: Float
-        ) : Screen("rideSummary/$averageSpeed/$distance") {
+            val distance: Float,
+            val averageSpeed: Float
+        ) : Screen("rideSummary/$distance/$averageSpeed") {
             companion object {
-                const val route = "rideSummary/{averageSpeed}/{distance}"
+                const val route = "rideSummary/{distance}/{averageSpeed}"
             }
         }
     }

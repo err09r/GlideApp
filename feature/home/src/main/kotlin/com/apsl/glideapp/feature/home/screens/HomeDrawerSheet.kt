@@ -39,6 +39,7 @@ import com.apsl.glideapp.core.ui.icons.Route
 import com.apsl.glideapp.core.ui.icons.Settings
 import com.apsl.glideapp.core.ui.icons.Wallet
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
+import com.apsl.glideapp.core.util.android.DistanceFormatter
 import com.apsl.glideapp.core.util.android.NumberFormatter
 import com.apsl.glideapp.core.util.android.openAppLanguageSettings
 import com.apsl.glideapp.core.util.android.openAppSettings
@@ -120,7 +121,7 @@ fun HomeDrawerSheet(
                 StatsComponent(
                     icon = GlideIcons.Route,
                     value = userInfo.totalDistanceKilometers,
-                    units = stringResource(CoreR.string.meters) //TODO: Handle `Quantity strings (plurals)`
+                    units = stringResource(CoreR.string.kilometers) //TODO: Handle `Quantity strings (plurals)`
                 )
                 StatsComponent(
                     icon = GlideIcons.ElectricScooter,
@@ -174,7 +175,7 @@ private fun HomeDrawerSheetPreview() {
         HomeDrawerSheet(
             userInfo = UserInfo(
                 username = "f00b4r",
-                totalDistanceKilometers = NumberFormatter.format(1405),
+                totalDistanceKilometers = DistanceFormatter.format(14.5),
                 totalRides = NumberFormatter.format(23)
             ),
             onMyRidesClick = {},

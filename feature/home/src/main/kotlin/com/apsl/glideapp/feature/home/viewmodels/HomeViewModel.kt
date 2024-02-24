@@ -42,7 +42,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlin.math.roundToInt
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.channels.Channel
@@ -180,14 +179,12 @@ class HomeViewModel @Inject constructor(
                         return@onSuccess
                     }
                     _uiState.update { state ->
-                        Timber.d(NumberFormatter.format(user.totalDistanceMeters))
-                        Timber.d(NumberFormatter.format(user.totalRides))
                         state.copy(
                             userInfo = state.userInfo.copy(
                                 username = user.username,
-                                totalDistanceKilometers = NumberFormatter.format(user.totalDistanceMeters.roundToInt()),
+                                totalDistanceKilometers = DistanceFormatter.format(user.totalDistanceMeters / 1000),
                                 totalRides = NumberFormatter.format(user.totalRides),
-                                walletVisited = user.walletVisited,
+                                walletVisited = user.walletVisited
                             )
                         )
                     }
@@ -406,7 +403,12 @@ class HomeViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            _actions.send(HomeAction.FinishRide(distance = distance, averageSpeed = averageSpeed))
+            _actions.send(
+                HomeAction.FinishRide(
+                    distance = distance / 1000, // meters to km
+                    averageSpeed = averageSpeed
+                )
+            )
         }
     }
 

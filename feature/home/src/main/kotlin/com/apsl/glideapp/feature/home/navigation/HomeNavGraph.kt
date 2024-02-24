@@ -28,8 +28,8 @@ fun NavGraphBuilder.homeGraph(navController: NavController) {
                     }
                 },
                 onNavigateToPreRideInfo = { navController.navigate(Screen.Home.PreRideInfo.route) },
-                onNavigateToRideSummary = { averageSpeed, distance ->
-                    navController.navigate(Screen.Home.RideSummary(averageSpeed, distance).route)
+                onNavigateToRideSummary = { distance, averageSpeed ->
+                    navController.navigate(Screen.Home.RideSummary(distance, averageSpeed).route)
                 },
                 onNavigateToAllRides = { navController.navigate(Screen.Rides.Root.route) },
                 onNavigateToWallet = { navController.navigate(Screen.Wallet.Root.route) },
@@ -55,15 +55,15 @@ fun NavGraphBuilder.homeGraph(navController: NavController) {
         composable(
             route = Screen.Home.RideSummary.route,
             arguments = listOf(
-                navArgument("averageSpeed") { type = NavType.FloatType },
-                navArgument("distance") { type = NavType.FloatType }
+                navArgument("distance") { type = NavType.FloatType },
+                navArgument("averageSpeed") { type = NavType.FloatType }
             )
         ) { backStackEntry ->
-            val averageSpeed = backStackEntry.arguments?.getFloat("averageSpeed")
             val distance = backStackEntry.arguments?.getFloat("distance")
+            val averageSpeed = backStackEntry.arguments?.getFloat("averageSpeed")
             RideSummaryScreen(
-                averageSpeed = requireNotNull(averageSpeed),
                 distance = requireNotNull(distance),
+                averageSpeed = requireNotNull(averageSpeed),
                 onNavigateBack = { navController.popBackStack() }
             )
         }

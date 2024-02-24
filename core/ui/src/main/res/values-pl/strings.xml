@@ -6,8 +6,9 @@
     <string name="value_meters_full">%s metrów</string>
     <string name="value_kmh">%s km/h</string>
 
+    <string name="kilometers">kilometrów</string>
     <string name="meters">metry</string>
-    <string name="rides">przejazdy</string>
+    <string name="rides">przejazdów</string>
 
     <string name="error_server">Błąd serwera</string>
     <string name="error_unknown">Nieznany błąd</string>
@@ -84,7 +85,7 @@
     <string name="ride_notification_text_default">Lokalizacja</string>
 
     <string name="home_bottom_sheet_scooter">Scooter %s</string>
-    <string name="home_bottom_sheet_battery">%s%% bateria</string>
+    <string name="home_bottom_sheet_battery">Bateria %s%%</string>
     <string name="home_bottom_sheet_range">Zasięg %s km</string>
     <string name="home_bottom_sheet_button">Rozpocznij przejazd</string>
     <string name="home_bottom_sheet_fare">%1$s na start, następnie %2$s/min</string>
@@ -94,10 +95,10 @@
     <string name="time">Czas</string>
     <string name="amount">Kwota</string>
     <string name="voucher">Voucher</string>
-    <string name="pause">Pauza</string>
-    <string name="finish">Koniec</string>
-    <string name="ring">Zadzwoń</string>
-    <string name="report_issue">Zgłoś problem</string>
+    <string name="pause_button">Pauza</string>
+    <string name="finish_button">Zakończ</string>
+    <string name="ring_button">Zadzwoń</string>
+    <string name="report_issue_button">Zgłoś problem</string>
 
     <string name="home_drawer_menu_wallet">Portfel</string>
     <string name="home_drawer_menu_rides">Moje przejazdy</string>
@@ -105,7 +106,7 @@
     <string name="home_drawer_menu_language">Język</string>
     <string name="home_drawer_menu_help">Pomoc</string>
     <string name="home_drawer_menu_logout">Wyloguj</string>
-    <string name="home_drawer_header">Cześć, %s</string>
+    <string name="home_drawer_header">Hej, %s</string>
 
     <string name="ride_layout_header">Aktywny przejazd</string>
     <!--    -->
