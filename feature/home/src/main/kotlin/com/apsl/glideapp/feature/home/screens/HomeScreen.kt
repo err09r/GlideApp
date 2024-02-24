@@ -110,7 +110,6 @@ fun HomeScreen(
 
     LaunchedEffect(Unit) {
         viewModel.getLastMapCameraPosition()
-        onNavigateToRideSummary(15.9f, 4.8f)
     }
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
