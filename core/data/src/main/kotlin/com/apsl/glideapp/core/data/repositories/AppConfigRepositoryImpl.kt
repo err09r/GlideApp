@@ -14,12 +14,13 @@ class AppConfigRepositoryImpl @Inject constructor(
 
     override suspend fun getAppConfig(): AppConfig? {
         return appDataStore.unlockDistance.firstOrNull()?.let {
-            AppConfig(unlockDistance = it)
+            AppConfig(unlockDistanceMeters = it)
         }
     }
 
-    override suspend fun updateAppConfig() {
+    override suspend fun updateAppConfig(): Boolean {
         val config = api.getAppConfig()
-        appDataStore.saveUnlockDistance(config.unlockDistance)
+        val result = appDataStore.saveUnlockDistance(config.unlockDistance)
+        return result != null
     }
 }

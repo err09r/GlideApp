@@ -2,10 +2,25 @@
 
 package com.apsl.glideapp.core.ui.navigation
 
-sealed class AppNavGraph(val route: String) {
-    data object Auth : AppNavGraph("authGraph")
-    data object Home : AppNavGraph("homeGraph")
-    data object Rides : AppNavGraph("ridesGraph")
-    data object Wallet : AppNavGraph("walletGraph")
-    data object Settings : AppNavGraph("settingsGraph")
+sealed class AppNavGraph(val route: String, val startDestination: String) {
+
+    data object Auth : AppNavGraph(
+        route = "authGraph",
+        startDestination = Screen.Auth.Login.route
+    )
+
+    data object Home : AppNavGraph(
+        route = "homeGraph",
+        startDestination = Screen.Home.Root.route
+    )
+
+    data object Rides : AppNavGraph(
+        route = "ridesGraph",
+        startDestination = Screen.Rides.Root.route
+    )
+
+    data object Wallet : AppNavGraph(
+        route = "walletGraph",
+        startDestination = Screen.Wallet.Root.route
+    )
 }

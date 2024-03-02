@@ -26,7 +26,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -44,13 +46,14 @@ import com.apsl.glideapp.core.ui.R as CoreR
 
 @Composable
 fun VoucherScreen(
-    viewModel: VoucherViewModel = hiltViewModel(),
     onNavigateToPayment: () -> Unit,
     onNavigateBack: () -> Unit,
-    onNavigateToVoucherActivated: () -> Unit
+    onNavigateToVoucherActivated: () -> Unit,
+    viewModel: VoucherViewModel = hiltViewModel()
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
 
     ScreenActions(viewModel.actions) { action ->
         when (action) {
@@ -59,7 +62,8 @@ fun VoucherScreen(
             is VoucherAction.VoucherActivationError -> {
                 onNavigateBack()
                 scope.launch {
-                    snackbarHostState.showSnackbar(action.message)
+                    val error = context.getString(action.textResId)
+                    snackbarHostState.showSnackbar(error)
                 }
             }
         }
@@ -85,7 +89,7 @@ fun VoucherScreenContent(
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     FeatureScreen(
-        topBarText = "Voucher",
+        topBarText = stringResource(CoreR.string.voucher_screen_title),
         snackbarHostState = snackbarHostState,
         onBackClick = onBackClick
     ) {
@@ -105,7 +109,10 @@ fun VoucherScreenContent(
                 ) {
                     Spacer(Modifier.height(16.dp))
 
-                    Text(text = "Enter your code", style = MaterialTheme.typography.headlineSmall)
+                    Text(
+                        text = stringResource(CoreR.string.voucher_screen_card_title),
+                        style = MaterialTheme.typography.headlineSmall
+                    )
 
                     Spacer(Modifier.height(16.dp))
 
@@ -116,7 +123,7 @@ fun VoucherScreenContent(
 
                     Spacer(Modifier.height(16.dp))
 
-                    Text(text = "To activate the voucher and receive the bonus, enter your code below")
+                    Text(text = stringResource(CoreR.string.voucher_screen_card_text))
 
                     Spacer(Modifier.height(16.dp))
 
@@ -124,7 +131,7 @@ fun VoucherScreenContent(
                         value = uiState.codeTextFieldValue ?: "",
                         onValueChange = onCodeValueChange,
                         modifier = Modifier.fillMaxWidth(),
-                        label = { Text(text = "e.g. GIFTCODE") },
+                        label = { Text(text = stringResource(CoreR.string.voucher_screen_textfield_hint)) },
                         keyboardOptions = KeyboardOptions(
                             capitalization = KeyboardCapitalization.Characters,
                             autoCorrect = false,
@@ -147,7 +154,7 @@ fun VoucherScreenContent(
                         modifier = Modifier.fillMaxWidth(),
                         enabled = uiState.isActionButtonActive
                     ) {
-                        Text(text = "Activate")
+                        Text(text = stringResource(CoreR.string.voucher_screen_button))
                     }
 
                     Spacer(Modifier.height(16.dp))

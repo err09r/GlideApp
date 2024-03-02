@@ -12,11 +12,16 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -31,9 +36,7 @@ import com.apsl.glideapp.core.ui.icons.Bonus
 import com.apsl.glideapp.core.ui.icons.GlideIcons
 import com.apsl.glideapp.core.ui.icons.TopUp
 import com.apsl.glideapp.core.ui.icons.Voucher
-import com.apsl.glideapp.core.ui.pullrefresh.PullRefreshIndicator
-import com.apsl.glideapp.core.ui.pullrefresh.pullRefresh
-import com.apsl.glideapp.core.ui.pullrefresh.rememberPullRefreshState
+import com.apsl.glideapp.core.ui.pulltorefresh.Indicator
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.feature.wallet.common.AmountType
 import com.apsl.glideapp.feature.wallet.common.TransactionItem
@@ -42,11 +45,11 @@ import com.apsl.glideapp.core.ui.R as CoreR
 
 @Composable
 fun WalletScreen(
-    viewModel: WalletViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit,
     onNavigateToTransactions: () -> Unit,
     onNavigateToTopUp: () -> Unit,
-    onNavigateToRedeemVoucher: () -> Unit
+    onNavigateToRedeemVoucher: () -> Unit,
+    viewModel: WalletViewModel = hiltViewModel()
 ) {
     ComposableLifecycle { event ->
         when (event) {
@@ -68,7 +71,7 @@ fun WalletScreen(
         onSeeAllTransactionsClick = onNavigateToTransactions,
         onRedeemVoucherClick = onNavigateToRedeemVoucher,
         onTopUpClick = onNavigateToTopUp,
-        onPullRefresh = viewModel::refresh
+        onPullToRefresh = viewModel::refresh
     )
 }
 
@@ -79,39 +82,49 @@ fun WalletScreenContent(
     onSeeAllTransactionsClick: () -> Unit,
     onRedeemVoucherClick: () -> Unit,
     onTopUpClick: () -> Unit,
-    onPullRefresh: () -> Unit
+    onPullToRefresh: () -> Unit
 ) {
     FeatureScreen(
-        topBarText = "My wallet",
+        topBarText = stringResource(CoreR.string.wallet_screen_title),
         onBackClick = onBackClick
     ) {
-        val refreshing = uiState.isRefreshing
-        val pullRefreshState =
-            rememberPullRefreshState(
-                refreshing = uiState.isRefreshing,
-                onRefresh = onPullRefresh
-            )
+        val pullToRefreshState = rememberPullToRefreshState()
+        if (pullToRefreshState.isRefreshing) {
+            LaunchedEffect(Unit) {
+                onPullToRefresh()
+            }
+        }
+
+        if (!uiState.isRefreshing) {
+            LaunchedEffect(Unit) {
+                pullToRefreshState.endRefresh()
+            }
+        }
 
         val pagerItems = remember {
             listOf(
                 WalletPagerItem(
                     id = 1,
-                    title = "Redeem voucher",
-                    text = "Have a code? Activate it and enjoy the ride!",
+                    titleResId = CoreR.string.wallet_pager_item_title1,
+                    textResId = CoreR.string.wallet_pager_item_text1,
                     imageResId = CoreR.drawable.img_gift_front,
                     onClick = onRedeemVoucherClick
                 ),
                 WalletPagerItem(
                     id = 2,
-                    title = "Add payment method",
-                    text = "More methods for more convenience",
+                    titleResId = CoreR.string.wallet_pager_item_title2,
+                    textResId = CoreR.string.wallet_pager_item_text2,
                     imageResId = CoreR.drawable.img_card_front,
                     onClick = {}
                 )
-            )
+            ).toWalletPagerItems()
         }
 
-        Box(modifier = Modifier.pullRefresh(pullRefreshState)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .nestedScroll(pullToRefreshState.nestedScrollConnection)
+        ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -139,7 +152,7 @@ fun WalletScreenContent(
                 Spacer(Modifier.height(32.dp))
 
                 Separator(
-                    text = "Recent transactions",
+                    text = stringResource(CoreR.string.recent_transactions_header),
                     modifier = Modifier
                         .align(Alignment.Start)
                         .padding(start = 16.dp)
@@ -162,17 +175,17 @@ fun WalletScreenContent(
                         }
                         Spacer(Modifier.height(24.dp))
                         TextButton(onClick = onSeeAllTransactionsClick) {
-                            Text(text = "See all transactions")
+                            Text(text = stringResource(CoreR.string.recent_transactions_footer))
                         }
                         Spacer(Modifier.height(32.dp))
                     }
                 }
             }
 
-            PullRefreshIndicator(
-                refreshing = refreshing,
-                state = pullRefreshState,
-                modifier = Modifier.align(Alignment.TopCenter)
+            PullToRefreshContainer(
+                state = pullToRefreshState,
+                modifier = Modifier.align(Alignment.TopCenter),
+                indicator = { Indicator(state = it) }
             )
         }
     }
@@ -187,27 +200,27 @@ private fun WalletScreenPreview() {
                 recentTransactions = listOf(
                     TransactionUiModel(
                         id = "1",
-                        amount = "-3,00 zł",
+                        amount = "-3,00",
                         amountType = AmountType.Negative,
-                        title = "Account top up",
+                        titleResId = CoreR.string.transaction_type_top_up,
                         image = GlideIcons.TopUp,
                         separator = PagingSeparator("Monday, February 25"),
                         dateTime = "26 Feb, 03:13"
                     ),
                     TransactionUiModel(
                         id = "2",
-                        amount = "0,00 zł",
+                        amount = "0,00",
                         amountType = AmountType.Normal,
-                        title = "Account top up",
+                        titleResId = CoreR.string.transaction_type_top_up,
                         image = GlideIcons.Bonus,
                         separator = PagingSeparator("Monday, February 25"),
                         dateTime = "26 Feb, 03:13"
                     ),
                     TransactionUiModel(
                         id = "3",
-                        amount = "+3,00 zł",
+                        amount = "+3,00",
                         amountType = AmountType.Positive,
-                        title = "Account top up",
+                        titleResId = CoreR.string.transaction_type_top_up,
                         image = GlideIcons.Voucher,
                         separator = PagingSeparator("Monday, February 25"),
                         dateTime = "25 Feb, 03:13"
@@ -218,7 +231,7 @@ private fun WalletScreenPreview() {
             onSeeAllTransactionsClick = {},
             onRedeemVoucherClick = {},
             onTopUpClick = {},
-            onPullRefresh = {}
+            onPullToRefresh = {}
         )
     }
 }
@@ -233,7 +246,7 @@ private fun WalletScreenLoadingPreview() {
             onSeeAllTransactionsClick = {},
             onRedeemVoucherClick = {},
             onTopUpClick = {},
-            onPullRefresh = {}
+            onPullToRefresh = {}
         )
     }
 }

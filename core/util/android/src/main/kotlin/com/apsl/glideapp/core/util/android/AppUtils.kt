@@ -5,16 +5,22 @@ package com.apsl.glideapp.core.util.android
 import android.Manifest
 import android.app.Activity
 import android.app.NotificationManager
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.provider.Settings
+import android.widget.Toast
+import androidx.annotation.StringRes
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
+import com.apsl.glideapp.core.android.R
+import timber.log.Timber
 
 val Context.areLocationPermissionsGranted: Boolean
     get() = arePermissionsGranted(
@@ -61,13 +67,52 @@ fun Context.isPermissionPermanentlyDenied(permission: String): Boolean {
     }
 }
 
+fun Context.showToast(text: String, duration: Int = Toast.LENGTH_SHORT) {
+    Toast.makeText(this, text, duration).show()
+}
+
+fun Context.showToast(@StringRes resId: Int, duration: Int = Toast.LENGTH_SHORT) {
+    Toast.makeText(this, resId, duration).show()
+}
+
 fun Context.openAppSettings() {
-    this.startActivity(
-        Intent(
-            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-            Uri.fromParts("package", packageName, null)
+    try {
+        this.startActivity(
+            Intent(
+                Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                Uri.fromParts("package", packageName, null)
+            )
         )
-    )
+    } catch (e: ActivityNotFoundException) {
+        Timber.w(e)
+        this.showToast(R.string.toast_app_not_found)
+    }
+}
+
+fun Context.openAppLanguageSettings() {
+    try {
+        val action = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Settings.ACTION_APP_LOCALE_SETTINGS
+        } else {
+            Settings.ACTION_LOCALE_SETTINGS
+        }
+
+        this.startActivity(
+            Intent(action, Uri.fromParts("package", packageName, null))
+        )
+    } catch (e: ActivityNotFoundException) {
+        Timber.w(e)
+        this.showToast(R.string.toast_app_not_found)
+    }
+}
+
+fun Context.getVersionName(): String? {
+    return try {
+        this.packageManager.getPackageInfo(this.packageName, 0)?.versionName
+    } catch (e: PackageManager.NameNotFoundException) {
+        Timber.w(e)
+        null
+    }
 }
 
 fun Context.findActivity(): Activity? = when (this) {

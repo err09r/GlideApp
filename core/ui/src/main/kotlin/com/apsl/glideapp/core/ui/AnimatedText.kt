@@ -28,6 +28,49 @@ import com.apsl.glideapp.core.util.android.StopwatchUtils
 
 @Composable
 fun AnimatedText(
+    text: String,
+    modifier: Modifier = Modifier,
+    transitionSpec: AnimatedContentTransitionScope<Char>.() -> ContentTransform = { slideInVertically { -it } togetherWith slideOutVertically { it } },
+    color: Color = Color.Unspecified,
+    fontSize: TextUnit = TextUnit.Unspecified,
+    fontStyle: FontStyle? = null,
+    fontWeight: FontWeight? = null,
+    fontFamily: FontFamily? = null,
+    letterSpacing: TextUnit = TextUnit.Unspecified,
+    textDecoration: TextDecoration? = null,
+    textAlign: TextAlign? = null,
+    lineHeight: TextUnit = TextUnit.Unspecified,
+    overflow: TextOverflow = TextOverflow.Clip,
+    softWrap: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    minLines: Int = 1,
+    onTextLayout: (TextLayoutResult) -> Unit = {},
+    style: TextStyle = LocalTextStyle.current
+) {
+    AnimatedText(
+        textProvider = { text },
+        modifier = modifier,
+        transitionSpec = transitionSpec,
+        color = color,
+        fontSize = fontSize,
+        fontStyle = fontStyle,
+        fontWeight = fontWeight,
+        fontFamily = fontFamily,
+        letterSpacing = letterSpacing,
+        textDecoration = textDecoration,
+        textAlign = textAlign,
+        lineHeight = lineHeight,
+        overflow = overflow,
+        softWrap = softWrap,
+        maxLines = maxLines,
+        minLines = minLines,
+        onTextLayout = onTextLayout,
+        style = style
+    )
+}
+
+@Composable
+fun AnimatedText(
     textProvider: () -> String,
     modifier: Modifier = Modifier,
     transitionSpec: AnimatedContentTransitionScope<Char>.() -> ContentTransform = { slideInVertically { -it } togetherWith slideOutVertically { it } },
@@ -57,7 +100,7 @@ fun AnimatedText(
             AnimatedContent(
                 targetState = char,
                 transitionSpec = transitionSpec,
-                label = ""
+                label = "AnimatedContent"
             ) {
                 Text(
                     text = it.toString(),

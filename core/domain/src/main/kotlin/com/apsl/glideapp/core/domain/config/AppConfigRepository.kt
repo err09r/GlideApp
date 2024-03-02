@@ -4,5 +4,5 @@ import com.apsl.glideapp.core.model.AppConfig
 
 interface AppConfigRepository {
     suspend fun getAppConfig(): AppConfig?
-    suspend fun updateAppConfig()
+    suspend fun updateAppConfig(): Boolean
 }

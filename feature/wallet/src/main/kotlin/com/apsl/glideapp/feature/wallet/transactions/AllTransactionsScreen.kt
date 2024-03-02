@@ -2,12 +2,18 @@ package com.apsl.glideapp.feature.wallet.transactions
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -21,9 +27,7 @@ import com.apsl.glideapp.core.ui.icons.Bonus
 import com.apsl.glideapp.core.ui.icons.GlideIcons
 import com.apsl.glideapp.core.ui.icons.TopUp
 import com.apsl.glideapp.core.ui.icons.Voucher
-import com.apsl.glideapp.core.ui.pullrefresh.PullRefreshIndicator
-import com.apsl.glideapp.core.ui.pullrefresh.pullRefresh
-import com.apsl.glideapp.core.ui.pullrefresh.rememberPullRefreshState
+import com.apsl.glideapp.core.ui.pulltorefresh.Indicator
 import com.apsl.glideapp.core.ui.receiveAsLazyPagingItems
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.core.ui.toComposePagingItems
@@ -31,18 +35,19 @@ import com.apsl.glideapp.feature.wallet.common.AmountType
 import com.apsl.glideapp.feature.wallet.common.TransactionList
 import com.apsl.glideapp.feature.wallet.common.TransactionUiModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import com.apsl.glideapp.core.ui.R as CoreR
 
 @Composable
 fun AllTransactionsScreen(
-    viewModel: AllTransactionsViewModel = hiltViewModel(),
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    viewModel: AllTransactionsViewModel = hiltViewModel()
 ) {
     viewModel.pagingData.receiveAsLazyPagingItems(action = viewModel::onNewPagerLoadState)
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     AllTransactionsScreenContent(
         uiState = uiState,
         onBackClick = onNavigateBack,
-        onPullRefresh = viewModel::refresh
+        onPullToRefresh = viewModel::refresh
     )
 }
 
@@ -50,26 +55,40 @@ fun AllTransactionsScreen(
 fun AllTransactionsScreenContent(
     uiState: AllTransactionsUiState,
     onBackClick: () -> Unit,
-    onPullRefresh: () -> Unit
+    onPullToRefresh: () -> Unit
 ) {
     FeatureScreen(
-        topBarText = "My transactions",
+        topBarText = stringResource(CoreR.string.all_transactions_screen_title),
         onBackClick = onBackClick
     ) {
         when {
             uiState.isLoading -> LoadingScreen()
             uiState.error != null -> {
-                Text(text = uiState.error.text, modifier = Modifier.align(Alignment.Center))
+                Text(
+                    text = stringResource(uiState.error.textResId),
+                    modifier = Modifier.align(Alignment.Center)
+                )
             }
 
             else -> {
-                val refreshing = uiState.isRefreshing
-                val pullRefreshState = rememberPullRefreshState(
-                    refreshing = refreshing,
-                    onRefresh = onPullRefresh
-                )
+                val pullToRefreshState = rememberPullToRefreshState()
+                if (pullToRefreshState.isRefreshing) {
+                    LaunchedEffect(Unit) {
+                        onPullToRefresh()
+                    }
+                }
 
-                Box(modifier = Modifier.pullRefresh(pullRefreshState)) {
+                if (!uiState.isRefreshing) {
+                    LaunchedEffect(Unit) {
+                        pullToRefreshState.endRefresh()
+                    }
+                }
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .nestedScroll(pullToRefreshState.nestedScrollConnection)
+                ) {
                     TransactionList(
                         transactions = uiState.transactions,
                         modifier = Modifier.fillMaxWidth(),
@@ -77,10 +96,10 @@ fun AllTransactionsScreenContent(
                     )
                 }
 
-                PullRefreshIndicator(
-                    refreshing = refreshing,
-                    state = pullRefreshState,
-                    modifier = Modifier.align(Alignment.TopCenter)
+                PullToRefreshContainer(
+                    state = pullToRefreshState,
+                    modifier = Modifier.align(Alignment.TopCenter),
+                    indicator = { Indicator(state = it) }
                 )
             }
         }
@@ -96,27 +115,27 @@ private fun AllTransactionsScreenPreview() {
                 listOf(
                     TransactionUiModel(
                         id = "1",
-                        amount = "-3,00 zł",
+                        amount = "-3,00",
                         amountType = AmountType.Negative,
-                        title = "Account top up",
+                        titleResId = CoreR.string.transaction_type_top_up,
                         image = GlideIcons.TopUp,
                         separator = PagingSeparator("Monday, February 26"),
                         dateTime = "26 Feb, 03:13"
                     ),
                     TransactionUiModel(
                         id = "2",
-                        amount = "0,00 zł",
+                        amount = "0,00",
                         amountType = AmountType.Normal,
-                        title = "Account top up",
+                        titleResId = CoreR.string.transaction_type_top_up,
                         image = GlideIcons.Bonus,
                         separator = PagingSeparator("Monday, February 26"),
                         dateTime = "26 Feb, 03:13"
                     ),
                     TransactionUiModel(
                         id = "3",
-                        amount = "+3,00 zł",
+                        amount = "+3,00",
                         amountType = AmountType.Positive,
-                        title = "Account top up",
+                        titleResId = CoreR.string.transaction_type_top_up,
                         image = GlideIcons.Voucher,
                         separator = PagingSeparator("Monday, February 25"),
                         dateTime = "25 Feb, 03:13"
@@ -130,7 +149,7 @@ private fun AllTransactionsScreenPreview() {
         AllTransactionsScreenContent(
             uiState = AllTransactionsUiState(transactions = transactions),
             onBackClick = {},
-            onPullRefresh = {}
+            onPullToRefresh = {}
         )
     }
 }

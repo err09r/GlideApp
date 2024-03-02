@@ -20,6 +20,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
@@ -46,19 +47,22 @@ import com.apsl.glideapp.feature.home.viewmodels.HomeViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLngBounds
+import com.google.maps.android.compose.CameraMoveStartedReason
 import com.google.maps.android.compose.CameraPositionState
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = hiltViewModel(),
-    onNavigateToLogin: () -> Unit,
+    onNavigateToPreRideInfo: () -> Unit,
+    onNavigateToRideSummary: (Float, Float) -> Unit,
     onNavigateToAllRides: () -> Unit,
     onNavigateToWallet: () -> Unit,
+    onNavigateToTopUp: () -> Unit,
     onNavigateToLocationPermission: () -> Unit,
     onNavigateToLocationRationale: () -> Unit,
-    onNavigateToNotificationPermission: () -> Unit
+    onNavigateToNotificationPermission: () -> Unit,
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
 
@@ -71,7 +75,8 @@ fun HomeScreen(
 
     HomeActionsHandler(
         actions = viewModel.actions,
-        onNavigateToLogin = onNavigateToLogin,
+        onNavigateToTopUp = onNavigateToTopUp,
+        onNavigateToRideSummary = onNavigateToRideSummary,
         onStartObservingUserLocation = viewModel::startObservingUserLocation,
         onRequestLocationPermissions = { requestPermissionsState.requestPermissions = true }
     )
@@ -101,6 +106,10 @@ fun HomeScreen(
         }
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.getLastMapCameraPosition()
+    }
+
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     HomeScreenContent(
         uiState = uiState,
@@ -110,15 +119,18 @@ fun HomeScreen(
         onOpenLocationPermissionDialog = onNavigateToLocationPermission,
         onOpenLocationRationaleDialog = onNavigateToLocationRationale,
         onVehicleSelect = viewModel::updateSelectedVehicle,
-        onLoadMapDataWithinBounds = viewModel::loadMapContentWithinBounds,
-        onStartRideClick = viewModel::startRide,
+        onLoadMapContentWithinBounds = viewModel::loadMapContentWithinBounds,
+        onStartRideClick = onNavigateToPreRideInfo,
         onFinishRideClick = viewModel::finishRide,
         onMyRidesClick = {
             viewModel.updateSelectedVehicle(null)
             onNavigateToAllRides()
         },
         onWalletClick = {
-            viewModel.updateSelectedVehicle(null)
+            with(viewModel) {
+                saveWalletVisited()
+                updateSelectedVehicle(null)
+            }
             onNavigateToWallet()
         },
         onLogoutClick = viewModel::logOut
@@ -134,7 +146,7 @@ fun HomeScreenContent(
     onOpenLocationPermissionDialog: () -> Unit,
     onOpenLocationRationaleDialog: () -> Unit,
     onVehicleSelect: (String?) -> Unit,
-    onLoadMapDataWithinBounds: (LatLngBounds) -> Unit,
+    onLoadMapContentWithinBounds: (LatLngBounds, Float) -> Unit,
     onStartRideClick: () -> Unit,
     onFinishRideClick: () -> Unit,
     onMyRidesClick: () -> Unit,
@@ -152,7 +164,8 @@ fun HomeScreenContent(
     val cameraPositionState = remember(uiState.initialCameraPosition) {
         CameraPositionState().apply {
             if (uiState.initialCameraPosition != null) {
-                position = CameraPosition.fromLatLngZoom(uiState.initialCameraPosition, 13f)
+                val (latLng, zoom) = uiState.initialCameraPosition
+                position = CameraPosition.fromLatLngZoom(latLng, zoom)
             }
         }
     }
@@ -166,9 +179,10 @@ fun HomeScreenContent(
                     .bearing(it.bearingDegrees)
                     .tilt(30f)
                     .build()
+
                 cameraPositionState.animate(
                     CameraUpdateFactory.newCameraPosition(cameraPosition),
-                    500
+                    2000
                 )
             }
         }
@@ -188,7 +202,8 @@ fun HomeScreenContent(
                                 0f,
                                 0f
                             )
-                        ), 1000
+                        ),
+                        1000
                     )
                 }
             }
@@ -197,26 +212,28 @@ fun HomeScreenContent(
         onPermanentlyDenied = onOpenLocationPermissionDialog
     )
 
-    //TODO to be completely refactored to load data on first dispay
-    //TODO **********************************************************
-    val visibleBounds = cameraPositionState.projection?.visibleRegion?.latLngBounds
-    LaunchedEffect(cameraPositionState.isMoving) {
-        if (!cameraPositionState.isMoving) {
-            visibleBounds?.let { onLoadMapDataWithinBounds(it) }
+    // Load data on first open
+    val visibleBoundsAvailable by rememberUpdatedState(cameraPositionState.projection?.visibleRegion != null)
+    LaunchedEffect(visibleBoundsAvailable) {
+        Timber.d("visibleBoundsAvailable: $visibleBoundsAvailable")
+        if (visibleBoundsAvailable) {
+            val visibleBounds = cameraPositionState.projection?.visibleRegion?.latLngBounds
+            if (visibleBounds != null) {
+                onLoadMapContentWithinBounds(visibleBounds, cameraPositionState.position.zoom)
+            }
         }
     }
-//
-//    LaunchedEffect(cameraPositionState.projection) {
-//        Timber.d("load block")
-//        if (visibleBounds != null && uiState.vehicleClusterItems.isEmpty()) {
-//            Timber.d("onLoad: $visibleBounds")
-//            onLoadMapDataWithinBounds(visibleBounds)
-//        }
-//    }
-    //TODO **********************************************************
+
+    LaunchedEffect(cameraPositionState.isMoving) {
+        if (cameraPositionState.shouldLoadMapContent()) {
+            val visibleBounds = cameraPositionState.projection?.visibleRegion?.latLngBounds
+            if (visibleBounds != null) {
+                onLoadMapContentWithinBounds(visibleBounds, cameraPositionState.position.zoom)
+            }
+        }
+    }
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-
     ModalNavigationDrawer(
         drawerState = drawerState,
         gesturesEnabled = drawerState.isOpen,
@@ -234,7 +251,6 @@ fun HomeScreenContent(
         )
 
         LaunchedEffect(uiState.rideState?.vehicle) {
-            Timber.d("uiState.rideState?.vehicle: ${uiState.rideState?.vehicle}")
             if (uiState.rideState?.vehicle == null) {
                 scaffoldState.bottomSheetState.hide()
             } else {
@@ -243,7 +259,6 @@ fun HomeScreenContent(
         }
 
         LaunchedEffect(uiState.selectedVehicle) {
-            Timber.d("uiState.selectedVehicle: ${uiState.selectedVehicle}")
             if (uiState.selectedVehicle == null && !uiState.isRideActive) {
                 scaffoldState.bottomSheetState.hide()
             } else {
@@ -330,6 +345,13 @@ fun HomeScreenContent(
     }
 }
 
+private fun CameraPositionState.shouldLoadMapContent(): Boolean {
+    val isMoving = this.isMoving
+    val visibleBounds = this.projection?.visibleRegion?.latLngBounds
+    val moveStartedReason = this.cameraMoveStartedReason
+    return !isMoving && visibleBounds != null && moveStartedReason == CameraMoveStartedReason.GESTURE
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun HomeScreenPreview() {
@@ -342,7 +364,7 @@ private fun HomeScreenPreview() {
             onOpenLocationPermissionDialog = {},
             onOpenLocationRationaleDialog = {},
             onVehicleSelect = {},
-            onLoadMapDataWithinBounds = {},
+            onLoadMapContentWithinBounds = { _, _ -> },
             onStartRideClick = {},
             onFinishRideClick = {},
             onMyRidesClick = {},

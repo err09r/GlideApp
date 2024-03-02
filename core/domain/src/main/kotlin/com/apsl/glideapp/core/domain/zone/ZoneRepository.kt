@@ -5,5 +5,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface ZoneRepository {
     fun getAllZones(): Flow<List<Zone>>
-    suspend fun updateAllZones()
+    suspend fun updateAllZones(): Boolean
 }

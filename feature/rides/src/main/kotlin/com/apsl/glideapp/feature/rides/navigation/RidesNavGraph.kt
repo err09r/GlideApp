@@ -12,11 +12,13 @@ import com.apsl.glideapp.feature.rides.allrides.AllRidesScreen
 import com.apsl.glideapp.feature.rides.details.RideDetailsScreen
 
 fun NavGraphBuilder.ridesGraph(navController: NavController) {
-    navigation(startDestination = Screen.Rides.Root.route, route = AppNavGraph.Rides.route) {
-
+    navigation(
+        startDestination = AppNavGraph.Rides.startDestination,
+        route = AppNavGraph.Rides.route
+    ) {
         composable(route = Screen.Rides.Root.route) {
             AllRidesScreen(
-                onNavigateBack = { navController.popBackStack() },
+                onNavigateBack = { navController.navigateUp() },
                 onNavigateToRide = { rideId ->
                     navController.navigate(Screen.Rides.RideDetails(id = rideId).route)
                 }
@@ -30,7 +32,7 @@ fun NavGraphBuilder.ridesGraph(navController: NavController) {
             val rideId = backStackEntry.arguments?.getString("id")
             RideDetailsScreen(
                 rideId = requireNotNull(rideId),
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = { navController.navigateUp() }
             )
         }
     }

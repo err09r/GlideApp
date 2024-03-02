@@ -10,11 +10,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.apsl.glideapp.core.ui.GlideCircularLoadingIndicator
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
+import com.apsl.glideapp.core.ui.R as CoreR
 
 @Composable
 fun PaymentDialog(modifier: Modifier = Modifier) {
@@ -25,7 +27,7 @@ fun PaymentDialog(modifier: Modifier = Modifier) {
         tonalElevation = AlertDialogDefaults.TonalElevation
     ) {
         Column(modifier = Modifier.padding(24.dp)) {
-            Text(text = "Processing payment...")
+            Text(text = stringResource(CoreR.string.payment_dialog_description))
             Spacer(Modifier.height(24.dp))
             GlideCircularLoadingIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
         }

@@ -10,5 +10,5 @@ data class Ride(
     val startDateTime: LocalDateTime,
     val finishDateTime: LocalDateTime,
     val route: Route,
-    val averageSpeed: Double
+    val averageSpeedKmh: Double
 )

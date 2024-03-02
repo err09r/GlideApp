@@ -29,9 +29,9 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.center
 import androidx.compose.ui.unit.dp
+import kotlin.math.roundToInt
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.math.roundToInt
 
 fun Modifier.clickable(
     indication: Indication?,
@@ -70,7 +70,7 @@ fun Modifier.imeCollapsible(initialHeight: Dp): Modifier = composed {
     val imeHeight = WindowInsets.imeAnimationTarget.getBottom(LocalDensity.current).toDp()
     val spacerHeight = animateDpAsState(
         targetValue = if (imeHeight == 0.dp) initialHeight else 0.dp,
-        label = ""
+        label = "SpacerHeight"
     )
     this.height(spacerHeight.value)
 }

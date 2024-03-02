@@ -1,6 +1,5 @@
 package com.apsl.glideapp.feature.rides.allrides
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -27,20 +26,19 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.apsl.glideapp.core.ui.Graph
-import com.apsl.glideapp.core.ui.GraphRoutePreviewParameterProvider
-import com.apsl.glideapp.core.ui.RideRoute
+import com.apsl.glideapp.core.ui.GlideImage
 import com.apsl.glideapp.core.ui.icons.GlideIcons
 import com.apsl.glideapp.core.ui.icons.MapPoint
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
-import com.apsl.glideapp.feature.rides.R
+import com.apsl.glideapp.core.util.android.CurrencyFormatter
+import com.apsl.glideapp.core.ui.R as CoreR
 
 @Composable
 fun RideItem(
@@ -67,16 +65,15 @@ fun RideItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(modifier = Modifier.clip(shape = CardDefaults.shape)) {
-                Image(
-                    painter = painterResource(R.drawable.img_map_bg),
-                    contentDescription = null,
+                GlideImage(
+                    imageResId = CoreR.drawable.img_map_bg,
                     modifier = Modifier
-                        .size(80.dp)
                         .rotate(mapBackgroundDegree)
                         .scale(scaleX = mapBackgroundScaleX, scaleY = 1f),
+                    size = DpSize(80.dp, 80.dp),
                     contentScale = ContentScale.Crop
                 )
-                Graph(
+                RideGraph(
                     modifier = Modifier.size(80.dp),
                     contentPadding = PaddingValues(12.dp),
                     thickness = 2.dp,
@@ -126,14 +123,14 @@ fun RideItem(
 
 @Preview
 @Composable
-private fun RideItemPreview(@PreviewParameter(GraphRoutePreviewParameterProvider::class) route: RideRoute) {
+private fun RideItemPreview(@PreviewParameter(RideRoutePreviewParameterProvider::class) route: RideRoute) {
     GlideAppTheme {
         RideItem(
             modifier = Modifier.fillMaxWidth(),
             overlineText = "Spacerowa 1A, Słupsk",
             headlineText = "13:48 - 14:15",
             supportingText = "1415 meters",
-            trailingText = "13,50 zł",
+            trailingText = CurrencyFormatter.format(13.50),
             route = route,
             onClick = {}
         )

@@ -1,10 +1,12 @@
 package com.apsl.glideapp.feature.auth.login
 
+import androidx.annotation.StringRes
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
 import com.apsl.glideapp.core.domain.auth.LoginUseCase
 import com.apsl.glideapp.core.ui.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,12 +14,13 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
+import com.apsl.glideapp.core.ui.R as CoreR
 
 @Immutable
 data class LoginUiState(
     val isLoading: Boolean = false,
     val isPasswordVisible: Boolean = false,
+    val isRememberMeChecked: Boolean = true,
     val usernameTextFieldValue: String? = null,
     val passwordTextFieldValue: String? = null,
     val error: String? = null
@@ -28,15 +31,12 @@ data class LoginUiState(
 
 @Immutable
 sealed interface LoginAction {
-    data class ShowError(val error: String?) : LoginAction
-    data object NavigateToHome : LoginAction
+    data class ShowError(@StringRes val errorResId: Int) : LoginAction
     data object NavigateToRegister : LoginAction
 }
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(
-    private val loginUseCase: LoginUseCase
-) : BaseViewModel() {
+class LoginViewModel @Inject constructor(private val loginUseCase: LoginUseCase) : BaseViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState = _uiState.asStateFlow()
@@ -55,7 +55,6 @@ class LoginViewModel @Inject constructor(
                 loginUseCase(username = username, password = password)
                     .onSuccess {
                         _uiState.update { it.copy(isLoading = false) }
-                        _actions.send(LoginAction.NavigateToHome)
                     }
                     .onFailure { throwable ->
                         Timber.d(throwable.message)
@@ -66,7 +65,7 @@ class LoginViewModel @Inject constructor(
                                 isPasswordVisible = false
                             )
                         }
-                        _actions.send(LoginAction.ShowError(throwable.message))
+                        _actions.send(LoginAction.ShowError(errorResId = CoreR.string.error_connection))
                     }
             }
         } else {
@@ -88,6 +87,10 @@ class LoginViewModel @Inject constructor(
 
     fun togglePasswordVisibility() {
         _uiState.update { it.copy(isPasswordVisible = !it.isPasswordVisible) }
+    }
+
+    fun toggleRememberMe() {
+        _uiState.update { it.copy(isRememberMeChecked = !it.isRememberMeChecked) }
     }
 
     private fun showLoading() {

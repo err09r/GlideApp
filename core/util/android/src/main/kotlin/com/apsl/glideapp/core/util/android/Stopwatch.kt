@@ -2,6 +2,7 @@
 
 package com.apsl.glideapp.core.util.android
 
+import kotlin.time.Duration
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -12,7 +13,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import kotlin.time.Duration
 
 class GlideStopwatch(
     private val initialMillis: Long = System.currentTimeMillis(),
@@ -21,7 +21,7 @@ class GlideStopwatch(
 ) {
     private val scope = CoroutineScope(Job())
 
-    private val _currentValueMillis = MutableStateFlow(DEFAULT_INITIAL_VALUE_MILLIS)
+    private val _currentValueMillis = MutableStateFlow(DEFAULT_INITIAL_VALUE_MS)
     val currentValueMillis = _currentValueMillis.asStateFlow()
 
     private var isStared: Boolean = false
@@ -45,8 +45,8 @@ class GlideStopwatch(
 
         scope.launch {
             while (isActive && isStared) {
-                delay(INTERVAL_MILLIS)
-                _currentValueMillis.update { it + INTERVAL_MILLIS }
+                delay(INTERVAL_MS)
+                _currentValueMillis.update { it + INTERVAL_MS }
                 onTick(_currentValueMillis.value)
             }
         }
@@ -59,8 +59,8 @@ class GlideStopwatch(
     }
 
     private companion object {
-        private const val DEFAULT_INITIAL_VALUE_MILLIS = 0L
-        private const val INTERVAL_MILLIS: Long = 1000L
+        private const val DEFAULT_INITIAL_VALUE_MS = 0L
+        private const val INTERVAL_MS: Long = 1000L
     }
 }
 

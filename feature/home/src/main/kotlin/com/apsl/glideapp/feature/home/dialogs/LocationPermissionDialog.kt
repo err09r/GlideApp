@@ -6,12 +6,13 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.Dialog
 import com.apsl.glideapp.core.ui.GlideImage
-import com.apsl.glideapp.core.ui.R
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.core.util.android.openAppSettings
+import com.apsl.glideapp.core.ui.R as CoreR
 
 @Composable
 fun LocationPermissionDialog(onDismiss: () -> Unit, modifier: Modifier = Modifier) {
@@ -25,13 +26,13 @@ fun LocationPermissionDialog(onDismiss: () -> Unit, modifier: Modifier = Modifie
                     onDismiss()
                 }
             ) {
-                Text(text = "Open app settings")
+                Text(text = stringResource(CoreR.string.location_permission_dialog_button))
             }
         },
         modifier = modifier,
-        icon = { GlideImage(R.drawable.img_location) },
-        title = { Text(text = "Enable location") },
-        text = { Text(text = "To start a ride you should enable location in app settings") }
+        icon = { GlideImage(CoreR.drawable.img_toggle) },
+        title = { Text(text = stringResource(CoreR.string.location_permission_dialog_title)) },
+        text = { Text(text = stringResource(CoreR.string.location_permission_dialog_text)) }
     )
 }
 

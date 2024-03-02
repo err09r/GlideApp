@@ -19,7 +19,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomSheetScaffold
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -43,6 +43,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -77,8 +78,8 @@ import com.apsl.glideapp.core.ui.R as CoreR
 @Composable
 fun RideDetailsScreen(
     rideId: String,
-    viewModel: RideDetailsViewModel = hiltViewModel(),
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    viewModel: RideDetailsViewModel = hiltViewModel()
 ) {
     LaunchedEffect(Unit) {
         viewModel.getRideById(rideId)
@@ -135,7 +136,7 @@ fun RideDetailsScreenContent(
                 scaffoldState = scaffoldState,
                 topBar = {
                     TopAppBar(
-                        title = { Text(text = "Ride details") },
+                        title = { Text(text = stringResource(CoreR.string.ride_details_screen_title)) },
                         navigationIcon = {
                             IconButton(onClick = onBackClick) {
                                 Icon(imageVector = GlideIcons.ArrowBack, contentDescription = null)
@@ -150,9 +151,7 @@ fun RideDetailsScreenContent(
                     )
                 },
                 sheetContent = {
-                    uiState.ride?.let {
-                        RideDetailsSheetContent(ride = it)
-                    }
+                    uiState.ride?.let { RideDetailsSheetContent(ride = it) }
                 }
             ) {
                 Column(modifier = Modifier.fillMaxSize()) {
@@ -202,14 +201,14 @@ fun RideDetailsScreenContent(
 
                             StartPointMarker(
                                 markerState = rememberMarkerState(
-                                    key = "start",
+                                    key = "Start",
                                     position = uiState.ride.route.first()
                                 )
                             )
 
                             FinishPointMarker(
                                 markerState = rememberMarkerState(
-                                    key = "finish",
+                                    key = "Finish",
                                     position = uiState.ride.route.last()
                                 ),
                                 imageVector = GlideIcons.Flag
@@ -285,30 +284,53 @@ fun RideDetailsSheetContent(ride: RideDetailsUiModel, modifier: Modifier = Modif
             .verticalScroll(rememberScrollState())
     ) {
         Column {
-            RideDetailsSheetTitle(imageVector = GlideIcons.Route, text = "Route")
+            RideDetailsSheetTitle(
+                imageVector = GlideIcons.Route,
+                text = stringResource(CoreR.string.ride_details_sheet_title1)
+            )
             Spacer(Modifier.height(8.dp))
-            Column(modifier = Modifier.padding(start = 16.dp)) {
-                TitleValueText(title = "Total distance", value = "${ride.distance} m")
+
+            val addressText = if (ride.startAddress == null || ride.finishAddress == null) {
+                stringResource(CoreR.string.address_not_defined)
+            } else {
+                stringResource(CoreR.string.route_from_to, ride.startAddress, ride.finishAddress)
+            }
+            Text(
+                text = addressText,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            Spacer(Modifier.height(24.dp))
+
+            Column {
+                TitleValueText(
+                    title = stringResource(CoreR.string.ride_details_sheet_subtitle1),
+                    value = stringResource(CoreR.string.value_meters, ride.distanceMeters)
+                )
                 Spacer(Modifier.height(4.dp))
-                TitleValueText(title = "Average speed", value = ride.averageSpeed)
-                Spacer(Modifier.height(24.dp))
-                Text(
-                    text = "${ride.startAddress ?: "Address not defined"} - ${ride.finishAddress ?: "Address not defined "}",
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                TitleValueText(
+                    title = stringResource(CoreR.string.ride_details_sheet_subtitle2),
+                    value = stringResource(CoreR.string.value_kmh, ride.averageSpeedKmh)
                 )
             }
         }
 
         Spacer(Modifier.height(16.dp))
-        Divider()
+        HorizontalDivider()
         Spacer(Modifier.height(16.dp))
 
         Column {
-            RideDetailsSheetTitle(imageVector = GlideIcons.Clock, text = "Time")
+            RideDetailsSheetTitle(
+                imageVector = GlideIcons.Clock,
+                text = stringResource(CoreR.string.ride_details_sheet_title2)
+            )
             Spacer(Modifier.height(8.dp))
-            Column(modifier = Modifier.padding(start = 16.dp)) {
+            Column {
                 Text(
-                    text = "Ride lasted ${ride.timeInMinutes} minutes",
+                    text = stringResource(
+                        CoreR.string.ride_details_sheet_ride_lasted,
+                        ride.timeInMinutes
+                    ),
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(Modifier.height(24.dp))
@@ -317,19 +339,27 @@ fun RideDetailsSheetContent(ride: RideDetailsUiModel, modifier: Modifier = Modif
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "Date and time",
+                        text = stringResource(CoreR.string.ride_details_sheet_date_time),
+                        modifier = Modifier.alignByBaseline(),
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    Column(horizontalAlignment = Alignment.End) {
+                    Column(
+                        modifier = Modifier.alignByBaseline(),
+                        horizontalAlignment = Alignment.End
+                    ) {
                         Text(
                             text = ride.startDate,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            fontWeight = FontWeight.SemiBold
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold)
                         )
                         Text(
-                            text = "${ride.startTime} - ${ride.finishTime}",
+                            text = stringResource(
+                                CoreR.string.value_range,
+                                ride.startTime,
+                                ride.finishTime
+                            ),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            fontWeight = FontWeight.SemiBold
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold)
                         )
                     }
                 }
@@ -348,12 +378,14 @@ fun TitleValueText(title: String, value: String, modifier: Modifier = Modifier) 
     ) {
         Text(
             text = title,
+            modifier = Modifier.alignByBaseline(),
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Text(
             text = value,
+            modifier = Modifier.alignByBaseline(),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontWeight = FontWeight.SemiBold
+            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold)
         )
     }
 }
@@ -383,9 +415,9 @@ private fun RideDetailsSheetContentPreview() {
                 startTime = "16:24",
                 finishTime = "16:56",
                 route = emptyList(),
-                distance = 4154,
-                averageSpeed = "15,3 km/h",
-                timeInMinutes = 32
+                distanceMeters = "4154",
+                averageSpeedKmh = "15,3",
+                timeInMinutes = "32"
             )
         )
     }
@@ -404,9 +436,9 @@ private fun RideDetailsScreenPreview() {
                     startTime = "16:24",
                     finishTime = "16:56",
                     route = emptyList(),
-                    distance = 4154,
-                    averageSpeed = "15.3 km/h",
-                    timeInMinutes = 32
+                    distanceMeters = "4154",
+                    averageSpeedKmh = "15.3",
+                    timeInMinutes = "32"
                 )
             ),
             snackbarHostState = SnackbarHostState(),

@@ -18,11 +18,13 @@ import com.apsl.glideapp.feature.wallet.voucher.VoucherScreen
 import com.apsl.glideapp.feature.wallet.wallet.WalletScreen
 
 fun NavGraphBuilder.walletGraph(navController: NavController) {
-    navigation(startDestination = Screen.Wallet.Root.route, route = AppNavGraph.Wallet.route) {
-
+    navigation(
+        startDestination = AppNavGraph.Wallet.startDestination,
+        route = AppNavGraph.Wallet.route
+    ) {
         composable(route = Screen.Wallet.Root.route) {
             WalletScreen(
-                onNavigateBack = { navController.popBackStack() },
+                onNavigateBack = { navController.navigateUp() },
                 onNavigateToTransactions = { navController.navigate(Screen.Wallet.AllTransactions.route) },
                 onNavigateToRedeemVoucher = { navController.navigate(Screen.Wallet.RedeemVoucher.route) },
                 onNavigateToTopUp = { navController.navigate(Screen.Wallet.TopUp.route) }
@@ -31,17 +33,18 @@ fun NavGraphBuilder.walletGraph(navController: NavController) {
 
         composable(route = Screen.Wallet.AllTransactions.route) {
             AllTransactionsScreen(
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = { navController.navigateUp() }
             )
         }
 
         composable(route = Screen.Wallet.TopUp.route) {
             TopUpScreen(
-                onNavigateBack = { navController.popBackStack() },
+                onNavigateBack = { navController.navigateUp() },
                 onNavigateToPayment = { navController.navigate(Dialog.Wallet.Payment.route) },
                 onNavigateToTopUpSuccess = {
                     navController.navigate(Dialog.Wallet.TopUpSuccess.route) {
                         popUpTo(Screen.Wallet.TopUp.route) { inclusive = true }
+                        launchSingleTop = true
                     }
                 }
             )
@@ -49,11 +52,12 @@ fun NavGraphBuilder.walletGraph(navController: NavController) {
 
         composable(route = Screen.Wallet.RedeemVoucher.route) {
             VoucherScreen(
-                onNavigateBack = { navController.popBackStack() },
+                onNavigateBack = { navController.navigateUp() },
                 onNavigateToPayment = { navController.navigate(Dialog.Wallet.Payment.route) },
                 onNavigateToVoucherActivated = {
                     navController.navigate(Dialog.Wallet.VoucherActivated.route) {
                         popUpTo(Screen.Wallet.RedeemVoucher.route) { inclusive = true }
+                        launchSingleTop = true
                     }
                 }
             )
@@ -69,16 +73,12 @@ fun NavGraphBuilder.walletGraph(navController: NavController) {
             PaymentDialog()
         }
 
-        dialog(
-            route = Dialog.Wallet.TopUpSuccess.route,
-//            arguments = listOf(navArgument("amount") { type = NavType.StringType })
-        ) { backStackEntry ->
-//            val amount = backStackEntry.arguments?.getString("amount")
-            TopUpSuccessDialog(onDismiss = { navController.popBackStack() })//amount = requireNotNull(amount))
+        dialog(route = Dialog.Wallet.TopUpSuccess.route) {
+            TopUpSuccessDialog(onDismiss = { navController.navigateUp() })
         }
 
         dialog(route = Dialog.Wallet.VoucherActivated.route) {
-            VoucherActivatedDialog(onDismiss = { navController.popBackStack() })
+            VoucherActivatedDialog(onDismiss = { navController.navigateUp() })
         }
     }
 }

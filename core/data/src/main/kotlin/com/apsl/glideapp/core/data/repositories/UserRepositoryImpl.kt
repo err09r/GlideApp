@@ -17,37 +17,41 @@ class UserRepositoryImpl @Inject constructor(
 ) : UserRepository {
 
     override suspend fun getUser(): User? {
+        val walletVisited = appDataStore.walletVisited.firstOrNull() ?: false
         val userDto = runCatching { api.getUser() }.getOrNull()
+
         if (userDto != null) {
-            val user = userDto.toUser()
+            val user = userDto.toUser(walletVisited = walletVisited)
             appDataStore.saveCurrentUser(user.toCurrentUser())
             return user
         }
 
-        return appDataStore.currentUser.firstOrNull()?.toUser()
+        return appDataStore.currentUser.firstOrNull()?.toUser(walletVisited = walletVisited)
     }
 
-    private fun UserDto.toUser(): User {
+    private fun UserDto.toUser(walletVisited: Boolean): User {
         return User(
             id = id,
             username = username,
             firstName = firstName,
             lastName = lastName,
-            totalDistance = totalDistance,
+            totalDistanceMeters = totalDistance,
             totalRides = totalRides,
-            balance = balance
+            balance = balance,
+            walletVisited = walletVisited
         )
     }
 
-    private fun CurrentUser.toUser(): User {
+    private fun CurrentUser.toUser(walletVisited: Boolean): User {
         return User(
             id = id,
             username = username,
             firstName = firstName,
             lastName = lastName,
-            totalDistance = totalDistance,
+            totalDistanceMeters = totalDistance,
             totalRides = totalRides,
-            balance = balance
+            balance = balance,
+            walletVisited = walletVisited
         )
     }
 
@@ -57,10 +61,14 @@ class UserRepositoryImpl @Inject constructor(
             username = username,
             firstName = firstName,
             lastName = lastName,
-            totalDistance = totalDistance,
+            totalDistance = totalDistanceMeters,
             totalRides = totalRides,
             balance = balance,
             savingDateTime = LocalDateTime.now()
         )
+    }
+
+    override suspend fun saveWalletVisited(value: Boolean) {
+        appDataStore.saveWalletVisited(value)
     }
 }

@@ -8,19 +8,18 @@ import com.apsl.glideapp.core.util.maps.MapsConfiguration
 import com.apsl.glideapp.core.util.maps.toLatLngBounds
 import com.google.android.gms.maps.model.LatLngBounds
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
 @Immutable
 data class RideDetailsUiState(
     val isLoading: Boolean = false,
     val ride: RideDetailsUiModel? = null,
-    val mapCameraBounds: LatLngBounds = MapsConfiguration.initialRideDetailsCameraBounds,
-    val error: RideDetailsUiError? = null
+    val mapCameraBounds: LatLngBounds = MapsConfiguration.initialRideDetailsCameraBounds
 )
 
 @HiltViewModel

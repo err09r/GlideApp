@@ -1,19 +1,19 @@
 package com.apsl.glideapp.core.datastore
 
 import androidx.datastore.core.Serializer
-import com.apsl.glideapp.common.models.Coordinates
+import java.io.InputStream
+import java.io.OutputStream
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.encodeToByteArray
 import kotlinx.serialization.protobuf.ProtoBuf
 import timber.log.Timber
-import java.io.InputStream
-import java.io.OutputStream
 
 @Serializable
 data class AppPreferences(
     val currentUser: CurrentUser? = null,
-    val lastUserLocation: Coordinates? = null,
+    val walletVisited: Boolean? = null,
+    val lastMapCameraPosition: LastMapCameraPosition? = null,
     val isRideModeActive: Boolean? = null,
     val unlockDistance: Double? = null
 )

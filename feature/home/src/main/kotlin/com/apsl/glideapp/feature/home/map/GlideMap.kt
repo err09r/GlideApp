@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.apsl.glideapp.core.ui.theme.Colors
+import com.apsl.glideapp.core.ui.theme.LocalExtendedColorScheme
 import com.apsl.glideapp.core.ui.toPx
 import com.apsl.glideapp.core.util.maps.MapsConfiguration
 import com.apsl.glideapp.feature.home.models.SelectedVehicleUiModel
@@ -115,33 +115,34 @@ fun GlideMap(
             }
         )
 
-        if (selectedVehicle != null && mapState.selectedVehicleRadius != null) {
+        if (selectedVehicle != null && mapState.selectedVehicleRadiusMeters != null) {
             Circle(
                 center = selectedVehicle.coordinates,
                 fillColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
-                radius = mapState.selectedVehicleRadius,
+                radius = mapState.selectedVehicleRadiusMeters,
                 strokeColor = MaterialTheme.colorScheme.primary,
                 strokeWidth = 1.dp.toPx(),
                 visible = cameraPositionState.position.zoom >= MapsConfiguration.VEHICLE_CIRCLE_VISIBILITY_ZOOM_LEVEL
             )
         }
 
+        val extendedColorScheme = LocalExtendedColorScheme.current
         Polygon(
             points = MapsConfiguration.mapBorders,
-            fillColor = Colors.NoRiding.copy(alpha = 0.2f),
+            fillColor = extendedColorScheme.noRidingZone.copy(alpha = 0.2f),
             holes = mapState.ridingZones,
             strokeWidth = 1.dp.toPx(),
             strokeJointType = JointType.ROUND,
-            strokeColor = Colors.NoRiding
+            strokeColor = extendedColorScheme.noRidingZone
         )
 
         mapState.noParkingZones.forEach { zone ->
             Polygon(
                 points = zone.coordinates,
-                fillColor = Colors.NoParking.copy(alpha = 0.2f),
+                fillColor = extendedColorScheme.noParkingZone.copy(alpha = 0.2f),
                 strokeWidth = 1.dp.toPx(),
                 strokeJointType = JointType.ROUND,
-                strokeColor = Colors.NoParking
+                strokeColor = extendedColorScheme.noParkingZone
             )
             MarkerComposable(
                 state = rememberMarkerState(key = zone.id, position = zone.center),
@@ -162,7 +163,7 @@ fun GlideMap(
             )
             StartPointMarker(
                 markerState = rememberMarkerState(
-                    key = "start",
+                    key = "Start",
                     position = mapState.rideRoute.first()
                 )
             )

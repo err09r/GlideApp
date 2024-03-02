@@ -14,6 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.Lifecycle
@@ -94,19 +95,19 @@ fun NotificationPermissionDialogContent(
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(onClick = onConfirmButtonClick) {
-                Text(text = "Allow")
+                Text(text = stringResource(CoreR.string.notification_permission_dialog_button_confirm))
             }
         },
         modifier = modifier,
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(text = "Dismiss")
+                Text(text = stringResource(CoreR.string.notification_permission_dialog_button_dismiss))
             }
         },
         icon = { GlideImage(CoreR.drawable.img_bell) },
-        title = { Text(text = "Allow notifications") },
+        title = { Text(text = stringResource(CoreR.string.notification_permission_dialog_title)) },
         text = {
-            Text(text = "Notifications are disabled for our app. To provide the best ride experience, enable notifications in app settings")
+            Text(text = stringResource(CoreR.string.notification_permission_dialog_text))
         }
     )
 }

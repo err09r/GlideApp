@@ -1,4 +1,184 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <string name="value_kilometers">%s km</string>
+    <string name="value_meters">%s m</string>
+    <string name="value_meters_full">%s meters</string>
+    <string name="value_kmh">%s km/h</string>
+    <string name="value_range" translatable="false">%1$s - %2$s</string>
+    <string name="route_from_to" translatable="false">%1$s \u279E %2$s</string>
+
+    <string name="kilometers">kilometers</string>
+    <string name="meters">meters</string>
+    <string name="rides">rides</string>
+
+    <string name="error_server">Server error</string>
+    <string name="error_unknown">Unknown error</string>
+    <string name="error_connection">Connection error. Check your internet connection</string>
+    <string name="error_voucher_invalid_code">Invalid voucher code. Try again</string>
+
+    <string name="toast_configuration_not_received">The configuration was not received from the server. Please, relaunch the app</string>
+    <string name="toast_user_too_far">You are too far from the vehicle</string>
+    <string name="toast_user_inside_noparking_zone">User is inside no-parking zone</string>
+    <string name="toast_not_enough_funds">User does not have enough funds to start a ride</string>
+
+
+    <!--    Auth-->
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="repeat_password">Repeat password</string>
+    <string name="dont_have_an_account">Don\'t have an account?</string>
+    <string name="sign_up">Sign up</string>
+    <string name="remember_me">Remember me</string>
+
+    <string name="login_title">Welcome!</string>
+    <string name="login_description">Sign in to start a ride</string>
+    <string name="login_button">Sign in</string>
+
+    <string name="register_title">Hello!</string>
+    <string name="register_description">Create a new account and get a bonus to start</string>
+    <string name="register_button">@string/sign_up</string>
+    <string name="invalid_username_format">Invalid username format</string>
+    <string name="invalid_password_format">Invalid password format</string>
+    <string name="passwords_donot_match">Passwords do not match</string>
+    <string name="invalid_username_password_format">Invalid username or password format</string>
+    <!--    -->
+
+
+    <!--    Home-->
+    <string name="location_permission_dialog_button">Open app settings</string>
+    <string name="location_permission_dialog_title">Enable location</string>
+    <string name="location_permission_dialog_text">To start a ride you should enable location in app settings.</string>
+
+    <string name="location_rationale_button">@string/location_permission_dialog_button</string>
+    <string name="location_rationale_title">Location permission</string>
+    <string name="location_rationale_text">Location permission has to be granted to be able to use ride functionality.</string>
+
+    <string name="notification_permission_dialog_button_confirm">Allow</string>
+    <string name="notification_permission_dialog_button_dismiss">Dismiss</string>
+    <string name="notification_permission_dialog_title">Allow notifications</string>
+    <string name="notification_permission_dialog_text">Notifications are disabled for our app. To provide the best ride experience, enable notifications in app settings.</string>
+
+    <string name="preride_info_title1">Rules</string>
+    <string name="preride_info_title2">Zones</string>
+    <string name="preride_info_rule1">Our scooters have a maximum speed setting for your safety. Ensure you\'re traveling at a safe speed for the environment you\'re in.</string>
+    <string name="preride_info_rule2">Park in designated areas only to avoid inconveniencing pedestrians and other vehicles. Do not block walkways, driveways, or access points.</string>
+    <string name="preride_info_rule3">Stay alert and be aware of your surroundings. Follow traffic signals, use scooter lanes where available. Do not ride under the influence of alcohol or drugs.</string>
+    <string name="preride_info_zone_title1">No-parking zone</string>
+    <string name="preride_info_zone_text1">You may not pause or end the ride here.</string>
+    <string name="preride_info_zone_title2">No-riding zone</string>
+    <string name="preride_info_zone_text2">Glide vehicles don\'t operate here, and you may not end your ride here. You should get back to allowed riding zone.</string>
+    <string name="preride_info_zone_title3">Low-speed zone</string>
+    <string name="preride_info_zone_text3">Glide vehicles run a bit slower here due to busy traffic and pedestrians.</string>
+    <string name="preride_info_button">Agree &amp; ride</string>
+
+    <string name="ride_summary_headline">Let\'s see ride highlights!</string>
+    <string name="ride_summary_highlight_title1">Pace of your ride</string>
+    <string name="ride_summary_highlight_text1">You traveled at an average speed of <b>%1$s km/h</b> and covered an impressive distance of <b>%2$s km</b>. Great work keeping up a consistent pace!</string>
+    <string name="ride_summary_highlight_title2">Eco-friendly choice</string>
+    <string name="ride_summary_highlight_text2">Today, you\'ve potentially reduced CO₂ emissions by approximately <b>2 kg</b>, which is comparable to what a young tree absorbs in a day. The future thanks you!</string>
+    <string name="ride_summary_highlight_title3">Efficiency at its best</string>
+    <string name="ride_summary_highlight_text3">Thanks to the scooter\'s agility, you reached your destination <b>30%</b> quicker than if you\'d driven the same distance in city traffic.</string>
+    <string name="ride_summary_textfield_hint">Add a comment</string>
+    <string name="ride_summary_button">Done</string>
+
+    <string name="ride_notification_title">Tracking location…</string>
+    <string name="ride_notification_text">Driving around: %s</string>
+    <string name="ride_notification_text_default">Location</string>
+
+    <string name="home_bottom_sheet_scooter">Scooter %s</string>
+    <string name="home_bottom_sheet_battery">%s%% battery</string>
+    <string name="home_bottom_sheet_range">%s km range</string>
+    <string name="home_bottom_sheet_button">Start ride</string>
+    <string name="home_bottom_sheet_fare">%1$s to start, then %2$s/min</string>
+
     <string name="ride">Ride</string>
+    <string name="route">Route</string>
+    <string name="time">Time</string>
+    <string name="amount">Amount</string>
+    <string name="voucher">Voucher</string>
+    <string name="pause_button">Pause</string>
+    <string name="finish_button">Finish</string>
+    <string name="ring_button">Ring</string>
+    <string name="report_issue_button">Report issue</string>
+
+    <string name="home_drawer_menu_wallet">Wallet</string>
+    <string name="home_drawer_menu_rides">My rides</string>
+    <string name="home_drawer_menu_settings">Settings</string>
+    <string name="home_drawer_menu_language">Language</string>
+    <string name="home_drawer_menu_help">Help</string>
+    <string name="home_drawer_menu_logout">Log out</string>
+    <string name="home_drawer_header">Hi, %s</string>
+
+    <string name="ride_layout_header">Active ride</string>
+    <!--    -->
+
+
+    <!--    Rides-->
+    <string name="all_rides_screen_title">My rides</string>
+    <string name="all_rides_stats_travelled">Total travelled</string>
+    <string name="all_rides_stats_rides">Total rides</string>
+    <string name="all_rides_empty_title">No rides</string>
+    <string name="all_rides_empty_text">Start your first ride and it will show up here</string>
+
+    <string name="address_not_defined">Address not defined</string>
+
+    <string name="ride_details_screen_title">Ride details</string>
+    <string name="ride_details_sheet_title1">@string/route</string>
+    <string name="ride_details_sheet_subtitle1">Total distance</string>
+    <string name="ride_details_sheet_subtitle2">Average speed</string>
+    <string name="ride_details_sheet_title2">@string/time</string>
+    <string name="ride_details_sheet_ride_lasted">Ride lasted %s minutes</string>
+    <string name="ride_details_sheet_date_time">Date and time</string>
+    <!--    -->
+
+
+    <!--    Wallet-->
+    <string name="wallet_screen_title">My wallet</string>
+    <string name="payment_dialog_description">Processing payment…</string>
+    <string name="transaction_type_top_up">Account top up</string>
+    <string name="transaction_type_ride">@string/ride</string>
+    <string name="transaction_type_start_bonus">Start bonus</string>
+    <string name="transaction_type_voucher">Voucher activation</string>
+    <string name="transaction_type_penalty">Penalty</string>
+
+    <string name="top_up_success_dialog_button">Continue</string>
+    <string name="top_up_success_dialog_title">Success!</string>
+    <string name="top_up_success_dialog_text">Your balance has been successfully topped up. Have a nice ride!</string>
+
+    <string name="payment_method_google_pay" translatable="false">Google Pay</string>
+    <string name="payment_method_blik" translatable="false">BLIK</string>
+    <string name="payment_method_debit_card">Debit card</string>
+
+    <string name="top_up_screen_title">Account top up</string>
+    <string name="top_up_title1">Top up your account</string>
+    <string name="top_up_description1">Enter the amount you want to top up your account</string>
+    <string name="top_up_title2">Select payment method</string>
+    <string name="top_up_button">Top up</string>
+    <string name="invalid_amount_format">Invalid amount format</string>
+
+    <string name="all_transactions_screen_title">My transactions</string>
+
+    <string name="voucher_activated_dialog_button">Continue</string>
+    <string name="voucher_activated_dialog_title">Success!</string>
+    <string name="voucher_activated_dialog_text">Voucher code has been activated. Funds will be added to your account.</string>
+
+    <string name="voucher_screen_title">@string/voucher</string>
+    <string name="voucher_screen_card_title">Enter your code</string>
+    <string name="voucher_screen_card_text">To activate the voucher and receive the bonus, enter your code below</string>
+    <string name="voucher_screen_textfield_hint">e.g. CODE</string>
+    <string name="voucher_screen_button">Activate</string>
+
+    <string name="balance_card_title">Your balance</string>
+    <string name="balance_card_button">Add money</string>
+
+    <string name="wallet_pager_item_title1">Redeem voucher</string>
+    <string name="wallet_pager_item_text1">Have a code? Activate it and enjoy the ride!</string>
+    <string name="wallet_pager_item_title2">Add payment method</string>
+    <string name="wallet_pager_item_text2">More methods for more convenience</string>
+
+    <string name="recent_transactions_header">Recent transactions</string>
+    <string name="recent_transactions_footer">See all transactions</string>
+    <!--    -->
+
 </resources>

@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import com.apsl.glideapp.core.ui.R as CoreR
 
 @Immutable
 data class VoucherUiState(val codeTextFieldValue: String? = null) {
@@ -47,12 +48,12 @@ class VoucherViewModel @Inject constructor(
                     }
                     .onFailure { throwable ->
                         Timber.d(throwable.message)
-                        var text = "Connection error. Check your internet connection"
+                        var textResId: Int = CoreR.string.error_connection
                         if (throwable is TransactionException.InvalidVoucherCodeException) {
-                            text = "Invalid voucher code. Try again"
+                            textResId = CoreR.string.error_voucher_invalid_code
                             updateCodeTextFieldValue(null)
                         }
-                        _actions.send(VoucherAction.VoucherActivationError(text))
+                        _actions.send(VoucherAction.VoucherActivationError(textResId))
                     }
             }
         }

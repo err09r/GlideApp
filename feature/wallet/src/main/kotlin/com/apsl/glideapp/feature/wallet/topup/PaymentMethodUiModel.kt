@@ -1,36 +1,37 @@
 package com.apsl.glideapp.feature.wallet.topup
 
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.runtime.Immutable
 import com.apsl.glideapp.core.model.PaymentMethod
 import com.apsl.glideapp.feature.wallet.R
+import com.apsl.glideapp.core.ui.R as CoreR
 
 @Immutable
 data class PaymentMethodUiModel(
-    //@StringRes
-    val title: String,
+    @StringRes val titleResId: Int,
     @DrawableRes val iconResId: Int
 )
 
 fun PaymentMethod.toPaymentUiModel(): PaymentMethodUiModel {
-    val title: String
+    val titleResId: Int
     val imageResId = when (this) {
         PaymentMethod.GooglePay -> {
-            title = "Google Pay"
+            titleResId = CoreR.string.payment_method_google_pay
             R.drawable.ic_google_pay
         }
 
         PaymentMethod.Blik -> {
-            title = "BLIK"
+            titleResId = CoreR.string.payment_method_blik
             R.drawable.ic_blik
         }
 
         PaymentMethod.Card -> {
-            title = "Debit card"
+            titleResId = CoreR.string.payment_method_debit_card
             R.drawable.ic_debit_card
         }
     }
-    return PaymentMethodUiModel(title = title, iconResId = imageResId)
+    return PaymentMethodUiModel(titleResId = titleResId, iconResId = imageResId)
 }
 
 fun List<PaymentMethod>.toPaymentMethods(): PaymentMethods {

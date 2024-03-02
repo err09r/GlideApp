@@ -53,8 +53,8 @@ class RideServiceController @AssistedInject constructor(
                             _currentAddress.emit(address)
                         }
                     }
-                    .onFailure {
-                        Timber.d(it)
+                    .onFailure { throwable ->
+                        Timber.d(throwable)
                         userLocationJob?.cancel()
                         userLocationJob = null
                     }

@@ -1,5 +1,6 @@
 package com.apsl.glideapp.feature.wallet.common
 
+import androidx.annotation.StringRes
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.apsl.glideapp.common.models.TransactionType
@@ -12,17 +13,17 @@ import com.apsl.glideapp.core.ui.icons.Dollar
 import com.apsl.glideapp.core.ui.icons.GlideIcons
 import com.apsl.glideapp.core.ui.icons.TopUp
 import com.apsl.glideapp.core.ui.icons.Voucher
-import kotlinx.datetime.toJavaLocalDateTime
+import com.apsl.glideapp.core.util.android.CurrencyFormatter
 import java.time.format.DateTimeFormatter
 import kotlin.math.abs
+import com.apsl.glideapp.core.ui.R as CoreR
 
 @Immutable
 data class TransactionUiModel(
     val id: String,
     val amount: String,
     val amountType: AmountType,
-//    @StringRes val titleResId: Int,
-    val title: String,
+    @StringRes val titleResId: Int,
     val image: ImageVector,
     val dateTime: String,
     val separator: PagingSeparator
@@ -37,35 +38,30 @@ private val formatter by lazy { DateTimeFormatter.ofPattern("d MMM, HH:mm") }
 private val separatorFormatter by lazy { DateTimeFormatter.ofPattern("EEEE, d MMMM") }
 
 fun Transaction.toTransactionUiModel(): TransactionUiModel {
-    val amountString: String
+    var amountString = CurrencyFormatter.format(abs(amount))
     val amountType = when {
         amount > 0.0 -> {
-            amountString = "+${abs(amount).format(2)} zł"
+            amountString = "+$amountString"
             AmountType.Positive
         }
 
         amount < 0.0 -> {
-            amountString = "-${abs(amount).format(2)} zł"
+            amountString = "-$amountString"
             AmountType.Negative
         }
 
-        else -> {
-            amountString = "${amount.format(2)} zł"
-            AmountType.Normal
-        }
+        else -> AmountType.Normal
     }
 
-    val separator = PagingSeparator(
-        text = dateTime.toJavaLocalDateTime().format(separatorFormatter).capitalized()
-    )
+    val separator = PagingSeparator(text = dateTime.format(separatorFormatter).capitalized())
 
     return TransactionUiModel(
         id = id,
         amount = amountString,
         amountType = amountType,
-        title = type.title,
+        titleResId = type.titleResId,
         image = type.image,
-        dateTime = dateTime.toJavaLocalDateTime().format(formatter),
+        dateTime = dateTime.format(formatter),
         separator = separator
     )
 }
@@ -78,11 +74,12 @@ private val TransactionType.image: ImageVector
         else -> GlideIcons.TopUp
     }
 
-private val TransactionType.title: String
+private val TransactionType.titleResId: Int
+    @StringRes
     get() = when (this) {
-        TransactionType.TopUp -> "Account top up"
-        TransactionType.Ride -> "Ride"
-        TransactionType.StartBonus -> "Start bonus"
-        TransactionType.Voucher -> "Voucher activation"
-        TransactionType.Penalty -> "Penalty"
+        TransactionType.TopUp -> CoreR.string.transaction_type_top_up
+        TransactionType.Ride -> CoreR.string.transaction_type_ride
+        TransactionType.StartBonus -> CoreR.string.transaction_type_start_bonus
+        TransactionType.Voucher -> CoreR.string.transaction_type_voucher
+        TransactionType.Penalty -> CoreR.string.transaction_type_penalty
     }

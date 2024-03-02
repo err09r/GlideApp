@@ -3,32 +3,34 @@ package com.apsl.glideapp.feature.home.viewmodels
 import androidx.lifecycle.viewModelScope
 import com.apsl.glideapp.common.models.Route
 import com.apsl.glideapp.common.util.Geometry
-import com.apsl.glideapp.common.util.format
 import com.apsl.glideapp.core.domain.auth.LogOutUseCase
-import com.apsl.glideapp.core.domain.auth.ObserveUserAuthenticationStateUseCase
 import com.apsl.glideapp.core.domain.config.GetAppConfigUseCase
-import com.apsl.glideapp.core.domain.location.GetLastSavedUserLocationUseCase
+import com.apsl.glideapp.core.domain.location.GetLastMapCameraPositionUseCase
 import com.apsl.glideapp.core.domain.location.GpsDisabledException
 import com.apsl.glideapp.core.domain.location.IsGpsEnabledUseCase
 import com.apsl.glideapp.core.domain.location.MissingLocationPermissionsException
 import com.apsl.glideapp.core.domain.location.ObserveUserLocationUseCase
-import com.apsl.glideapp.core.domain.location.SaveLastUserLocationUseCase
+import com.apsl.glideapp.core.domain.location.SaveLastMapCameraPositionUseCase
 import com.apsl.glideapp.core.domain.map.GetMapContentWithinBoundsUseCase
 import com.apsl.glideapp.core.domain.map.ObserveMapContentUseCase
 import com.apsl.glideapp.core.domain.ride.FinishRideUseCase
 import com.apsl.glideapp.core.domain.ride.IsRideModeActiveUseCase
+import com.apsl.glideapp.core.domain.ride.ObservePreRideInfoEventsUseCase
 import com.apsl.glideapp.core.domain.ride.ObserveRideEventsUseCase
 import com.apsl.glideapp.core.domain.ride.StartRideUseCase
 import com.apsl.glideapp.core.domain.user.GetUserUseCase
+import com.apsl.glideapp.core.domain.user.SaveWalletVisitedUseCase
+import com.apsl.glideapp.core.model.MapCameraPosition
+import com.apsl.glideapp.core.model.PreRideInfoEvent
 import com.apsl.glideapp.core.model.RideEvent
-import com.apsl.glideapp.core.model.UserAuthState
 import com.apsl.glideapp.core.model.UserLocation
 import com.apsl.glideapp.core.model.Vehicle
 import com.apsl.glideapp.core.ui.BaseViewModel
+import com.apsl.glideapp.core.util.android.DistanceFormatter
+import com.apsl.glideapp.core.util.android.NumberFormatter
 import com.apsl.glideapp.core.util.maps.mapToLatLng
 import com.apsl.glideapp.core.util.maps.toCoordinates
 import com.apsl.glideapp.core.util.maps.toCoordinatesBounds
-import com.apsl.glideapp.core.util.maps.toLatLng
 import com.apsl.glideapp.feature.home.models.VehicleClusterItem
 import com.apsl.glideapp.feature.home.models.ZoneUiModel
 import com.apsl.glideapp.feature.home.models.mapToClusterItem
@@ -38,14 +40,12 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlin.math.roundToInt
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
@@ -54,13 +54,14 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDateTime
 import timber.log.Timber
+import com.apsl.glideapp.core.ui.R as CoreR
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val observeUserAuthenticationStateUseCase: ObserveUserAuthenticationStateUseCase,
     private val getUserUseCase: GetUserUseCase,
-    private val getLastSavedUserLocationUseCase: GetLastSavedUserLocationUseCase,
-    private val saveLastUserLocationUseCase: SaveLastUserLocationUseCase,
+    private val saveWalletVisitedUseCase: SaveWalletVisitedUseCase,
+    private val getLastMapCameraPositionUseCase: GetLastMapCameraPositionUseCase,
+    private val saveLastMapCameraPositionUseCase: SaveLastMapCameraPositionUseCase,
     private val getMapContentWithinBoundsUseCase: GetMapContentWithinBoundsUseCase,
     private val startRideUseCase: StartRideUseCase,
     private val finishRideUseCase: FinishRideUseCase,
@@ -70,7 +71,8 @@ class HomeViewModel @Inject constructor(
     private val isRideModeActiveUseCase: IsRideModeActiveUseCase,
     private val isGpsEnabledUseCase: IsGpsEnabledUseCase,
     private val getAppConfigUseCase: GetAppConfigUseCase,
-    private val logOutUseCase: LogOutUseCase
+    private val logOutUseCase: LogOutUseCase,
+    private val observePreRideInfoEventsUseCase: ObservePreRideInfoEventsUseCase
 ) : BaseViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -90,35 +92,41 @@ class HomeViewModel @Inject constructor(
     private var mapLoadingJob: Job? = null
 
     init {
-        observeUserAuthenticationState()
-        getLastSavedUserLocation()
         getUnlockDistance()
+        observePreRideInfoEvents()
     }
 
-    private fun observeUserAuthenticationState() {
-        observeUserAuthenticationStateUseCase()
-            .distinctUntilChanged()
-            .onEach { authState ->
-                Timber.d("User authentication state: $authState")
-                if (authState == UserAuthState.NotAuthenticated) {
-                    _actions.send(HomeAction.LogOut)
+    private fun observePreRideInfoEvents() {
+        viewModelScope.launch {
+            observePreRideInfoEventsUseCase().collect { preRideInfoEvent ->
+                when (preRideInfoEvent) {
+                    PreRideInfoEvent.Accepted -> startRide()
+                    else -> Unit // Ignore
                 }
             }
-            .launchIn(viewModelScope)
+        }
     }
 
-    private fun getLastSavedUserLocation() {
+    fun getLastMapCameraPosition() {
         viewModelScope.launch {
-            getLastSavedUserLocationUseCase().onSuccess { coordinates ->
-                val initialCameraPosition = coordinates?.toLatLng()
-                _uiState.update { it.copy(initialCameraPosition = initialCameraPosition) }
+            getLastMapCameraPositionUseCase().onSuccess { cameraPosition ->
+                if (cameraPosition != null) {
+                    _uiState.update { state ->
+                        state.copy(
+                            initialCameraPosition = LatLng(
+                                cameraPosition.latitude,
+                                cameraPosition.longitude
+                            ) to cameraPosition.zoom
+                        )
+                    }
+                }
             }
         }
     }
 
     private fun getUnlockDistance() {
         viewModelScope.launch {
-            val distance = getAppConfigUseCase().getOrNull()?.unlockDistance
+            val distance = getAppConfigUseCase().getOrNull()?.unlockDistanceMeters
             this@HomeViewModel.unlockDistance = distance
             updateMapState(selectedVehicleRadius = distance)
         }
@@ -130,7 +138,7 @@ class HomeViewModel @Inject constructor(
         ridingZones: List<List<LatLng>> = uiState.value.mapState.ridingZones,
         noParkingZones: List<ZoneUiModel> = uiState.value.mapState.noParkingZones,
         rideRoute: List<LatLng>? = uiState.value.mapState.rideRoute,
-        selectedVehicleRadius: Double? = uiState.value.mapState.selectedVehicleRadius
+        selectedVehicleRadius: Double? = uiState.value.mapState.selectedVehicleRadiusMeters
     ) {
         _uiState.update { uiState ->
             uiState.copy(
@@ -140,7 +148,7 @@ class HomeViewModel @Inject constructor(
                     ridingZones = ridingZones,
                     noParkingZones = noParkingZones,
                     rideRoute = rideRoute,
-                    selectedVehicleRadius = selectedVehicleRadius
+                    selectedVehicleRadiusMeters = selectedVehicleRadius
                 )
             )
         }
@@ -157,8 +165,9 @@ class HomeViewModel @Inject constructor(
                         state.copy(
                             userInfo = state.userInfo.copy(
                                 username = user.username,
-                                totalDistance = user.totalDistance.roundToInt(),
-                                totalRides = user.totalRides
+                                totalDistanceKilometers = DistanceFormatter.format(user.totalDistanceMeters / 1000),
+                                totalRides = NumberFormatter.format(user.totalRides),
+                                walletVisited = user.walletVisited
                             )
                         )
                     }
@@ -188,24 +197,26 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun saveWalletVisited() {
+        viewModelScope.launch {
+            saveWalletVisitedUseCase().onFailure { Timber.d(it.message) }
+        }
+    }
+
     private fun updateVehicleClusterItems(selectedId: String?) {
         updateMapState(
             vehicleClusterItems = uiState.value.mapState.vehicleClusterItems.map { item ->
-                if (item.id == selectedId) {
-                    item.copy(isSelected = true)
-                } else {
-                    item.copy(isSelected = false)
-                }
+                item.copy(isSelected = item.id == selectedId)
             }
         )
     }
 
-    fun loadMapContentWithinBounds(bounds: LatLngBounds) {
+    fun loadMapContentWithinBounds(bounds: LatLngBounds, zoom: Float) {
         val contentBounds = bounds.toCoordinatesBounds()
         Timber.d("loadMapContentWithinBounds: $contentBounds")
         viewModelScope.launch {
             if (isRideModeActiveUseCase()) {
-                Timber.d("Ride is active.")
+                Timber.d("Map content can't be loaded, ride is active.")
                 return@launch
             }
             if (activeRideId == null && mapContentJob == null) {
@@ -214,12 +225,18 @@ class HomeViewModel @Inject constructor(
             if (!uiState.value.isLoadingMapContent) {
                 _uiState.update { it.copy(isLoadingMapContent = true) }
             }
-            saveLastUserLocationUseCase(contentBounds.center)
+            saveLastMapCameraPositionUseCase(
+                MapCameraPosition(
+                    latitude = contentBounds.center.latitude,
+                    longitude = contentBounds.center.longitude,
+                    zoom = zoom
+                )
+            )
             getMapContentWithinBoundsUseCase(contentBounds)
         }
     }
 
-    fun startRide() {
+    private fun startRide() {
         viewModelScope.launch {
             checkGpsEnabled().onFailure {
                 Timber.d(it)
@@ -231,28 +248,28 @@ class HomeViewModel @Inject constructor(
             val selectedVehicle = vehiclesOnMap.find { it.id == uiState.value.selectedVehicle?.id }
 
             if (currentUserLocation != null && selectedVehicle != null) {
-                val distanceFromVehicle = Geometry.calculateDistance(
+                val distanceFromVehicleMeters = Geometry.calculateDistance(
                     currentUserLocation.toCoordinates().asPair(),
                     selectedVehicle.coordinates.asPair()
                 )
 
-                Timber.d("Distance from vehicle: $distanceFromVehicle")
+                Timber.d("Distance from vehicle: $distanceFromVehicleMeters")
 
-                val unlockDistance = this@HomeViewModel.unlockDistance
-                    ?: getAppConfigUseCase().getOrNull()?.unlockDistance
+                val unlockDistanceMeters = this@HomeViewModel.unlockDistance
+                    ?: getAppConfigUseCase().getOrNull()?.unlockDistanceMeters
 
-                if (unlockDistance != null && distanceFromVehicle <= unlockDistance) {
+                if (unlockDistanceMeters != null && distanceFromVehicleMeters <= unlockDistanceMeters) {
                     startRideUseCase(
                         vehicleId = selectedVehicle.id,
                         userCoordinates = currentUserLocation.toCoordinates()
                     )
                 } else {
-                    val message = if (unlockDistance == null) {
-                        "The configuration was not received from the server. Please, relaunch the app."
+                    val textResId = if (unlockDistanceMeters == null) {
+                        CoreR.string.toast_configuration_not_received
                     } else {
-                        "You are too far from the vehicle"
+                        CoreR.string.toast_user_too_far
                     }
-                    _actions.send(HomeAction.Toast(message))
+                    _actions.send(HomeAction.Toast(textResId))
                 }
             }
         }
@@ -300,10 +317,12 @@ class HomeViewModel @Inject constructor(
                     )
 
                     is RideEvent.RouteUpdated -> onRideRouteUpdated(rideEvent.currentRoute)
-                    is RideEvent.Finished -> onRideFinished()
-                    is RideEvent.Error.UserInsideNoParkingZone -> {
-                        _actions.send(HomeAction.Toast(rideEvent.message.toString()))
-                    }
+                    is RideEvent.Finished -> onRideFinished(
+                        distance = rideEvent.distance,
+                        averageSpeed = rideEvent.averageSpeed
+                    )
+
+                    is RideEvent.Error -> onError(rideEvent)
                 }
             }
             .launchIn(viewModelScope)
@@ -338,21 +357,25 @@ class HomeViewModel @Inject constructor(
     private fun onRideRouteUpdated(currentRoute: Route) {
         Timber.d("Ride route updated")
         updateMapState(rideRoute = currentRoute.points.mapToLatLng())
-        updateRideState(distance = (currentRoute.distance / 1000).format(1).replace('.', ','))
+        updateRideState(distanceKilometers = DistanceFormatter.format(currentRoute.distance / 1000))
     }
 
     private fun updateRideState(
-        distance: String = uiState.value.rideState?.distance ?: "0,0",
+        distanceKilometers: String = uiState.value.rideState?.distanceKilometers
+            ?: DistanceFormatter.default(),
         isPaused: Boolean = uiState.value.rideState?.isPaused ?: false
     ) {
         _uiState.update { uiState ->
             uiState.copy(
-                rideState = uiState.rideState?.copy(distance = distance, isPaused = isPaused)
+                rideState = uiState.rideState?.copy(
+                    distanceKilometers = distanceKilometers,
+                    isPaused = isPaused
+                )
             )
         }
     }
 
-    private fun onRideFinished() {
+    private fun onRideFinished(distance: Double, averageSpeed: Double) {
         Timber.d("Ride finished")
 
         activeRideId = null
@@ -363,7 +386,34 @@ class HomeViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            _actions.send(HomeAction.FinishRide)
+            _actions.send(
+                HomeAction.FinishRide(
+                    distance = distance / 1000, // meters to km
+                    averageSpeed = averageSpeed
+                )
+            )
+        }
+    }
+
+    private fun onError(error: RideEvent.Error) {
+        Timber.d(error.message)
+        viewModelScope.launch {
+            val textResId = when (error) {
+                is RideEvent.Error.UserInsideNoParkingZone -> CoreR.string.toast_user_inside_noparking_zone
+                is RideEvent.Error.UserTooFarFromVehicle -> CoreR.string.toast_user_too_far
+                is RideEvent.Error.NotEnoughFunds -> CoreR.string.toast_not_enough_funds
+            }
+            _actions.send(HomeAction.Toast(textResId))
+        }
+        when (error) {
+            is RideEvent.Error.NotEnoughFunds -> {
+                viewModelScope.launch {
+                    delay(OPEN_TOPUP_SCREEN_DELAY_MS)
+                    _actions.send(HomeAction.OpenTopUpScreen)
+                }
+            }
+
+            else -> Unit
         }
     }
 
@@ -403,7 +453,7 @@ class HomeViewModel @Inject constructor(
     private suspend fun hideMapLoading() {
         mapLoadingJob?.cancelAndJoin()
         mapLoadingJob = viewModelScope.launch {
-            delay(1000)
+            delay(LOADING_BAR_DELAY_MS)
             _uiState.update { it.copy(isLoadingMapContent = false) }
         }
     }
@@ -436,8 +486,14 @@ class HomeViewModel @Inject constructor(
             .onEach { result ->
                 result
                     .onSuccess { userLocation ->
-                        val coordinates = userLocation.toCoordinates()
-                        saveLastUserLocationUseCase(coordinates)
+                        val (latitude, longitude) = userLocation.toCoordinates()
+                        saveLastMapCameraPositionUseCase(
+                            MapCameraPosition(
+                                latitude = latitude,
+                                longitude = longitude,
+                                zoom = DEFAULT_ZOOM
+                            )
+                        )
                         updateMapState(userLocation = userLocation)
                     }
                     .onFailure { throwable ->
@@ -464,5 +520,11 @@ class HomeViewModel @Inject constructor(
     fun stopObservingUserLocation() {
         userLocationJob?.cancel()
         userLocationJob = null
+    }
+
+    private companion object {
+        private const val DEFAULT_ZOOM = 13f
+        private const val LOADING_BAR_DELAY_MS = 800L
+        private const val OPEN_TOPUP_SCREEN_DELAY_MS = 500L
     }
 }

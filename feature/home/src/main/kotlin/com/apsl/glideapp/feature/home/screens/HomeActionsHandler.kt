@@ -5,26 +5,30 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
 import com.apsl.glideapp.core.ui.ComposableLifecycle
 import com.apsl.glideapp.core.ui.ScreenActions
 import com.apsl.glideapp.core.util.android.findActivity
+import com.apsl.glideapp.core.util.android.showToast
 import com.apsl.glideapp.feature.home.map.openLocationSettingsDialog
 import com.apsl.glideapp.feature.home.map.shouldOpenLocationSettingsDialog
 import com.apsl.glideapp.feature.home.rideservice.RideService
 import com.apsl.glideapp.feature.home.viewmodels.HomeAction
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 
 @Composable
 fun HomeActionsHandler(
     actions: Flow<HomeAction>,
-    onNavigateToLogin: () -> Unit,
+    onNavigateToTopUp: () -> Unit,
+    onNavigateToRideSummary: (Float, Float) -> Unit,
     onStartObservingUserLocation: () -> Unit,
     onRequestLocationPermissions: () -> Unit
 ) {
@@ -69,10 +73,9 @@ fun HomeActionsHandler(
         }
     }
 
+    val scope = rememberCoroutineScope()
     ScreenActions(actions) { action ->
         when (action) {
-            is HomeAction.LogOut -> onNavigateToLogin()
-
             is HomeAction.StartRide -> {
                 val intent = Intent(context, RideService::class.java).apply {
                     this.action = RideService.ACTION_START
@@ -88,11 +91,17 @@ fun HomeActionsHandler(
                 }
 
                 context.startForegroundService(intent)
+
+                scope.launch {
+                    delay(200)
+                    onNavigateToRideSummary(
+                        action.distance.toFloat(), // Convert to float because there is no Double NavType in NavType.kt. No need to create one
+                        action.averageSpeed.toFloat()
+                    )
+                }
             }
 
-            is HomeAction.Toast -> {
-                Toast.makeText(context, action.message, Toast.LENGTH_LONG).show()
-            }
+            is HomeAction.Toast -> context.showToast(action.textResId)
 
             is HomeAction.OpenLocationSettingsDialog -> {
                 if (context.shouldOpenLocationSettingsDialog) {
@@ -110,6 +119,8 @@ fun HomeActionsHandler(
             }
 
             is HomeAction.RequestLocationPermissions -> onRequestLocationPermissions()
+
+            is HomeAction.OpenTopUpScreen -> onNavigateToTopUp()
         }
     }
 }

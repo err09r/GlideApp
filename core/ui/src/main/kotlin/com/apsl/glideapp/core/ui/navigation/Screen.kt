@@ -1,10 +1,22 @@
-@file:Suppress("Unused")
+@file:Suppress("Unused", "ConstPropertyName")
 
 package com.apsl.glideapp.core.ui.navigation
 
 sealed class Screen(val route: String) {
+
+    data object Loading : Screen("loading")
+
     object Home {
         data object Root : Screen("home")
+        data object PreRideInfo : Screen("preRideInfo")
+        data class RideSummary(
+            val distance: Float,
+            val averageSpeed: Float
+        ) : Screen("rideSummary/$distance/$averageSpeed") {
+            companion object {
+                const val route = "rideSummary/{distance}/{averageSpeed}"
+            }
+        }
     }
 
     object Rides {

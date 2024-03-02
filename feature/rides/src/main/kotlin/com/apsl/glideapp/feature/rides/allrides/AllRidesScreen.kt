@@ -19,15 +19,21 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -36,27 +42,26 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.apsl.glideapp.core.ui.FeatureScreen
-import com.apsl.glideapp.core.ui.GraphRoutePreviewParameterProvider
 import com.apsl.glideapp.core.ui.LoadingScreen
 import com.apsl.glideapp.core.ui.PagingSeparator
-import com.apsl.glideapp.core.ui.RideRoute
 import com.apsl.glideapp.core.ui.icons.ElectricScooter
 import com.apsl.glideapp.core.ui.icons.GlideIcons
 import com.apsl.glideapp.core.ui.icons.NotificationRemove
 import com.apsl.glideapp.core.ui.icons.Route
-import com.apsl.glideapp.core.ui.pullrefresh.PullRefreshIndicator
-import com.apsl.glideapp.core.ui.pullrefresh.pullRefresh
-import com.apsl.glideapp.core.ui.pullrefresh.rememberPullRefreshState
+import com.apsl.glideapp.core.ui.pulltorefresh.Indicator
 import com.apsl.glideapp.core.ui.receiveAsLazyPagingItems
 import com.apsl.glideapp.core.ui.theme.GlideAppTheme
 import com.apsl.glideapp.core.ui.toComposePagingItems
+import com.apsl.glideapp.core.util.android.CurrencyFormatter
+import com.apsl.glideapp.core.util.android.NumberFormatter
 import kotlinx.coroutines.flow.MutableStateFlow
+import com.apsl.glideapp.core.ui.R as CoreR
 
 @Composable
 fun AllRidesScreen(
-    viewModel: AllRidesViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit,
-    onNavigateToRide: (String) -> Unit
+    onNavigateToRide: (String) -> Unit,
+    viewModel: AllRidesViewModel = hiltViewModel()
 ) {
     LaunchedEffect(Unit) {
         viewModel.refreshRidesSummary()
@@ -69,7 +74,7 @@ fun AllRidesScreen(
         uiState = uiState,
         onBackClick = onNavigateBack,
         onRideClick = onNavigateToRide,
-        onPullRefresh = viewModel::refresh
+        onPullToRefresh = viewModel::refresh
     )
 }
 
@@ -78,29 +83,39 @@ fun AllRidesScreenContent(
     uiState: AllRidesUiState,
     onBackClick: () -> Unit,
     onRideClick: (String) -> Unit,
-    onPullRefresh: () -> Unit
+    onPullToRefresh: () -> Unit
 ) {
     FeatureScreen(
-        topBarText = "My rides",
+        topBarText = stringResource(CoreR.string.all_rides_screen_title),
         onBackClick = onBackClick
     ) {
         when {
             uiState.isLoading -> LoadingScreen()
             uiState.error != null -> {
-                Text(text = uiState.error.text, modifier = Modifier.align(Alignment.Center))
+                Text(
+                    text = stringResource(uiState.error.textResId),
+                    modifier = Modifier.align(Alignment.Center)
+                )
             }
 
             else -> {
-                val refreshing = uiState.isRefreshing
-                val pullRefreshState = rememberPullRefreshState(
-                    refreshing = refreshing,
-                    onRefresh = onPullRefresh
-                )
+                val pullToRefreshState = rememberPullToRefreshState()
+                if (pullToRefreshState.isRefreshing) {
+                    LaunchedEffect(Unit) {
+                        onPullToRefresh()
+                    }
+                }
+
+                if (!uiState.isRefreshing) {
+                    LaunchedEffect(Unit) {
+                        pullToRefreshState.endRefresh()
+                    }
+                }
 
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .pullRefresh(pullRefreshState)
+                        .nestedScroll(pullToRefreshState.nestedScrollConnection)
                 ) {
                     val itemCount = uiState.rides?.itemCount ?: 0
 
@@ -108,7 +123,10 @@ fun AllRidesScreenContent(
                         AllRidesEmptyScreen()
                     } else {
                         Column {
-                            RideStats(rides = uiState.totalRides, distance = uiState.totalDistance)
+                            RideStats(
+                                rides = uiState.totalRides,
+                                distance = uiState.totalDistanceMeters
+                            )
                             RideList(
                                 rides = uiState.rides,
                                 modifier = Modifier.fillMaxSize(),
@@ -118,10 +136,10 @@ fun AllRidesScreenContent(
                         }
                     }
 
-                    PullRefreshIndicator(
-                        refreshing = refreshing,
-                        state = pullRefreshState,
-                        modifier = Modifier.align(Alignment.TopCenter)
+                    PullToRefreshContainer(
+                        state = pullToRefreshState,
+                        modifier = Modifier.align(Alignment.TopCenter),
+                        indicator = { Indicator(state = it) }
                     )
                 }
             }
@@ -130,7 +148,11 @@ fun AllRidesScreenContent(
 }
 
 @Composable
-fun RideStats(modifier: Modifier = Modifier, rides: String, distance: String) {
+fun RideStats(
+    rides: String,
+    distance: String,
+    modifier: Modifier = Modifier
+) {
     ElevatedCard(
         onClick = {},
         modifier = modifier
@@ -142,16 +164,16 @@ fun RideStats(modifier: Modifier = Modifier, rides: String, distance: String) {
                 .fillMaxWidth()
                 .height(IntrinsicSize.Min)
                 .padding(horizontal = 16.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             RideStatsItem(
-                title = "Total travelled",
-                text = "$distance km",
+                title = stringResource(CoreR.string.all_rides_stats_travelled),
+                text = stringResource(CoreR.string.value_kilometers, distance),
                 imageVector = GlideIcons.Route
             )
-            Spacer(Modifier.weight(1f))
             RideStatsItem(
-                title = "Total rides",
+                title = stringResource(CoreR.string.all_rides_stats_rides),
                 text = rides,
                 imageVector = GlideIcons.ElectricScooter
             )
@@ -159,12 +181,13 @@ fun RideStats(modifier: Modifier = Modifier, rides: String, distance: String) {
     }
 }
 
+//TODO: Make adaptable, fix incorrect stretching when title is long enough
 @Composable
 fun RideStatsItem(
-    modifier: Modifier = Modifier,
     title: String,
     text: String,
-    imageVector: ImageVector
+    imageVector: ImageVector,
+    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier,
@@ -176,25 +199,19 @@ fun RideStatsItem(
                     color = MaterialTheme.colorScheme.surface,
                     shape = CardDefaults.shape
                 )
-                .padding(8.dp)
+                .padding(10.dp)
         ) {
             Icon(
                 imageVector = imageVector,
                 contentDescription = null,
                 modifier = Modifier.size(24.dp),
-                tint = MaterialTheme.colorScheme.primary
+                tint = MaterialTheme.colorScheme.tertiary
             )
         }
-        Spacer(Modifier.width(20.dp))
+        Spacer(Modifier.width(16.dp))
         Column(horizontalAlignment = Alignment.End) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.bodyLarge
-            )
-            Text(
-                text = text,
-                style = MaterialTheme.typography.bodyLarge
-            )
+            Text(text = title, textAlign = TextAlign.End)
+            Text(text = text, textAlign = TextAlign.End)
         }
     }
 }
@@ -203,7 +220,10 @@ fun RideStatsItem(
 @Composable
 private fun RideStatsPreview() {
     GlideAppTheme {
-        RideStats(rides = "12", distance = "12,5")
+        RideStats(
+            rides = NumberFormatter.format(12),
+            distance = NumberFormatter.format(12.5)
+        )
     }
 }
 
@@ -213,44 +233,45 @@ fun AllRidesEmptyScreen() {
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Box(
             modifier = Modifier
-                .background(
-                    color = MaterialTheme.colorScheme.surfaceVariant,
-                    shape = CircleShape
-                )
-                .padding(8.dp)
+                .background(color = MaterialTheme.colorScheme.errorContainer, shape = CircleShape)
+                .padding(12.dp)
         ) {
             Icon(
                 imageVector = GlideIcons.NotificationRemove,
                 contentDescription = null,
-                modifier = Modifier.size(32.dp)
+                modifier = Modifier.size(32.dp),
+                tint = MaterialTheme.colorScheme.onErrorContainer
             )
         }
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(24.dp))
 
         Text(
-            text = "No rides",
+            text = stringResource(CoreR.string.all_rides_empty_title),
             style = MaterialTheme.typography.headlineMedium
         )
 
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(12.dp))
+        HorizontalDivider()
+        Spacer(Modifier.height(12.dp))
+
         Text(
-            text = "Start your first ride and it will show up here",
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyLarge
+            text = stringResource(CoreR.string.all_rides_empty_text),
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
         )
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun AllRidesScreenPreview(@PreviewParameter(GraphRoutePreviewParameterProvider::class) route: RideRoute) {
+private fun AllRidesScreenPreview(@PreviewParameter(RideRoutePreviewParameterProvider::class) route: RideRoute) {
     GlideAppTheme {
         val rides = MutableStateFlow(
             PagingData.from(
@@ -261,8 +282,8 @@ private fun AllRidesScreenPreview(@PreviewParameter(GraphRoutePreviewParameterPr
                         finishTime = "16:02",
                         address = "Spacerowa 1A, Słupsk",
                         route = route,
-                        distance = 426,
-                        fare = "3,75",
+                        distanceMeters = "426",
+                        fare = CurrencyFormatter.format(8.10),
                         separator = PagingSeparator("Monday, February 25")
                     ),
                     RideUiModel(
@@ -271,8 +292,8 @@ private fun AllRidesScreenPreview(@PreviewParameter(GraphRoutePreviewParameterPr
                         finishTime = "16:02",
                         address = "Spacerowa 1A, Słupsk",
                         route = route,
-                        distance = 426,
-                        fare = "4,05",
+                        distanceMeters = "426",
+                        fare = CurrencyFormatter.format(12.803),
                         separator = PagingSeparator("Monday, February 25")
                     ),
                     RideUiModel(
@@ -281,8 +302,8 @@ private fun AllRidesScreenPreview(@PreviewParameter(GraphRoutePreviewParameterPr
                         finishTime = "16:02",
                         address = "Spacerowa 1A, Słupsk",
                         route = route,
-                        distance = 426,
-                        fare = "8,99",
+                        distanceMeters = "426",
+                        fare = CurrencyFormatter.format(8.99),
                         separator = PagingSeparator("Monday, February 26")
                     )
                 )
@@ -292,15 +313,19 @@ private fun AllRidesScreenPreview(@PreviewParameter(GraphRoutePreviewParameterPr
             .toComposePagingItems()
 
         AllRidesScreenContent(
-            uiState = AllRidesUiState(rides = rides, totalRides = "12", totalDistance = "19,5"),
+            uiState = AllRidesUiState(
+                rides = rides,
+                totalRides = "12",
+                totalDistanceMeters = "19,5"
+            ),
             onBackClick = {},
             onRideClick = {},
-            onPullRefresh = {}
+            onPullToRefresh = {}
         )
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, locale = "pl")
 @Composable
 private fun AllRidesScreenEmptyPreview() {
     GlideAppTheme {
@@ -312,7 +337,7 @@ private fun AllRidesScreenEmptyPreview() {
             uiState = AllRidesUiState(rides = rides),
             onBackClick = {},
             onRideClick = {},
-            onPullRefresh = {}
+            onPullToRefresh = {}
         )
     }
 }
